@@ -69,10 +69,9 @@ public enum ScriptAPI {
     }
 
     public void setSayMessenger(SayMessenger msger) { this.messengerSay = msger; }
+    public void setMessengerAskYesNo(AskYesNoMessenger msger) { this.messengerAskYesNo = msger; }
+    public void setAskMenuMessenger(AskMenuMessenger msger) { this.messengerAskMenu = msger; }
 
-    private SayMessenger getSay() { return this.messengerSay; }
-    private AskYesNoMessenger getAskYesNo() { return this.messengerAskYesNo; }
-    private AskMenuMessenger getAskMenu() { return this.messengerAskMenu; }
 
     // =================================================================================================================
 
@@ -108,7 +107,7 @@ public enum ScriptAPI {
                         if (idx != 0) {
                             var res = chain.get(idx - 1);
                             script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.getSay().send(script, speaker, 0, messages[idx - 1], back, forward);
+                            ScriptAPI.INSTANCE.messengerSay.send(script, speaker, 0, messages[idx - 1], back, forward);
                         } else {
                             log.warn("Tried to go back while on the first message? No! :(");
                             script.end();
@@ -118,7 +117,7 @@ public enum ScriptAPI {
                         if (ts - 1 >= idx + 1) {
                             var res = chain.get(idx + 1);
                             script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.getSay().send(script, speaker, 0, messages[idx - 1], back, forward);
+                            ScriptAPI.INSTANCE.messengerSay.send(script, speaker, 0, messages[idx - 1], back, forward);
                         } else {
                             script.setScriptResponse(null);
                             script.resume(t, a, o);
