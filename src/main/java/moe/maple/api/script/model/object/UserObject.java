@@ -37,7 +37,7 @@ public interface UserObject<T> extends FieldedObject {
      * Normally these would be classified as a constant and thrown into
      * a static method, so that it could be called whenever. However, since
      * these change based on version,  it's important that you have to ability
-     * to override these as jobs change. So, for now, some simple implementations.
+     * to override these as nexon changes jobs. So, for now, some simple implementations.
      * Based on v92 ~ v95.
      */
     default boolean isAdmin() {

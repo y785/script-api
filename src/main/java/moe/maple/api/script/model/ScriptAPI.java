@@ -51,13 +51,13 @@ public enum ScriptAPI {
     public void setDefaultSpeakerId(int speakerId) { this.defaultSpeakerId = speakerId; }
 
     public void setDefaultMessengers() {
-        messengerSay = (script, speakerTemplateid, param, message, previous, next) -> {
-            log.debug("say-> speaker: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerTemplateid, param, previous, next, message);
+        messengerSay = (script, message, speakerTemplateId, param, previous, next) -> {
+            log.debug("say-> speaker: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerTemplateId, param, previous, next, message);
         };
-        messengerAskYesNo = (script, speakerTemplateId, param, message) -> {
+        messengerAskYesNo = (script, message, speakerTemplateId, param) -> {
            log.debug("askYesNo-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
         };
-        messengerAskMenu = (script, speakerTemplateId, param, message) -> {
+        messengerAskMenu = (script, message, speakerTemplateId, param) -> {
             log.debug("askMenu-> speaker: {}, param: {}, message: {}", speakerTemplateId, param, message);
         };
     }
@@ -99,9 +99,10 @@ public enum ScriptAPI {
                         script.end();
                     case 0: // Back.
                         if (idx != 0) {
+                            var message = messages[idx - 1];
                             var res = chain.get(idx - 1);
                             script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.messengerSay.send(script, speaker, 0, messages[idx - 1], back, forward);
+                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, 0, back, forward);
                         } else {
                             log.warn("Tried to go back while on the first message? No! :(");
                             script.end();
@@ -109,9 +110,10 @@ public enum ScriptAPI {
                         break;
                     case 1: // Next.
                         if (ts - 1 >= idx + 1) {
+                            var message = messages[idx + 1];
                             var res = chain.get(idx + 1);
                             script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.messengerSay.send(script, speaker, 0, messages[idx - 1], back, forward);
+                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, 0, back, forward);
                         } else {
                             script.setScriptResponse(null);
                             script.resume(t, a, o);
@@ -126,8 +128,9 @@ public enum ScriptAPI {
         script.setScriptResponse(chain.getFirst());
 
         var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+        var message = messages[0];
 
-        ScriptAPI.INSTANCE.messengerSay.send(script, speaker, 0, messages[0], false, messages.length > 1);
+        ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, 0, false, messages.length > 1);
 
         return script::setScriptAction;
     }
@@ -152,7 +155,7 @@ public enum ScriptAPI {
         });
         var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
 
-        ScriptAPI.INSTANCE.messengerAskYesNo.send(script, speaker, 0, message);
+        ScriptAPI.INSTANCE.messengerAskYesNo.send(script, message, speaker, 0);
     }
 
     public static void askYesNo(MoeScript script, String message, BasicScriptAction onYes) {
@@ -183,7 +186,7 @@ public enum ScriptAPI {
 
         var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
 
-        ScriptAPI.INSTANCE.messengerAskMenu.send(script, speaker, 0, builder.toString());
+        ScriptAPI.INSTANCE.messengerAskMenu.send(script, builder.toString(), speaker, 0);
 
         return script::setScriptAction;
     }
@@ -212,7 +215,7 @@ public enum ScriptAPI {
 
         var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
 
-        ScriptAPI.INSTANCE.messengerAskMenu.send(script, speaker, 0, builder.toString());
+        ScriptAPI.INSTANCE.messengerAskMenu.send(script, builder.toString(), speaker, 0);
 
         return script::setScriptAction;
     }

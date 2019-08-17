@@ -29,5 +29,5 @@ import moe.maple.api.script.model.type.SpeakerType;
 public interface SayMessenger extends ScriptMessenger {
     default SpeakerType type() { return SpeakerType.SAY; }
 
-    void send(MoeScript script, int speakerTemplateid, int param, String message, boolean previous, boolean next);
+    void send(MoeScript script, String message, int speakerTemplateId, int param, boolean previous, boolean next);
 }

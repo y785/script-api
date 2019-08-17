@@ -29,5 +29,5 @@ import moe.maple.api.script.model.type.SpeakerType;
 public interface AskMenuMessenger extends ScriptMessenger {
     default SpeakerType type() { return SpeakerType.ASKMENU; }
 
-    void send(MoeScript script, int speakerTemplateId, int param, String message);
+    void send(MoeScript script, String message, int speakerTemplateId, int param);
 }

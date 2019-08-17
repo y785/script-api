@@ -38,6 +38,9 @@ public class Main {
         // Moe.
 
         ScriptAPI.INSTANCE.setDefaultMessengers();
+        ScriptAPI.INSTANCE.setSayMessenger((script, speakerTemplateid, param, message, previous, next) -> {
+
+        });
 
         var script = new ExampleMenuScript();
         script.addStartEvent(a -> log.debug("Starting script! :D"));

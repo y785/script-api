@@ -29,5 +29,5 @@ import moe.maple.api.script.model.type.SpeakerType;
 public interface AskYesNoMessenger extends ScriptMessenger {
     default SpeakerType type() { return SpeakerType.ASKYESNO; }
 
-    void send(MoeScript script, int speakerTemplateId, int param, String message);
+    void send(MoeScript script, String message, int speakerTemplateId, int param);
 }
