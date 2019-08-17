@@ -22,12 +22,8 @@
 
 package moe.maple.api.script.model;
 
-import moe.maple.api.script.model.action.BasicScriptAction;
-import moe.maple.api.script.model.action.NumberScriptAction;
-import moe.maple.api.script.model.action.StringScriptAction;
-import moe.maple.api.script.model.messenger.AskMenuMessenger;
-import moe.maple.api.script.model.messenger.AskYesNoMessenger;
-import moe.maple.api.script.model.messenger.SayMessenger;
+import moe.maple.api.script.model.action.*;
+import moe.maple.api.script.model.messenger.*;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.type.SpeakerType;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
@@ -36,9 +32,7 @@ import moe.maple.api.script.util.With;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.EnumMap;
 import java.util.LinkedList;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
