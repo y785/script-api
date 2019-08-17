@@ -7,10 +7,13 @@ import moe.maple.api.script.model.type.SpeakerType;
 
 public interface MoeScript {
 
+    boolean isDone();
+
     void work();
 
     void start();
     void end();
+    void restart();
 
     void resume(SpeakerType type, Number action, Object response);
 

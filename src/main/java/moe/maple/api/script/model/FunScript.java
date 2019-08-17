@@ -21,28 +21,44 @@ public abstract class FunScript implements MoeScript {
     protected LinkedList<ScriptEvent> startScriptEvents;
     protected LinkedList<ScriptEvent> endScriptEvents;
 
+    private boolean done;
+
     public FunScript() {
         this.startScriptEvents = new LinkedList<>();
         this.endScriptEvents = new LinkedList<>();
-
     }
 
     @Override
     public abstract void work();
 
     @Override
+    public boolean isDone() {
+        return done;
+    }
+
+    @Override
     public void start() {
-        this.startScriptEvents.forEach(event -> {
-            event.act(this);
-        });
+        this.done = false;
+        this.nextResponse = null;
+        this.nextAction = null;
+        this.startScriptEvents.forEach(event -> event.act(this));
         work();
     }
 
     @Override
     public void end() {
-        this.endScriptEvents.forEach(event -> {
-            event.act(this);
-        });
+        if (done)
+            return;
+        this.nextResponse = null;
+        this.nextAction = null;
+        this.endScriptEvents.forEach(event -> event.act(this));
+        this.done = true;
+    }
+
+    @Override
+    public void restart() {
+        end();
+        start();
     }
 
     @Override
@@ -55,10 +71,16 @@ public abstract class FunScript implements MoeScript {
             } else {
                 if (act instanceof BasicScriptAction) {
                     ((BasicScriptAction) act).act();
+                    if (nextResponse == null)
+                        this.end();
                 } else if (act instanceof NumberScriptAction) {
                     ((NumberScriptAction) act).act((Number)response);
+                    if (nextResponse == null)
+                        this.end();
                 } else if (act instanceof StringScriptAction) {
                     ((StringScriptAction) act).act((String)response);
+                    if (nextResponse == null)
+                        this.end();
                 } else {
                     log.error("Couldn't process action: {}", act.getClass().getSimpleName());
                     this.end();

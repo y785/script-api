@@ -69,12 +69,10 @@ public class ScriptAPI {
                 }
             }
         }));
+        script.setScriptResponse(chain.getFirst());
 
         log.debug("say: {}", messages[0]);
-        // script.setScriptAction(next);
-        script.setScriptResponse(chain.getFirst());
-        // send packet.
-        // handle response.
+        // todo send packet
 
         return script::setScriptAction;
     }
@@ -97,8 +95,8 @@ public class ScriptAPI {
                 }
             }
         });
-        // todo send packet.
         log.debug("askYesNo: {}", message);
+        // todo send packet
     }
 
     public static void askYesNo(MoeScript script, String message, BasicScriptAction onYes) {
@@ -115,7 +113,11 @@ public class ScriptAPI {
             var min = 0;
             var max = menuItems.length - 1;
             var sel = ((Number)o).intValue();
-            if (t != SpeakerType.ASKMENU || sel < min || sel > max) {
+            var bad = sel < min || sel > max;
+
+            if (t != SpeakerType.ASKMENU || bad || a.intValue() != 1) {
+                if (bad)
+                    log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
                 script.end();
             } else {
                 script.setScriptResponse(null);
@@ -124,6 +126,8 @@ public class ScriptAPI {
         });
 
         log.debug("askMeu: {}", builder);
+        // todo send packet
+
         return script::setScriptAction;
     }
 
@@ -136,7 +140,11 @@ public class ScriptAPI {
             var min = 0;
             var max = options.length - 1;
             var sel = ((Number)o).intValue();
-            if (t != SpeakerType.ASKMENU || sel < min || sel > max) {
+            var bad = sel < min || sel > max;
+
+            if (t != SpeakerType.ASKMENU || bad || a.intValue() != 1) {
+                if (bad)
+                    log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
                 script.end();
             } else {
                 script.setScriptResponse(null);
@@ -146,6 +154,7 @@ public class ScriptAPI {
         });
 
         log.debug("askMenu: {}", builder);
+        // todo send packet
 
         return script::setScriptAction;
     }

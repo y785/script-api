@@ -1,5 +1,6 @@
 package moe.maple.api.script;
 
+import moe.maple.api.script.example.ExampleMenuScript;
 import moe.maple.api.script.example.ExampleSayAndAsk;
 import moe.maple.api.script.model.type.SpeakerType;
 import org.slf4j.Logger;
@@ -13,20 +14,16 @@ public class Main {
         // Initialize as needed.
         // Moe.
 
-        var script = new ExampleSayAndAsk();
-        script.addStartEvent(a -> {
-            log.debug("Starting script! :D");
-        });
-        script.addEndEvent(e -> {
-            log.debug("Ending script! :(");
-        });
+        var script = new ExampleMenuScript();
+        script.addStartEvent(a -> log.debug("Starting script! :D"));
+        script.addEndEvent(e -> log.debug("Ending script! :("));
         script.start();
 
-        script.resume(SpeakerType.SAY, 1, null); // Forward!
-        script.resume(SpeakerType.SAY, 0, null); // Back
-        script.resume(SpeakerType.SAY, 1, null); // Forward!
-        script.resume(SpeakerType.SAY, 1, null); // Forward!
-        script.resume(SpeakerType.SAY, 1, null); // Forward!
+        script.resume(SpeakerType.ASKMENU, 1, 2); // Forward!
+//        script.resume(SpeakerType.SAY, 0, null); // Back
+//        script.resume(SpeakerType.SAY, 1, null); // Forward!
+//        script.resume(SpeakerType.SAY, 1, null); // Forward!
+//        script.resume(SpeakerType.SAY, 1, null); // Forward!
 
         script.resume(SpeakerType.ASKYESNO, 1, null);
 
