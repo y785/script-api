@@ -20,11 +20,13 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model.messenger;
 
-import moe.maple.api.script.model.MoeScript;
+import moe.maple.api.script.model.type.SpeakerType;
 
 @FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+public interface AskMenuMessenger extends ScriptMessenger {
+    default SpeakerType type() { return SpeakerType.ASKMENU; }
+
+    void send();
 }

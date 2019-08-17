@@ -1,8 +1,34 @@
+/*
+ * Copyright (C) 2019, y785, http://github.com/y785
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package moe.maple.api.script.model;
 
 import moe.maple.api.script.model.action.BasicScriptAction;
 import moe.maple.api.script.model.action.NumberScriptAction;
 import moe.maple.api.script.model.action.StringScriptAction;
+import moe.maple.api.script.model.messenger.AskMenuMessenger;
+import moe.maple.api.script.model.messenger.AskYesNoMessenger;
+import moe.maple.api.script.model.messenger.ScriptMessenger;
+import moe.maple.api.script.model.messenger.SayMessenger;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.type.SpeakerType;
 import moe.maple.api.script.util.ScriptStringBuilder;
@@ -11,12 +37,32 @@ import moe.maple.api.script.util.With;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.EnumMap;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ScriptAPI {
+public enum ScriptAPI {
+    INSTANCE;
     private static final Logger log = LoggerFactory.getLogger( ScriptAPI.class );
+
+    private SayMessenger sayMsger;
+
+
+    ScriptAPI() { }
+
+    public void setDefaultMessengers() {
+        sayMsger = ((script, speakerTemplateid, param, message, previous, next) -> {
+            log.debug("say-> speaker: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerTemplateid, param, previous, next, message);
+        });
+    }
+
+    public void setSayMessenger(SayMessenger msger) { this.sayMsger = msger; }
+
+    private SayMessenger getSayMessenger() { return this.sayMsger; }
+
+
 
     @FunctionalInterface
     public interface BasicActionChain {
@@ -37,6 +83,8 @@ public class ScriptAPI {
     public static BasicActionChain say(MoeScript script, String... messages) {
         var chain = new LinkedList<ScriptResponse>();
         With.indexAndCount(messages, (msg, idx, ts) -> chain.add((t, a, o) -> {
+            var back = idx != 0;
+            var forward = ts - 1 >= idx + 1;
             if (t != SpeakerType.SAY) { // Wrong type, b-baka.
                 script.end();
             } else {
@@ -47,7 +95,7 @@ public class ScriptAPI {
                         if (idx != 0) {
                             var res = chain.get(idx - 1);
                             script.setScriptResponse(res);
-                            log.debug("Now I send packet for: {}", messages[idx - 1]);
+                            ScriptAPI.INSTANCE.getSayMessenger().send(script, 0, 0, messages[idx - 1], back, forward);
                         } else {
                             log.warn("Tried to go back while on the first message? No! :(");
                             script.end();
@@ -57,7 +105,7 @@ public class ScriptAPI {
                         if (ts - 1 >= idx + 1) {
                             var res = chain.get(idx + 1);
                             script.setScriptResponse(res);
-                            log.debug("Now I send packet for: {}", messages[idx + 1]);
+                            ScriptAPI.INSTANCE.getSayMessenger().send(script,0, 0, messages[idx - 1], back, forward);
                         } else {
                             script.setScriptResponse(null);
                             script.resume(t, a, o);
