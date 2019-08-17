@@ -21,10 +21,8 @@
  */
 
 package moe.maple.api.script.model.messenger;
-
 import moe.maple.api.script.model.type.SpeakerType;
 
-@FunctionalInterface
 public interface ScriptMessenger {
     SpeakerType type();
 }
