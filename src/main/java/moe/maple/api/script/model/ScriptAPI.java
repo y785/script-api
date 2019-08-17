@@ -36,41 +36,39 @@ public class ScriptAPI {
     // Will be called from future object that doesn't need to pass Script
     public static BasicActionChain say(MoeScript script, String... messages) {
         var chain = new LinkedList<ScriptResponse>();
-        With.indexAndCount(messages, (msg, idx, ts) -> {
-            chain.add((t, a, o) -> {
-                if (t != SpeakerType.SAY) { // Wrong type, b-baka.
-                    script.end();
-                } else {
-                    switch (a.intValue()) {
-                        case -1: // Escape
+        With.indexAndCount(messages, (msg, idx, ts) -> chain.add((t, a, o) -> {
+            if (t != SpeakerType.SAY) { // Wrong type, b-baka.
+                script.end();
+            } else {
+                switch (a.intValue()) {
+                    case -1: // Escape
+                        script.end();
+                    case 0: // Back.
+                        if (idx != 0) {
+                            var res = chain.get(idx - 1);
+                            script.setScriptResponse(res);
+                            log.debug("Now I send packet for: {}", messages[idx - 1]);
+                        } else {
+                            log.warn("Tried to go back while on the first message? No! :(");
                             script.end();
-                        case 0: // Back.
-                            if (idx != 0) {
-                                var res = chain.get(idx - 1);
-                                script.setScriptResponse(res);
-                                log.debug("Now I send packet for: {}", messages[idx - 1]);
-                            } else {
-                                log.warn("Tried to go back while on the first message? No! :(");
-                                script.end();
-                            }
-                            break;
-                        case 1: // Next.
-                            if (ts - 1 >= idx + 1) {
-                                var res = chain.get(idx + 1);
-                                script.setScriptResponse(res);
-                                log.debug("Now I send packet for: {}", messages[idx + 1]);
-                            } else {
-                                script.setScriptResponse(null);
-                                script.resume(t, a, o);
-                            }
-                            break;
-                        default:
-                            log.warn("Unhandled action({}) for {}", t, a);
-                            script.end();
-                    }
+                        }
+                        break;
+                    case 1: // Next.
+                        if (ts - 1 >= idx + 1) {
+                            var res = chain.get(idx + 1);
+                            script.setScriptResponse(res);
+                            log.debug("Now I send packet for: {}", messages[idx + 1]);
+                        } else {
+                            script.setScriptResponse(null);
+                            script.resume(t, a, o);
+                        }
+                        break;
+                    default:
+                        log.warn("Unhandled action({}) for {}", t, a);
+                        script.end();
                 }
-            });
-        });
+            }
+        }));
 
         log.debug("say: {}", messages[0]);
         // script.setScriptAction(next);
@@ -129,6 +127,7 @@ public class ScriptAPI {
         return script::setScriptAction;
     }
 
+    @SafeVarargs
     public static BasicActionChain askMenu(MoeScript script, String prompt, Tuple<String, BasicScriptAction>... options) {
         var builder = new ScriptStringBuilder();
         builder.append(prompt).appendMenu(Stream.of(options).map(t -> t.left).collect(Collectors.joining()));
@@ -146,7 +145,7 @@ public class ScriptAPI {
             }
         });
 
-        log.debug("askMeu: {}", builder);
+        log.debug("askMenu: {}", builder);
 
         return script::setScriptAction;
     }
