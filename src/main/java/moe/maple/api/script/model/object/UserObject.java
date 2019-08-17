@@ -22,12 +22,14 @@
 
 package moe.maple.api.script.model.object;
 
+import java.util.Optional;
+
 /**
  * This is a script proxy for user/character objects.
  * <T> should be your implementation of user/character.
  * @param <T>
  */
-public interface UserObject<T> extends ScriptObject {
+public interface UserObject<T> extends FieldedObject {
 
     T getUser();
 
