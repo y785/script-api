@@ -22,11 +22,12 @@
 
 package moe.maple.api.script.model.messenger;
 
+import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.model.type.SpeakerType;
 
 @FunctionalInterface
 public interface AskMenuMessenger extends ScriptMessenger {
     default SpeakerType type() { return SpeakerType.ASKMENU; }
 
-    void send();
+    void send(MoeScript script, int speakerTemplateId, int param, String message);
 }

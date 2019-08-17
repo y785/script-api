@@ -22,11 +22,12 @@
 
 package moe.maple.api.script.model.messenger;
 
+import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.model.type.SpeakerType;
 
 @FunctionalInterface
-public interface AskYesNoMessenger {
+public interface AskYesNoMessenger extends ScriptMessenger {
     default SpeakerType type() { return SpeakerType.ASKYESNO; }
 
-    void send();
+    void send(MoeScript script, int speakerTemplateId, int param, String message);
 }

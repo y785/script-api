@@ -22,25 +22,17 @@
 
 package moe.maple.api.script.model;
 
-import moe.maple.api.script.model.action.BasicScriptAction;
-import moe.maple.api.script.model.action.NumberScriptAction;
-import moe.maple.api.script.model.action.StringScriptAction;
-import moe.maple.api.script.model.messenger.AskMenuMessenger;
-import moe.maple.api.script.model.messenger.AskYesNoMessenger;
-import moe.maple.api.script.model.messenger.ScriptMessenger;
-import moe.maple.api.script.model.messenger.SayMessenger;
+import moe.maple.api.script.model.action.*;
+import moe.maple.api.script.model.messenger.*;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.type.SpeakerType;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
-import moe.maple.api.script.util.builder.ScriptStringBuilder;
 import moe.maple.api.script.util.Tuple;
 import moe.maple.api.script.util.With;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.EnumMap;
 import java.util.LinkedList;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,22 +40,34 @@ public enum ScriptAPI {
     INSTANCE;
     private static final Logger log = LoggerFactory.getLogger( ScriptAPI.class );
 
-    private SayMessenger sayMsger;
+    private int defaultSpeakerId;
 
+    private SayMessenger messengerSay;
+    private AskYesNoMessenger messengerAskYesNo;
+    private AskMenuMessenger messengerAskMenu;
 
     ScriptAPI() { }
 
+    public void setDefaultSpeakerId(int speakerId) { this.defaultSpeakerId = speakerId; }
+
     public void setDefaultMessengers() {
-        sayMsger = ((script, speakerTemplateid, param, message, previous, next) -> {
+        messengerSay = (script, speakerTemplateid, param, message, previous, next) -> {
             log.debug("say-> speaker: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerTemplateid, param, previous, next, message);
-        });
+        };
+        messengerAskYesNo = (script, speakerTemplateId, param, message) -> {
+           log.debug("askYesNo-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
+        };
+        messengerAskMenu = (script, speakerTemplateId, param, message) -> {
+            log.debug("askMenu-> speaker: {}, param: {}, message: {}", speakerTemplateId, param, message);
+        };
     }
 
-    public void setSayMessenger(SayMessenger msger) { this.sayMsger = msger; }
+    public void setSayMessenger(SayMessenger msger) { this.messengerSay = msger; }
+    public void setMessengerAskYesNo(AskYesNoMessenger msger) { this.messengerAskYesNo = msger; }
+    public void setAskMenuMessenger(AskMenuMessenger msger) { this.messengerAskMenu = msger; }
 
-    private SayMessenger getSayMessenger() { return this.sayMsger; }
 
-
+    // =================================================================================================================
 
     @FunctionalInterface
     public interface BasicActionChain {
@@ -89,6 +93,7 @@ public enum ScriptAPI {
             if (t != SpeakerType.SAY) { // Wrong type, b-baka.
                 script.end();
             } else {
+                var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
                 switch (a.intValue()) {
                     case -1: // Escape
                         script.end();
@@ -96,7 +101,7 @@ public enum ScriptAPI {
                         if (idx != 0) {
                             var res = chain.get(idx - 1);
                             script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.getSayMessenger().send(script, 0, 0, messages[idx - 1], back, forward);
+                            ScriptAPI.INSTANCE.messengerSay.send(script, speaker, 0, messages[idx - 1], back, forward);
                         } else {
                             log.warn("Tried to go back while on the first message? No! :(");
                             script.end();
@@ -106,7 +111,7 @@ public enum ScriptAPI {
                         if (ts - 1 >= idx + 1) {
                             var res = chain.get(idx + 1);
                             script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.getSayMessenger().send(script,0, 0, messages[idx - 1], back, forward);
+                            ScriptAPI.INSTANCE.messengerSay.send(script, speaker, 0, messages[idx - 1], back, forward);
                         } else {
                             script.setScriptResponse(null);
                             script.resume(t, a, o);
@@ -120,8 +125,9 @@ public enum ScriptAPI {
         }));
         script.setScriptResponse(chain.getFirst());
 
-        log.debug("say: {}", messages[0]);
-        // todo send packet
+        var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+
+        ScriptAPI.INSTANCE.messengerSay.send(script, speaker, 0, messages[0], false, messages.length > 1);
 
         return script::setScriptAction;
     }
@@ -144,8 +150,9 @@ public enum ScriptAPI {
                 }
             }
         });
-        log.debug("askYesNo: {}", message);
-        // todo send packet
+        var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+
+        ScriptAPI.INSTANCE.messengerAskYesNo.send(script, speaker, 0, message);
     }
 
     public static void askYesNo(MoeScript script, String message, BasicScriptAction onYes) {
@@ -174,8 +181,9 @@ public enum ScriptAPI {
             }
         });
 
-        log.debug("askMeu: {}", builder);
-        // todo send packet
+        var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+
+        ScriptAPI.INSTANCE.messengerAskMenu.send(script, speaker, 0, builder.toString());
 
         return script::setScriptAction;
     }
@@ -202,8 +210,9 @@ public enum ScriptAPI {
             }
         });
 
-        log.debug("askMenu: {}", builder);
-        // todo send packet
+        var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+
+        ScriptAPI.INSTANCE.messengerAskMenu.send(script, speaker, 0, builder.toString());
 
         return script::setScriptAction;
     }

@@ -23,6 +23,7 @@
 package moe.maple.api.script.example;
 
 import moe.maple.api.script.model.FunScript;
+import moe.maple.api.script.model.Script;
 import moe.maple.api.script.model.ScriptAPI;
 import moe.maple.api.script.util.Tuple;
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ public class ExampleMenuTupleScript extends FunScript {
     private static final Logger log = LoggerFactory.getLogger( ExampleMenuTupleScript.class );
 
     @Override
+    @Script(name = "ExampleMenu2")
     public void work() {
         ScriptAPI.askMenu(this, "Example Menu Script",
         Tuple.of("Option 1", () -> {
