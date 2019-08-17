@@ -25,7 +25,7 @@ package moe.maple.api.script.example;
 import moe.maple.api.script.model.FunScript;
 import moe.maple.api.script.model.Script;
 import moe.maple.api.script.model.ScriptAPI;
-import moe.maple.api.script.util.Tuple;
+import moe.maple.api.script.util.tuple.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

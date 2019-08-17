@@ -20,24 +20,29 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.example;
+package moe.maple.api.script.util.tuple;
 
-import moe.maple.api.script.model.FunScript;
-import moe.maple.api.script.model.Script;
-import moe.maple.api.script.model.ScriptAPI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class ImmutableTuple<L, R> implements Tuple<L, R> {
 
-public class ExampleMenuScript extends FunScript {
-    private static final Logger log = LoggerFactory.getLogger( ExampleMenuScript.class );
+    private final L left;
+    private final R right;
+
+    public ImmutableTuple(L left, R right) {
+        this.left = left;
+        this.right = right;
+    }
 
     @Override
-    @Script(name = "ExampleMenu1")
-    public void work() {
-        var menuItems = new String[]{"Option 1", "Option 2", "Option 3", "Option 4", "Option 5"};
-        ScriptAPI.askMenu(this, "Example Menu Script", menuItems).andThen(idx -> {
-            var selection = menuItems[idx.intValue()];
-            log.debug("Selected: {}", selection);
-        });
+    public L left() {
+        return left;
+    }
+
+    @Override
+    public R right() {
+        return right;
+    }
+
+    public static <L, R> ImmutableTuple<L, R> of(L left, R right) {
+        return new ImmutableTuple<>(left, right);
     }
 }

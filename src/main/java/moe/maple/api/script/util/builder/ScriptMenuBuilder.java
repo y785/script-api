@@ -22,7 +22,7 @@
 
 package moe.maple.api.script.util.builder;
 
-import moe.maple.api.script.util.Tuple;
+import moe.maple.api.script.util.tuple.Tuple;
 
 import java.util.Collection;
 
@@ -84,7 +84,7 @@ public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> i
 
     public ScriptMenuBuilder appendMenu(Collection<Tuple<Integer, String>> options) {
         for (Tuple<Integer, String> option : options) {
-            appendMenuItem(option.left, option.right);
+            appendMenuItem(option.left(), option.right());
         }
         return this;
     }

@@ -27,7 +27,8 @@ import moe.maple.api.script.model.messenger.*;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.type.SpeakerType;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
-import moe.maple.api.script.util.Tuple;
+import moe.maple.api.script.util.tuple.ImmutableTuple;
+import moe.maple.api.script.util.tuple.Tuple;
 import moe.maple.api.script.util.With;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,8 +85,69 @@ public enum ScriptAPI {
         void andThen(StringScriptAction next);
     }
 
-    // Will be called from future object that doesn't need to pass Script
+    // =================================================================================================================
+
+    public static BasicActionChain say(MoeScript script, Tuple<Integer, String>... paramAndMessages) {
+        var chain = new LinkedList<ScriptResponse>();
+        With.indexAndCount(paramAndMessages, (msg, idx, ts) -> chain.add((t, a, o) -> {
+            var back = idx != 0;
+            var forward = ts - 1 >= idx + 1;
+            if (t != SpeakerType.SAY) { // Wrong type, b-baka.
+                script.end();
+            } else {
+                var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+                switch (a.intValue()) {
+                    case -1: // Escape
+                        script.end();
+                    case 0: // Back.
+                        if (idx != 0) {
+                            var message = paramAndMessages[idx - 1].right();
+                            var res = chain.get(idx - 1);
+                            script.setScriptResponse(res);
+                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, paramAndMessages[idx - 1].left(), back, forward);
+                        } else {
+                            log.warn("Tried to go back while on the first message? No! :(");
+                            script.end();
+                        }
+                        break;
+                    case 1: // Next.
+                        if (ts - 1 >= idx + 1) {
+                            var message = paramAndMessages[idx + 1].right();
+                            var res = chain.get(idx + 1);
+                            script.setScriptResponse(res);
+                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, paramAndMessages[idx + 1].left(), back, forward);
+                        } else {
+                            script.setScriptResponse(null);
+                            script.resume(t, a, o);
+                        }
+                        break;
+                    default:
+                        log.warn("Unhandled action({}) for {}", t, a);
+                        script.end();
+                }
+            }
+        }));
+        script.setScriptResponse(chain.getFirst());
+
+        var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+        var param = paramAndMessages[0].left();
+        var message = paramAndMessages[0].right();
+
+        ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, param, false, paramAndMessages.length > 1);
+
+        return script::setScriptAction;
+    }
+
     public static BasicActionChain say(MoeScript script, String... messages) {
+        /*
+         * The param + message is almost never used, so I don't think it would be the most optimal
+         * solution to convert it. While annoying, it's better to keep split for now. :(
+         */
+//        var params = new ImmutableTuple[messages.length];
+//        With.index(messages, (m, i) -> {
+//            params[i] = ImmutableTuple.of(0, m);
+//        });
+//        return say(script, params);
         var chain = new LinkedList<ScriptResponse>();
         With.indexAndCount(messages, (msg, idx, ts) -> chain.add((t, a, o) -> {
             var back = idx != 0;
@@ -194,7 +256,7 @@ public enum ScriptAPI {
     @SafeVarargs
     public static BasicActionChain askMenu(MoeScript script, String prompt, Tuple<String, BasicScriptAction>... options) {
         var builder = new ScriptMenuBuilder();
-        builder.append(prompt).appendMenu(Stream.of(options).map(t -> t.left).collect(Collectors.joining()));
+        builder.append(prompt).appendMenu(Stream.of(options).map(Tuple::left).collect(Collectors.joining()));
 
         script.setScriptResponse((t, a, o) -> {
             var min = 0;
@@ -208,7 +270,7 @@ public enum ScriptAPI {
                 script.end();
             } else {
                 script.setScriptResponse(null);
-                script.setScriptAction(options[sel].right);
+                script.setScriptAction(options[sel].right());
                 script.resume(t, a, o);
             }
         });
