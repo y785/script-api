@@ -5,7 +5,8 @@ import moe.maple.api.script.model.action.NumberScriptAction;
 import moe.maple.api.script.model.action.StringScriptAction;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.type.SpeakerType;
-import moe.maple.api.script.util.ScriptStringBuilder;
+import moe.maple.api.script.util.builder.ScriptMenuBuilder;
+import moe.maple.api.script.util.builder.ScriptStringBuilder;
 import moe.maple.api.script.util.Tuple;
 import moe.maple.api.script.util.With;
 import org.slf4j.Logger;
@@ -110,7 +111,7 @@ public class ScriptAPI {
     // =================================================================================================================
 
     public static NumberActionChain askMenu(MoeScript script, String prompt, String... menuItems) {
-        var builder = new ScriptStringBuilder();
+        var builder = new ScriptMenuBuilder();
         builder.append(prompt).appendMenu(menuItems);
 
         script.setScriptResponse((t, a, o) -> {
@@ -130,7 +131,7 @@ public class ScriptAPI {
     }
 
     public static BasicActionChain askMenu(MoeScript script, String prompt, Tuple<String, BasicScriptAction>... options) {
-        var builder = new ScriptStringBuilder();
+        var builder = new ScriptMenuBuilder();
         builder.append(prompt).appendMenu(Stream.of(options).map(t -> t.left).collect(Collectors.joining()));
 
         script.setScriptResponse((t, a, o) -> {
