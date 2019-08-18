@@ -48,6 +48,7 @@ public enum ScriptAPI {
     private SayMessenger messengerSay;
     private AskYesNoMessenger messengerAskYesNo;
     private AskMenuMessenger messengerAskMenu;
+    private AskAvatarMessenger messengerAskAvatar;
 
     ScriptAPI() { }
 
@@ -73,6 +74,7 @@ public enum ScriptAPI {
     public void setSayMessenger(SayMessenger msger) { this.messengerSay = msger; }
     public void setMessengerAskYesNo(AskYesNoMessenger msger) { this.messengerAskYesNo = msger; }
     public void setAskMenuMessenger(AskMenuMessenger msger) { this.messengerAskMenu = msger; }
+    public void setAskAvatarMessenger(AskAvatarMessenger msger) { this.messengerAskAvatar = msger; }
 
 
     // =================================================================================================================
@@ -300,6 +302,43 @@ public enum ScriptAPI {
         ScriptAPI.INSTANCE.messengerAskMenu.send(script, builder.toString(), speaker, 0);
 
         return script::setScriptAction;
+    }
+
+    // =================================================================================================================
+
+    private static ScriptResponse askAvatarResponse(MoeScript script, int... options) {
+        return (t, a, o) -> {
+            var min = 0;
+            var max = options.length - 1;
+            var sel = ((Number)o).intValue();
+            var bad = sel < min || sel > max;
+
+            if (t != SpeakerType.ASKAVATAR || bad || a.intValue() != 1) {
+                if (bad)
+                    log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
+                script.end();
+            } else {
+                script.setScriptResponse(null);
+                script.resume(t, a, o);
+            }
+        };
+    }
+
+    public static NumberActionChain askAvatar(MoeScript script, int speakerTemplateId, int param, String prompt, int... options) {
+
+        script.setScriptResponse(askAvatarResponse(script, options));
+
+        ScriptAPI.INSTANCE.messengerAskAvatar.send(script, prompt, speakerTemplateId, param, options);
+
+        return script::setScriptAction;
+    }
+
+    public static NumberActionChain askAvatar(MoeScript script, int speakerTemplateId, String prompt, int... options) {
+        return askAvatar(script, speakerTemplateId, 0, prompt, options);
+    }
+
+    public static NumberActionChain askAvatar(MoeScript script, String prompt, int... options) {
+        return askAvatar(script, ScriptAPI.INSTANCE.getSpeakerIdFromScript(script), prompt, options);
     }
 
     // =================================================================================================================

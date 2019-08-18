@@ -26,6 +26,6 @@ import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.model.type.SpeakerType;
 
 @FunctionalInterface
-public interface AskMenuMessenger extends ScriptMessenger {
-    void send(MoeScript script, String message, int speakerTemplateId, int param);
+public interface AskAvatarMessenger extends ScriptMessenger {
+    void send(MoeScript script, String message, int speakerTemplateId, int param, int[] options);
 }
