@@ -30,6 +30,7 @@ import moe.maple.api.script.model.type.SpeakerType;
 public interface MoeScript {
 
     boolean isDone();
+    boolean isPaused();
 
     void work();
 

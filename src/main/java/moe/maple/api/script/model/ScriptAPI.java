@@ -94,10 +94,10 @@ public enum ScriptAPI {
     // =================================================================================================================
 
     public static BasicActionChain say(MoeScript script, Tuple<Integer, String>... paramAndMessages) {
+        script.setScriptAction(null);
+
         var chain = new LinkedList<ScriptResponse>();
         With.indexAndCount(paramAndMessages, (msg, idx, ts) -> chain.add((t, a, o) -> {
-            var back = idx != 0;
-            var forward = ts - 1 >= idx + 1;
             if (t != SpeakerType.SAY) { // Wrong type, b-baka.
                 script.end();
             } else {
@@ -107,10 +107,11 @@ public enum ScriptAPI {
                         script.end();
                     case 0: // Back.
                         if (idx != 0) {
+                            var back = idx-1 != 0;
                             var message = paramAndMessages[idx - 1].right();
                             var res = chain.get(idx - 1);
                             script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, paramAndMessages[idx - 1].left(), back, forward);
+                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, paramAndMessages[idx - 1].left(), back, true);
                         } else {
                             log.warn("Tried to go back while on the first message? No! :(");
                             script.end();
@@ -118,10 +119,11 @@ public enum ScriptAPI {
                         break;
                     case 1: // Next.
                         if (ts - 1 >= idx + 1) {
+                            var forward = ts - 1 > idx + 1;
                             var message = paramAndMessages[idx + 1].right();
                             var res = chain.get(idx + 1);
                             script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, paramAndMessages[idx + 1].left(), back, forward);
+                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, paramAndMessages[idx + 1].left(), true, forward);
                         } else {
                             script.setScriptResponse(null);
                             script.resume(t, a, o);
@@ -145,6 +147,8 @@ public enum ScriptAPI {
     }
 
     public static BasicActionChain say(MoeScript script, Integer[] speakers, Integer[] params, String... messages) {
+        script.setScriptAction(null);
+
         var chain = new LinkedList<ScriptResponse>();
         With.indexAndCount(messages, (msg, idx, ts) -> chain.add((t, a, o) -> {
             var back = idx != 0;
@@ -217,6 +221,7 @@ public enum ScriptAPI {
     }
 
     public static BasicActionChain say(MoeScript script, int param, String... messages) {
+        script.setScriptAction(null);
         /*
          * The param + message is almost never used, so I don't think it would be the most optimal
          * solution to convert it. While annoying, it's better to keep split for now. :(
@@ -228,8 +233,6 @@ public enum ScriptAPI {
 //        return say(script, params);
         var chain = new LinkedList<ScriptResponse>();
         With.indexAndCount(messages, (msg, idx, ts) -> chain.add((t, a, o) -> {
-            var back = idx != 0;
-            var forward = ts - 1 >= idx + 1;
             if (t != SpeakerType.SAY) { // Wrong type, b-baka.
                 script.end();
             } else {
@@ -239,6 +242,8 @@ public enum ScriptAPI {
                         script.end();
                     case 0: // Back.
                         if (idx != 0) {
+                            var back = idx-1 != 0;
+                            var forward = true;
                             var message = messages[idx - 1];
                             var res = chain.get(idx - 1);
                             script.setScriptResponse(res);
@@ -250,6 +255,8 @@ public enum ScriptAPI {
                         break;
                     case 1: // Next.
                         if (ts - 1 >= idx + 1) {
+                            var back = true;
+                            var forward = ts - 1 > idx + 1;
                             var message = messages[idx + 1];
                             var res = chain.get(idx + 1);
                             script.setScriptResponse(res);

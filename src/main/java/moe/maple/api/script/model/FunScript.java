@@ -59,6 +59,11 @@ public abstract class FunScript implements MoeScript {
     }
 
     @Override
+    public boolean isPaused() {
+        return !isDone() && (nextResponse != null || nextAction != null);
+    }
+
+    @Override
     public void start() {
         this.done = false;
         this.nextResponse = null;
