@@ -104,4 +104,9 @@ public class ApiTest {
         assertTrue(test.isDone());
         assertTrue(!test.isPaused());
     }
+
+    @Test
+    public void apiSayLogicTuple() {
+
+    }
 }

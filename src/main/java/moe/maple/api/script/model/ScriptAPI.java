@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -93,25 +94,20 @@ public enum ScriptAPI {
 
     // =================================================================================================================
 
-    public static BasicActionChain say(MoeScript script, Tuple<Integer, String>... paramAndMessages) {
-        script.setScriptAction(null);
-
-        var chain = new LinkedList<ScriptResponse>();
-        With.indexAndCount(paramAndMessages, (msg, idx, ts) -> chain.add((t, a, o) -> {
+    private static ScriptResponse sayResponse(MoeScript script, List<ScriptResponse> chain, Integer speakerTemplateId, Integer param, String message, Integer idx, Integer ts) {
+        return (t, a, o) -> {
             if (t != SpeakerType.SAY) { // Wrong type, b-baka.
                 script.end();
             } else {
-                var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
                 switch (a.intValue()) {
                     case -1: // Escape
                         script.end();
                     case 0: // Back.
                         if (idx != 0) {
                             var back = idx-1 != 0;
-                            var message = paramAndMessages[idx - 1].right();
                             var res = chain.get(idx - 1);
                             script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, paramAndMessages[idx - 1].left(), back, true);
+                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speakerTemplateId, param, back, true);
                         } else {
                             log.warn("Tried to go back while on the first message? No! :(");
                             script.end();
@@ -120,10 +116,9 @@ public enum ScriptAPI {
                     case 1: // Next.
                         if (ts - 1 >= idx + 1) {
                             var forward = ts - 1 > idx + 1;
-                            var message = paramAndMessages[idx + 1].right();
                             var res = chain.get(idx + 1);
                             script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, paramAndMessages[idx + 1].left(), true, forward);
+                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speakerTemplateId, param, true, forward);
                         } else {
                             script.setScriptResponse(null);
                             script.resume(t, a, o);
@@ -134,7 +129,17 @@ public enum ScriptAPI {
                         script.end();
                 }
             }
-        }));
+        };
+    }
+
+    public static BasicActionChain say(MoeScript script, Tuple<Integer, String>... paramAndMessages) {
+        script.setScriptAction(null);
+
+        var chain = new LinkedList<ScriptResponse>();
+
+        With.indexAndCount(paramAndMessages, (tpl, idx, ts) -> {
+            chain.add(sayResponse(script, chain, ScriptAPI.INSTANCE.getSpeakerIdFromScript(script), tpl.left(), tpl.right(), idx, ts));
+        });
         script.setScriptResponse(chain.getFirst());
 
         var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
@@ -150,47 +155,13 @@ public enum ScriptAPI {
         script.setScriptAction(null);
 
         var chain = new LinkedList<ScriptResponse>();
-        With.indexAndCount(messages, (msg, idx, ts) -> chain.add((t, a, o) -> {
-            var back = idx != 0;
-            var forward = ts - 1 >= idx + 1;
-            if (t != SpeakerType.SAY) { // Wrong type, b-baka.
-                script.end();
-            } else {
-                switch (a.intValue()) {
-                    case -1: // Escape
-                        script.end();
-                    case 0: // Back.
-                        if (idx != 0) {
-                            var message = messages[idx - 1];
-                            var res = chain.get(idx - 1);
-                            var speaker = speakers[idx - 1];
-                            var param = params[idx - 1];
-                            script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, param, back, forward);
-                        } else {
-                            log.warn("Tried to go back while on the first message? No! :(");
-                            script.end();
-                        }
-                        break;
-                    case 1: // Next.
-                        if (ts - 1 >= idx + 1) {
-                            var message = messages[idx + 1];
-                            var speaker = speakers[idx + 1];
-                            var param = params[idx + 1];
-                            var res = chain.get(idx + 1);
-                            script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, param, back, forward);
-                        } else {
-                            script.setScriptResponse(null);
-                            script.resume(t, a, o);
-                        }
-                        break;
-                    default:
-                        log.warn("Unhandled action({}) for {}", t, a);
-                        script.end();
-                }
-            }
-        }));
+
+        // To be honest, this isn't really needed. // todo validate
+        With.index(speakers, (i, idx) -> {
+            if (i == 0)
+                speakers[idx] = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
+        });
+        With.indexAndCount(messages, (msg, idx, ts) -> chain.add(sayResponse(script, chain, speakers[idx], params[idx], msg, idx, ts)));
         script.setScriptResponse(chain.getFirst());
 
         var speaker = speakers[0];
@@ -203,10 +174,6 @@ public enum ScriptAPI {
     }
 
     public static BasicActionChain say(MoeScript script, Integer[] speakers, int param, String... messages) {
-        With.index(speakers, (i, idx) -> {
-            if (i == 0)
-                speakers[idx] = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
-        });
         Integer[] params = new Integer[messages.length];
         Arrays.fill(params, param);
         return say(script, speakers, params, messages);
@@ -222,56 +189,10 @@ public enum ScriptAPI {
 
     public static BasicActionChain say(MoeScript script, int param, String... messages) {
         script.setScriptAction(null);
-        /*
-         * The param + message is almost never used, so I don't think it would be the most optimal
-         * solution to convert it. While annoying, it's better to keep split for now. :(
-         */
-//        var params = new ImmutableTuple[messages.length];
-//        With.index(messages, (m, i) -> {
-//            params[i] = ImmutableTuple.of(0, m);
-//        });
-//        return say(script, params);
         var chain = new LinkedList<ScriptResponse>();
-        With.indexAndCount(messages, (msg, idx, ts) -> chain.add((t, a, o) -> {
-            if (t != SpeakerType.SAY) { // Wrong type, b-baka.
-                script.end();
-            } else {
-                var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
-                switch (a.intValue()) {
-                    case -1: // Escape
-                        script.end();
-                    case 0: // Back.
-                        if (idx != 0) {
-                            var back = idx-1 != 0;
-                            var forward = true;
-                            var message = messages[idx - 1];
-                            var res = chain.get(idx - 1);
-                            script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, param, back, forward);
-                        } else {
-                            log.warn("Tried to go back while on the first message? No! :(");
-                            script.end();
-                        }
-                        break;
-                    case 1: // Next.
-                        if (ts - 1 >= idx + 1) {
-                            var back = true;
-                            var forward = ts - 1 > idx + 1;
-                            var message = messages[idx + 1];
-                            var res = chain.get(idx + 1);
-                            script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, param, back, forward);
-                        } else {
-                            script.setScriptResponse(null);
-                            script.resume(t, a, o);
-                        }
-                        break;
-                    default:
-                        log.warn("Unhandled action({}) for {}", t, a);
-                        script.end();
-                }
-            }
-        }));
+        With.indexAndCount(messages, (msg, idx, ts) -> {
+            chain.add(sayResponse(script, chain, ScriptAPI.INSTANCE.getSpeakerIdFromScript(script), param, msg, idx, ts));
+        });
         script.setScriptResponse(chain.getFirst());
 
         var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
