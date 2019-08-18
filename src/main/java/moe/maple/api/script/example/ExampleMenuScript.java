@@ -22,13 +22,13 @@
 
 package moe.maple.api.script.example;
 
-import moe.maple.api.script.model.FunScript;
+import moe.maple.api.script.model.BaseScript;
 import moe.maple.api.script.model.Script;
 import moe.maple.api.script.model.ScriptAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExampleMenuScript extends FunScript {
+public class ExampleMenuScript extends BaseScript {
     private static final Logger log = LoggerFactory.getLogger( ExampleMenuScript.class );
 
     @Override

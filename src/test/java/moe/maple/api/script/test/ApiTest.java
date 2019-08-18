@@ -22,7 +22,7 @@
 
 package moe.maple.api.script.test;
 
-import moe.maple.api.script.model.FunScript;
+import moe.maple.api.script.model.BaseScript;
 import moe.maple.api.script.model.Script;
 import moe.maple.api.script.model.ScriptAPI;
 import moe.maple.api.script.model.type.SpeakerType;
@@ -54,7 +54,7 @@ public class ApiTest {
 
     @Test
     public void apiSayLogic() {
-        class ApiSayLogic1 extends FunScript {
+        class ApiSayLogic1 extends BaseScript {
             @Override
             @Script(name = "ApiSayLogic1")
             public void work() {
@@ -113,7 +113,7 @@ public class ApiTest {
 
     @Test
     public void apiAskMenuLogic() {
-        class ApiAskMenuLogic extends FunScript {
+        class ApiAskMenuLogic extends BaseScript {
             @Override
             @Script(name = "ApiAskMenu")
             public void work() {

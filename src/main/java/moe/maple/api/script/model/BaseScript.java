@@ -34,9 +34,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 
-public abstract class FunScript implements MoeScript {
+public abstract class BaseScript implements MoeScript {
 
-    private static final Logger log = LoggerFactory.getLogger( FunScript.class );
+    private static final Logger log = LoggerFactory.getLogger( BaseScript.class );
 
     protected ScriptAction nextAction;
     protected ScriptResponse nextResponse;
@@ -45,7 +45,7 @@ public abstract class FunScript implements MoeScript {
 
     private boolean done;
 
-    public FunScript() {
+    public BaseScript() {
         this.startScriptEvents = new LinkedList<>();
         this.endScriptEvents = new LinkedList<>();
     }
