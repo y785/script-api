@@ -296,7 +296,7 @@ public enum ScriptAPI {
                 }
             }
         });
-        var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+        var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
 
         ScriptAPI.INSTANCE.messengerAskYesNo.send(script, message, speaker, 0);
     }
@@ -327,7 +327,7 @@ public enum ScriptAPI {
             }
         });
 
-        var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+        var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
 
         ScriptAPI.INSTANCE.messengerAskMenu.send(script, builder.toString(), speaker, 0);
 
@@ -356,7 +356,7 @@ public enum ScriptAPI {
             }
         });
 
-        var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+        var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
 
         ScriptAPI.INSTANCE.messengerAskMenu.send(script, builder.toString(), speaker, 0);
 
