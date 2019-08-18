@@ -53,6 +53,7 @@ public enum ScriptAPI {
     public void setDefaultSpeakerId(int speakerId) { this.defaultSpeakerId = speakerId; }
 
     private int getSpeakerIdFromScript(MoeScript script) {
+        // todo check if script has a default speakerId
         return ScriptAPI.INSTANCE.defaultSpeakerId;
     }
 
@@ -100,7 +101,7 @@ public enum ScriptAPI {
             if (t != SpeakerType.SAY) { // Wrong type, b-baka.
                 script.end();
             } else {
-                var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+                var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
                 switch (a.intValue()) {
                     case -1: // Escape
                         script.end();
@@ -134,7 +135,7 @@ public enum ScriptAPI {
         }));
         script.setScriptResponse(chain.getFirst());
 
-        var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+        var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
         var param = paramAndMessages[0].left();
         var message = paramAndMessages[0].right();
 
@@ -232,7 +233,7 @@ public enum ScriptAPI {
             if (t != SpeakerType.SAY) { // Wrong type, b-baka.
                 script.end();
             } else {
-                var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+                var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
                 switch (a.intValue()) {
                     case -1: // Escape
                         script.end();
@@ -266,7 +267,7 @@ public enum ScriptAPI {
         }));
         script.setScriptResponse(chain.getFirst());
 
-        var speaker = ScriptAPI.INSTANCE.defaultSpeakerId;
+        var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
         var message = messages[0];
 
         ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, param, false, messages.length > 1);
