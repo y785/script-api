@@ -23,20 +23,21 @@
 package moe.maple.api.script.example;
 
 import moe.maple.api.script.model.BaseScript;
+import moe.maple.api.script.model.NpcScript;
 import moe.maple.api.script.model.Script;
 import moe.maple.api.script.model.ScriptAPI;
 import moe.maple.api.script.util.tuple.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExampleMenuTupleScript extends BaseScript {
+public class ExampleMenuTupleScript extends NpcScript {
 
     private static final Logger log = LoggerFactory.getLogger( ExampleMenuTupleScript.class );
 
     @Override
     @Script(name = "ExampleMenu2")
     public void work() {
-        ScriptAPI.askMenu(this, "Example Menu Script",
+        askMenu("Example Menu Script",
         Tuple.of("Option 1", () -> {
             log.debug("Option 1 met.");
         }), Tuple.of("Option 2", () -> {

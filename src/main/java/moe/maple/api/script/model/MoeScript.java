@@ -68,4 +68,12 @@ public interface MoeScript {
     Optional<NpcObject> getNpcObject();
     Optional<UserObject> getUserObject();
 
+    /**
+     * Mainly used for packets. Maybe scripts will use this in say prompts or messages.
+     * If a script is going to speak, it needs a template id. Not all will speak, but this is useful for reasons.
+     * Can be overridden on a per-script basis.
+     * @return the NpcObject's template id or 2007, which is the id for maple administrator (I hope)
+     */
+    default int getSpeakerTemplateId() { return getNpcObject().map(NpcObject::getTemplateId).orElse(2007); }
+
 }

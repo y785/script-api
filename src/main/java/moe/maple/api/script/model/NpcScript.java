@@ -20,25 +20,9 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.example;
+package moe.maple.api.script.model;
 
-import moe.maple.api.script.model.BaseScript;
-import moe.maple.api.script.model.NpcScript;
-import moe.maple.api.script.model.Script;
-import moe.maple.api.script.model.ScriptAPI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public abstract class NpcScript extends BaseScript implements SpeakingScript {
 
-public class ExampleMenuScript extends NpcScript {
-    private static final Logger log = LoggerFactory.getLogger( ExampleMenuScript.class );
-
-    @Override
-    @Script(name = "ExampleMenu1")
-    public void work() {
-        var menuItems = new String[]{"Option 1", "Option 2", "Option 3", "Option 4", "Option 5"};
-        askMenu("Example Menu Script", menuItems).andThen(idx -> {
-            var selection = menuItems[idx.intValue()];
-            log.debug("Selected: {}", selection);
-        });
-    }
+    public NpcScript() { super(); }
 }

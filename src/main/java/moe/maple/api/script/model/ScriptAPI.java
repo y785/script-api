@@ -23,7 +23,10 @@
 package moe.maple.api.script.model;
 
 import moe.maple.api.script.model.action.*;
+import moe.maple.api.script.model.chain.BasicActionChain;
+import moe.maple.api.script.model.chain.NumberActionChain;
 import moe.maple.api.script.model.messenger.*;
+import moe.maple.api.script.model.object.NpcObject;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.type.SpeakerType;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
@@ -43,8 +46,6 @@ public enum ScriptAPI {
     INSTANCE;
     private static final Logger log = LoggerFactory.getLogger( ScriptAPI.class );
 
-    private int defaultSpeakerId;
-
     private SayMessenger messengerSay;
     private AskYesNoMessenger messengerAskYesNo;
     private AskMenuMessenger messengerAskMenu;
@@ -52,11 +53,10 @@ public enum ScriptAPI {
 
     ScriptAPI() { }
 
-    public void setDefaultSpeakerId(int speakerId) { this.defaultSpeakerId = speakerId; }
-
     private int getSpeakerIdFromScript(MoeScript script) {
-        // todo check if script has a default speakerId
-        return ScriptAPI.INSTANCE.defaultSpeakerId;
+        if (script instanceof SpeakingScript)
+            return ((SpeakingScript)script).getSpeakerTemplateId();
+        return script.getNpcObject().map(NpcObject::getTemplateId).orElse(2007);
     }
 
     public void setDefaultMessengers() {
@@ -76,23 +76,6 @@ public enum ScriptAPI {
     public void setAskMenuMessenger(AskMenuMessenger msger) { this.messengerAskMenu = msger; }
     public void setAskAvatarMessenger(AskAvatarMessenger msger) { this.messengerAskAvatar = msger; }
 
-
-    // =================================================================================================================
-
-    @FunctionalInterface
-    public interface BasicActionChain {
-        void andThen(BasicScriptAction next);
-    }
-
-    @FunctionalInterface
-    public interface NumberActionChain {
-        void andThen(NumberScriptAction next);
-    }
-
-    @FunctionalInterface
-    public interface StringActionChain {
-        void andThen(StringScriptAction next);
-    }
 
     // =================================================================================================================
 
@@ -307,10 +290,11 @@ public enum ScriptAPI {
     }
 
     @SafeVarargs
-    public static BasicActionChain askMenu(MoeScript script, String prompt, Tuple<String, BasicScriptAction>... options) {
+    public static void askMenu(MoeScript script, String prompt, Tuple<String, BasicScriptAction>... options) {
         var builder = new ScriptMenuBuilder();
         builder.append(prompt).appendMenu(Stream.of(options).map(Tuple::left).collect(Collectors.joining()));
 
+        script.setScriptAction(null);
         script.setScriptResponse((t, a, o) -> {
             var min = 0;
             var max = options.length - 1;
@@ -335,8 +319,6 @@ public enum ScriptAPI {
         }, () -> {
             log.debug("User object isn't set, workflow is messy.");
         });
-
-        return script::setScriptAction;
     }
 
     // =================================================================================================================
