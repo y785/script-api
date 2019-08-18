@@ -26,6 +26,9 @@ import moe.maple.api.script.model.action.BasicScriptAction;
 import moe.maple.api.script.model.action.NumberScriptAction;
 import moe.maple.api.script.model.action.ScriptAction;
 import moe.maple.api.script.model.action.StringScriptAction;
+import moe.maple.api.script.model.object.FieldObject;
+import moe.maple.api.script.model.object.NpcObject;
+import moe.maple.api.script.model.object.UserObject;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.event.ScriptEvent;
 import moe.maple.api.script.model.type.SpeakerType;
@@ -33,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
+import java.util.Optional;
 
 public abstract class BaseScript implements MoeScript {
 
@@ -43,6 +47,10 @@ public abstract class BaseScript implements MoeScript {
     protected LinkedList<ScriptEvent> startScriptEvents;
     protected LinkedList<ScriptEvent> endScriptEvents;
 
+    protected FieldObject field;
+    protected NpcObject npc;
+    protected UserObject user;
+
     private boolean done;
 
     public BaseScript() {
@@ -52,6 +60,8 @@ public abstract class BaseScript implements MoeScript {
 
     @Override
     public abstract void work();
+
+    // =================================================================================================================
 
     @Override
     public boolean isDone() {
@@ -119,6 +129,8 @@ public abstract class BaseScript implements MoeScript {
         }
     }
 
+    // =================================================================================================================
+
     @Override
     public void setScriptAction(ScriptAction action) {
         this.nextAction = action;
@@ -139,4 +151,36 @@ public abstract class BaseScript implements MoeScript {
         this.endScriptEvents.add(event);
     }
 
+    // =================================================================================================================
+
+
+    @Override
+    public void setFieldObject(FieldObject object) {
+        this.field = object;
+    }
+
+    @Override
+    public void setNpcObject(NpcObject object) {
+        this.npc = object;
+    }
+
+    @Override
+    public void setUserObject(UserObject object) {
+        this.user = object;
+    }
+
+    @Override
+    public Optional<FieldObject> getFieldObect() {
+        return Optional.ofNullable(field);
+    }
+
+    @Override
+    public Optional<NpcObject> getNpcObject() {
+        return Optional.ofNullable(npc);
+    }
+
+    @Override
+    public Optional<UserObject> getUserObject() {
+        return Optional.ofNullable(user);
+    }
 }

@@ -109,7 +109,12 @@ public enum ScriptAPI {
                             var back = idx-1 != 0;
                             var res = chain.get(idx - 1);
                             script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speakerTemplateId, param, back, true);
+
+                            script.getUserObject().ifPresentOrElse(obj -> {
+                                ScriptAPI.INSTANCE.messengerSay.send(obj, message, speakerTemplateId, param, back, true);
+                            }, () -> {
+                                log.debug("User object isn't set, workflow is messy.");
+                            });
                         } else {
                             log.warn("Tried to go back while on the first message? No! :(");
                             script.end();
@@ -120,7 +125,11 @@ public enum ScriptAPI {
                             var forward = ts - 1 > idx + 1;
                             var res = chain.get(idx + 1);
                             script.setScriptResponse(res);
-                            ScriptAPI.INSTANCE.messengerSay.send(script, message, speakerTemplateId, param, true, forward);
+                            script.getUserObject().ifPresentOrElse(obj -> {
+                                ScriptAPI.INSTANCE.messengerSay.send(obj, message, speakerTemplateId, param, true, forward);
+                            }, () -> {
+                                log.debug("User object isn't set, workflow is messy.");
+                            });
                         } else {
                             script.setScriptResponse(null);
                             script.resume(t, a, o);
@@ -148,7 +157,11 @@ public enum ScriptAPI {
         var param = paramAndMessages[0].left();
         var message = paramAndMessages[0].right();
 
-        ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, param, false, paramAndMessages.length > 1);
+        script.getUserObject().ifPresentOrElse(obj -> {
+            ScriptAPI.INSTANCE.messengerSay.send(obj, message, speaker, param, false, paramAndMessages.length > 1);
+        }, () -> {
+            log.debug("User object isn't set, workflow is messy.");
+        });
 
         return script::setScriptAction;
     }
@@ -170,7 +183,11 @@ public enum ScriptAPI {
         var param = params[0];
         var message = messages[0];
 
-        ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, param, false, messages.length > 1);
+        script.getUserObject().ifPresentOrElse(obj -> {
+            ScriptAPI.INSTANCE.messengerSay.send(obj, message, speaker, param, false, messages.length > 1);
+        }, () -> {
+            log.debug("User object isn't set, workflow is messy.");
+        });
 
         return script::setScriptAction;
     }
@@ -200,7 +217,11 @@ public enum ScriptAPI {
         var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
         var message = messages[0];
 
-        ScriptAPI.INSTANCE.messengerSay.send(script, message, speaker, param, false, messages.length > 1);
+        script.getUserObject().ifPresentOrElse(obj -> {
+            ScriptAPI.INSTANCE.messengerSay.send(obj, message, speaker, param, false, messages.length > 1);
+        }, () -> {
+            log.debug("User object isn't set, workflow is messy.");
+        });
 
         return script::setScriptAction;
     }
@@ -229,7 +250,11 @@ public enum ScriptAPI {
         });
         var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
 
-        ScriptAPI.INSTANCE.messengerAskYesNo.send(script, message, speaker, 0);
+        script.getUserObject().ifPresentOrElse(obj -> {
+            ScriptAPI.INSTANCE.messengerAskYesNo.send(obj, message, speaker, 0);
+        }, () -> {
+            log.debug("User object isn't set, workflow is messy.");
+        });
     }
 
     public static void askYesNo(MoeScript script, String message, BasicScriptAction onYes) {
@@ -262,7 +287,11 @@ public enum ScriptAPI {
 
         script.setScriptResponse(askMenuResponse(script, menuItems));
 
-        ScriptAPI.INSTANCE.messengerAskMenu.send(script, builder.toString(), speakerTemplateId, param);
+        script.getUserObject().ifPresentOrElse(obj -> {
+            ScriptAPI.INSTANCE.messengerAskMenu.send(obj, builder.toString(), speakerTemplateId, param);
+        }, () -> {
+            log.debug("User object isn't set, workflow is messy.");
+        });
 
         return script::setScriptAction;
     }
@@ -299,7 +328,11 @@ public enum ScriptAPI {
 
         var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
 
-        ScriptAPI.INSTANCE.messengerAskMenu.send(script, builder.toString(), speaker, 0);
+        script.getUserObject().ifPresentOrElse(obj -> {
+            ScriptAPI.INSTANCE.messengerAskMenu.send(obj, builder.toString(), speaker, 0);
+        }, () -> {
+            log.debug("User object isn't set, workflow is messy.");
+        });
 
         return script::setScriptAction;
     }
@@ -328,7 +361,12 @@ public enum ScriptAPI {
 
         script.setScriptResponse(askAvatarResponse(script, options));
 
-        ScriptAPI.INSTANCE.messengerAskAvatar.send(script, prompt, speakerTemplateId, param, options);
+
+        script.getUserObject().ifPresentOrElse(obj -> {
+            ScriptAPI.INSTANCE.messengerAskAvatar.send(obj, prompt, speakerTemplateId, param, options);
+        }, () -> {
+            log.debug("User object isn't set, workflow is messy.");
+        });
 
         return script::setScriptAction;
     }

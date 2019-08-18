@@ -23,9 +23,14 @@
 package moe.maple.api.script.model;
 
 import moe.maple.api.script.model.action.ScriptAction;
+import moe.maple.api.script.model.object.FieldObject;
+import moe.maple.api.script.model.object.NpcObject;
+import moe.maple.api.script.model.object.UserObject;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.event.ScriptEvent;
 import moe.maple.api.script.model.type.SpeakerType;
+
+import java.util.Optional;
 
 public interface MoeScript {
 
@@ -54,5 +59,13 @@ public interface MoeScript {
     void addEndEvent(ScriptEvent event);
 
     // =================================================================================================================
+
+    void setFieldObject(FieldObject object);
+    void setNpcObject(NpcObject object);
+    void setUserObject(UserObject object);
+
+    Optional<FieldObject> getFieldObect();
+    Optional<NpcObject> getNpcObject();
+    Optional<UserObject> getUserObject();
 
 }
