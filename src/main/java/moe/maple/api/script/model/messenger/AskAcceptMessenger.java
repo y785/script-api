@@ -20,22 +20,11 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script;
+package moe.maple.api.script.model.messenger;
 
-public class Main {
-    public static void main(String... args) {
-        // Goals:
-        // Non-blocking / Non-locking.
-        // Initialize as needed.
-        // Moe.
-        
-        System.out.println("⠀⠀⠀⣠⣾⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣷⣄   ");
-        System.out.println("⠀⠀⠀⣿⣿⡇⠀⠀⢸⣿⢰⣿⡆⠀⣾⣿⡆⠀⣾⣷⠀⣿⣿⡇⠀⠀⢸⣿⣿  ");
-        System.out.println("⠀⠀⠀⣿⣿⡇⠀⠀⢸⣿⠘⣿⣿⣤⣿⣿⣿⣤⣿⡇⠀⢻⣿⡇⠀⠀⢸⣿⣿  ");
-        System.out.println("⠀⠀⠀⣿⣿⡇⠀⠀⢸⡿⠀⢹⣿⣿⣿⣿⣿⣿⣿⠁⠀⢸⣿⣇⠀⠀⢸⣿⣿  ");
-        System.out.println("⠀⠀⠀⠙⢿⣷⣶⣶⡿⠁⠀⠈⣿⣿⠟⠀⣿⣿⠇⠀⠀⠈⠻⣿⣿⣿⣿⡿⠋  ");
-        System.out.println();
-        System.out.println(" This is a MapleStory(\uD83C\uDF41) scripting api.");
-        System.out.println(" ❤️ http://github.com/y785/ ❤️");
-    }
+import moe.maple.api.script.model.object.UserObject;
+
+@FunctionalInterface
+public interface AskAcceptMessenger extends ScriptMessenger {
+    void send(UserObject userObject, int speakerTemplateId, int param, String text);
 }
