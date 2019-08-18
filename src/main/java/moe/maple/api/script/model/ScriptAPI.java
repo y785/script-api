@@ -236,11 +236,8 @@ public enum ScriptAPI {
 
     // =================================================================================================================
 
-    public static NumberActionChain askMenu(MoeScript script, String prompt, String... menuItems) {
-        var builder = new ScriptMenuBuilder();
-        builder.append(prompt).appendMenu(menuItems);
-
-        script.setScriptResponse((t, a, o) -> {
+    private static ScriptResponse askMenuResponse(MoeScript script, String... menuItems) {
+        return (t, a, o) -> {
             var min = 0;
             var max = menuItems.length - 1;
             var sel = ((Number)o).intValue();
@@ -254,13 +251,26 @@ public enum ScriptAPI {
                 script.setScriptResponse(null);
                 script.resume(t, a, o);
             }
-        });
+        };
+    }
 
-        var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
+    public static NumberActionChain askMenu(MoeScript script, int speakerTemplateId, int param, String prompt, String... menuItems) {
+        var builder = new ScriptMenuBuilder();
+        builder.append(prompt).appendMenu(menuItems);
 
-        ScriptAPI.INSTANCE.messengerAskMenu.send(script, builder.toString(), speaker, 0);
+        script.setScriptResponse(askMenuResponse(script, menuItems));
+
+        ScriptAPI.INSTANCE.messengerAskMenu.send(script, builder.toString(), speakerTemplateId, param);
 
         return script::setScriptAction;
+    }
+
+    public static NumberActionChain askMenu(MoeScript script, int speakerTemplateId, String prompt, String... menuItems) {
+        return askMenu(script, speakerTemplateId, 0, prompt, menuItems);
+    }
+
+    public static NumberActionChain askMenu(MoeScript script, String prompt, String... menuItems) {
+        return askMenu(script, ScriptAPI.INSTANCE.getSpeakerIdFromScript(script), prompt, menuItems);
     }
 
     @SafeVarargs

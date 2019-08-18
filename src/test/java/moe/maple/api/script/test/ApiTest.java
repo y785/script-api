@@ -26,6 +26,7 @@ import moe.maple.api.script.model.FunScript;
 import moe.maple.api.script.model.Script;
 import moe.maple.api.script.model.ScriptAPI;
 import moe.maple.api.script.model.type.SpeakerType;
+import moe.maple.api.script.util.tuple.Tuple;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,7 @@ public class ApiTest {
             public void work() {
                 ScriptAPI.say(this, "0", "1", "2").andThen(() -> {
                     log.debug("Beginning sub test 2: Back <-> Forward");
-                    ScriptAPI.say(this, "3", "4", "5").andThen(() -> {
+                    ScriptAPI.say(this, Tuple.of(0, "3"), Tuple.of(0, "4"), Tuple.of(0, "5")).andThen(() -> {
                         ScriptAPI.say(this, "6");
                     });
                 });
@@ -103,10 +104,52 @@ public class ApiTest {
 
         assertTrue(test.isDone());
         assertTrue(!test.isPaused());
+
+        test.reset();
+
+        assertTrue(!test.isPaused());
+        assertTrue(!test.isDone());
     }
 
     @Test
-    public void apiSayLogicTuple() {
+    public void apiAskMenuLogic() {
+        class ApiAskMenuLogic extends FunScript {
+            @Override
+            @Script(name = "ApiAskMenu")
+            public void work() {
+                ScriptAPI.askMenu(this, "Prompt", "Option 1", "Option 2", "Option 3").andThen(sel -> {
+                    assertEquals(sel, 1);
+                    ScriptAPI.askMenu(this, "Prompt", Tuple.of("Option 4", null), Tuple.of("Option 5", () -> {
 
+                    }));
+                });
+            }
+        }
+
+        var test = new ApiAskMenuLogic();
+        test.work();
+
+        assertTrue(!test.isDone());
+        assertTrue(test.isPaused());
+
+        test.resume(SpeakerType.ASKMENU, 1, 1);
+
+        assertTrue(!test.isDone());
+        assertTrue(test.isPaused());
+
+        test.resume(SpeakerType.ASKMENU, 1, 0);
+
+        assertTrue(test.isDone());
+        assertTrue(!test.isPaused());
+
+        test.reset();
+        assertTrue(!test.isDone());
+        assertTrue(!test.isPaused());
+
+        test.resume(SpeakerType.ASKMENU, 1, 1);
+        test.resume(SpeakerType.ASKMENU, 1, 1);
+
+        assertTrue(test.isDone());
+        assertTrue(!test.isPaused());
     }
 }

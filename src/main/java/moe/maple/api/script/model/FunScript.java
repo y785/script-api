@@ -83,9 +83,10 @@ public abstract class FunScript implements MoeScript {
     }
 
     @Override
-    public void restart() {
+    public void reset() {
         end();
-        start();
+
+        this.done = false;
     }
 
     @Override

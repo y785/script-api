@@ -36,7 +36,12 @@ public interface MoeScript {
 
     void start();
     void end();
-    void restart();
+
+    /**
+     * Resets the script back to its default state.
+     */
+    void reset();
+    default void resetAndStart() { reset(); start(); }
 
     void resume(SpeakerType type, Number action, Object response);
 
