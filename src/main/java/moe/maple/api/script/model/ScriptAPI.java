@@ -233,6 +233,7 @@ public enum ScriptAPI {
     // =================================================================================================================
 
     public static void askYesNo(MoeScript script, String message, BasicScriptAction onYes, BasicScriptAction onNo) {
+        script.setScriptAction(null);
         script.setScriptResponse((t, a, o) -> {
             if (t != SpeakerType.ASKYESNO) {
                 script.end();
@@ -285,6 +286,7 @@ public enum ScriptAPI {
         var builder = new ScriptMenuBuilder();
         builder.append(prompt).appendMenu(menuItems);
 
+        script.setScriptAction(null);
         script.setScriptResponse(askMenuResponse(script, menuItems));
 
         script.getUserObject().ifPresentOrElse(obj -> {
@@ -358,9 +360,8 @@ public enum ScriptAPI {
     }
 
     public static NumberActionChain askAvatar(MoeScript script, int speakerTemplateId, int param, String prompt, int... options) {
-
+        script.setScriptAction(null);
         script.setScriptResponse(askAvatarResponse(script, options));
-
 
         script.getUserObject().ifPresentOrElse(obj -> {
             ScriptAPI.INSTANCE.messengerAskAvatar.send(obj, prompt, speakerTemplateId, param, options);
