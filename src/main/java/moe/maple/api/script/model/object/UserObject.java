@@ -143,6 +143,13 @@ public interface UserObject<T> extends FieldedObject {
      * @return true if user learned the targeted skill, level, & mastery.
      */
     boolean learnSkill(int skillId, int level, int mastery);
+
+    /**
+     * @param skillId - Skill id
+     * @return true if the skill was forgotten/removed.
+     */
+    boolean forgetSkill(int skillId);
+
     default boolean learnSkill(int skillId, int level) { return learnSkill(skillId, level, 1); }
     default boolean learnSkill(int skillId) { return learnSkill(skillId, 1, 1); }
 
@@ -214,7 +221,7 @@ public interface UserObject<T> extends FieldedObject {
 
     /**
      * Packet: UserEffectLocal | UserEffect.AvatarOriented
-     * @param path - The Effect.wz UOL, example: Effect/OnUserEff.img/guideEffect/aranTutorial/tutorialArrow1
+     * @param path - The Effect.wz UOL, example: "Effect/OnUserEff.img/guideEffect/aranTutorial/tutorialArrow1"
      * @param durationInSeconds - The duration of the effect in seconds -- This was removed in later versions.
      */
     void avatarOriented(String path, int durationInSeconds);
@@ -222,7 +229,7 @@ public interface UserObject<T> extends FieldedObject {
     /**
      * Packet: UserEffectLocal | UserEffect.ReservedEffect
      * This is commonly called showEffect/showIntro/playScene in odin-based sources.
-     * @param path - The Effect.wz UOL, example: Effect/Direction1/aranTutorial/Child
+     * @param path - The Effect.wz UOL, example: "Effect/Direction1/aranTutorial/Child"
      */
     void reservedEffect(String path);
 
@@ -231,6 +238,20 @@ public interface UserObject<T> extends FieldedObject {
      * See: UserEffect.PlayPortalSE
      */
     void playPortalSE();
+
+    // =================================================================================================================
+
+    /**
+     * Packet: FieldEffect | FieldEffectType.FieldEffect_Screen
+     * @param path - The Map.wz UOL, relative to "Map.wz/Effect.img", example: "maplemap/enter/50000"
+     */
+    void fieldEffectScreen(String path);
+
+    /**
+     * Packet: FieldEffect | FieldEffectType.FieldEffect_Sound
+     * @param path - The Sound.wz UOL, relative to "Sound.wz/Field.img", example: "Aran/balloon"
+     */
+    void fieldEffectSound(String path);
 
     // =================================================================================================================
 }
