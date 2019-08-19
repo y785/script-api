@@ -57,15 +57,6 @@ public enum ScriptAPI {
 
     ScriptAPI() { }
 
-    private static void run() {
-        log.debug("User object isn't set, workflow is messy.");
-    }
-
-    @Deprecated
-    private int getSpeakerIdFromScript(MoeScript script) {
-        return script.getSpeakerTemplateId();
-    }
-
     public void setDefaultMessengers() {
         messengerSay = (script, message, speakerTemplateId, param, previous, next) -> log.debug("say-> speaker: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerTemplateId, param, previous, next, message);
         messengerAskYesNo = (script, message, speakerTemplateId, param) -> log.debug("askYesNo-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
@@ -115,7 +106,7 @@ public enum ScriptAPI {
                             script.setScriptResponse(res);
 
                             script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speakerTemplateId, param, back, true),
-                                    ScriptAPI::run);
+                                    () -> log.debug("User object isn't set, workflow is messy."));
                         } else {
                             log.warn("Tried to go back while on the first message? No! :(");
                             script.end();
