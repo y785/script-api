@@ -1,2 +1,7 @@
-# ❤ Moe Script
-Scripting api beginnings, will go public once ironed out.
+# ❤ Moe Script API
+### Features
+- Non-blocking
+- No vm
+- Moe
+### Examples
+[The main script repo](https://github.com/y785/moe-scripts)
