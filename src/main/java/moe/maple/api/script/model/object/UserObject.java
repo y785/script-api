@@ -119,16 +119,22 @@ public interface UserObject<T> extends FieldedObject {
     default boolean hasMoney(int amount) { return getMoney() >= Math.abs(amount); }
 
     /**
-     * @param amount the amount to increase
+     * @param amount the amount to increased/decreased
      * @return if money was increased successfully
      */
     boolean increaseMoney(int amount);
+    boolean decreaseMoney(int amount);
 
     /**
-     * @param amount the amount to decrease
-     * @return if money was decreased successfully
+     * Teach the user the skill provided.
+     * @param skillId - Skill id
+     * @param level   - Skill level
+     * @param mastery - Skill mastery
+     * @return true if user learned the targeted skill, level, & mastery.
      */
-    boolean decreaseMoney(int amount);
+    boolean learnSkill(int skillId, int level, int mastery);
+    default boolean learnSkill(int skillId, int level) { return learnSkill(skillId, level, 1); }
+    default boolean learnSkill(int skillId) { return learnSkill(skillId, 1, 1); }
 
     // =================================================================================================================
 
@@ -161,6 +167,35 @@ public interface UserObject<T> extends FieldedObject {
 
     default boolean startQuest(int questId) { return setQuestState(questId, 1); }
     default boolean completeQuest(int questId) { return setQuestState(questId, 2); }
+
+    String getQuestEx(int questId, String key);
+    boolean setQuestEx(int questId, String key, String value);
+
+    // =================================================================================================================
+
+    /**
+     * Aran and evan quest tutors.
+     * hire/destroy should add/remove the tutor skill from the respective beginner job.
+     * These are used in the beginner quests for legend/noblesse.
+     * Packet: UserHireTutor / UserTutorMsg
+     */
+
+    boolean hireTutor();
+    boolean destroyTutor();
+
+    void tutorMessage(int value, int duration);
+    default void tutorMessage(int value) { tutorMessage(value, 7000); }
+
+    void tutorMessage(String value);
+    void tutorMessage(String value, int width, int duration);
+
+    // =================================================================================================================
+
+    /**
+     * Packet: SetStandAloneMode
+     */
+    void lockUI();
+    void unlockUI();
 
     // =================================================================================================================
 }
