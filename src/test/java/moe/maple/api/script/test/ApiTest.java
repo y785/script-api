@@ -54,9 +54,11 @@ public class ApiTest {
 
     @Test
     public void apiSayLogic() {
+        final String SCRIPT_NAME = "ApiSayLogic1";
+
         class ApiSayLogic1 extends BaseScript {
             @Override
-            @Script(name = "ApiSayLogic1")
+            @Script(name = SCRIPT_NAME)
             public void work() {
                 ScriptAPI.say(this, "0", "1", "2").andThen(() -> {
                     log.debug("Beginning sub test 2: Back <-> Forward");
@@ -85,6 +87,7 @@ public class ApiTest {
         });
 
         var test = new ApiSayLogic1();
+        assertEquals(test.name(), SCRIPT_NAME);
         test.work();
 
         assertTrue(!test.isDone());

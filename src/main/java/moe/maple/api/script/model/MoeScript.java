@@ -32,6 +32,8 @@ import java.util.Optional;
 
 public interface MoeScript {
 
+    String name();
+
     boolean isDone();
     boolean isPaused();
 

@@ -33,6 +33,7 @@ import moe.maple.api.script.model.type.SpeakerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -58,6 +59,16 @@ public abstract class BaseScript implements MoeScript {
     public BaseScript() {
         this.startScriptEvents = new LinkedList<>();
         this.endScriptEvents = new LinkedList<>();
+    }
+
+    @Override
+    public String name() {
+        for (Method method : this.getClass().getMethods()) {
+            var annotation = method.getAnnotation(Script.class);
+            if (annotation == null) continue;
+            return annotation.name();
+        }
+        return "Unnamed Script: "+this.getClass().getName();
     }
 
     @Override
