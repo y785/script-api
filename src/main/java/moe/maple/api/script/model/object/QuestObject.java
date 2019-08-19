@@ -31,4 +31,26 @@ public interface QuestObject<T> extends ScriptObject {
     T getQuest();
 
     int getId();
+
+    /**
+     * This should return 0-2 depending on a quests current status
+     * 0 - NotStarted
+     * 1 - Started
+     * 2 - Completed
+     * These are officially from QR_STATE_ enum in BMS
+     * @return int representing quest status
+     */
+    int getState();
+
+    /**
+     * @param state the state, see above
+     * @return true if the quest state was set
+     */
+    boolean setState(int state);
+
+    default boolean isStarted() { return getState() == 1; }
+    default boolean isCompleted() { return getState() == 2; }
+
+    default boolean start() { return setState(1); }
+    default boolean complete() { return setState(2); }
 }

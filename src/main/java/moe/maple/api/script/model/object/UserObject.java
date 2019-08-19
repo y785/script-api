@@ -137,4 +137,30 @@ public interface UserObject<T> extends FieldedObject {
     default boolean hasItem(int itemId) { return hasItem(itemId, 1); }
 
     // =================================================================================================================
+
+    /**
+     * This should return 0-2 depending on a quests current status
+     * 0 - NotStarted
+     * 1 - Started
+     * 2 - Completed
+     * These are officially from QR_STATE_ enum in BMS
+     * @param questId the quest
+     * @return int representing quest status
+     */
+    int getQuestState(int questId);
+
+    /**
+     * @param questId the quest
+     * @param state the state, see above
+     * @return true if the quest state was set
+     */
+    boolean setQuestState(int questId, int state);
+
+    default boolean isQuestStarted(int questId) { return getQuestState(questId) == 1; }
+    default boolean isQuestCompleted(int questId) { return getQuestState(questId) == 2; }
+
+    default boolean startQuest(int questId) { return setQuestState(questId, 1); }
+    default boolean completeQuest(int questId) { return setQuestState(questId, 2); }
+
+    // =================================================================================================================
 }
