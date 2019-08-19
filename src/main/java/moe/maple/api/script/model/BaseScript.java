@@ -63,12 +63,9 @@ public abstract class BaseScript implements MoeScript {
 
     @Override
     public String name() {
-        for (Method method : this.getClass().getMethods()) {
-            var annotation = method.getAnnotation(Script.class);
-            if (annotation == null) continue;
-            return annotation.name();
-        }
-        return "Unnamed Script: "+this.getClass().getName();
+        var annotation = this.getClass().getAnnotation(Script.class);
+        if (annotation == null) return "Unnamed Script: "+this.getClass().getName();
+        return annotation.name();
     }
 
     @Override
