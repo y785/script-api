@@ -23,9 +23,7 @@
 package moe.maple.api.script.model;
 
 import moe.maple.api.script.model.action.ScriptAction;
-import moe.maple.api.script.model.object.FieldObject;
-import moe.maple.api.script.model.object.NpcObject;
-import moe.maple.api.script.model.object.UserObject;
+import moe.maple.api.script.model.object.*;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.event.ScriptEvent;
 import moe.maple.api.script.model.type.SpeakerType;
@@ -61,11 +59,19 @@ public interface MoeScript {
     // =================================================================================================================
 
     void setFieldObject(FieldObject object);
+    void setFieldSetObject(FieldSetObject object);
     void setNpcObject(NpcObject object);
+    void setPortalObject(PortalObject object);
+    void setQuestObject(QuestObject object);
+    void setReactorObject(ReactorObject object);
     void setUserObject(UserObject object);
 
     Optional<FieldObject> getFieldObect();
+    Optional<FieldSetObject> getFieldSetObject();
     Optional<NpcObject> getNpcObject();
+    Optional<PortalObject> getPortalObject();
+    Optional<QuestObject> getQuestObject();
+    Optional<ReactorObject> getReactorObject();
     Optional<UserObject> getUserObject();
 
     /**

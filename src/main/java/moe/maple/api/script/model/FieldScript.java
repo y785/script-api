@@ -22,6 +22,17 @@
 
 package moe.maple.api.script.model;
 
+import moe.maple.api.script.model.object.FieldObject;
+
 public abstract class FieldScript extends BaseScript implements MessagingScript {
+
+    protected FieldObject self;
+
     public FieldScript() { super(); }
+
+    @Override
+    public void setFieldObject(FieldObject field) {
+        this.self = field;
+        super.setFieldObject(field);
+    }
 }

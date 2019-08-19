@@ -26,9 +26,7 @@ import moe.maple.api.script.model.action.BasicScriptAction;
 import moe.maple.api.script.model.action.IntegerScriptAction;
 import moe.maple.api.script.model.action.ScriptAction;
 import moe.maple.api.script.model.action.StringScriptAction;
-import moe.maple.api.script.model.object.FieldObject;
-import moe.maple.api.script.model.object.NpcObject;
-import moe.maple.api.script.model.object.UserObject;
+import moe.maple.api.script.model.object.*;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.event.ScriptEvent;
 import moe.maple.api.script.model.type.SpeakerType;
@@ -48,7 +46,11 @@ public abstract class BaseScript implements MoeScript {
     protected LinkedList<ScriptEvent> endScriptEvents;
 
     protected FieldObject field;
+    protected FieldSetObject fieldset;
     protected NpcObject npc;
+    protected PortalObject portal;
+    protected QuestObject quest;
+    protected ReactorObject reactor;
     protected UserObject user;
 
     private boolean done;
@@ -153,20 +155,39 @@ public abstract class BaseScript implements MoeScript {
 
     // =================================================================================================================
 
-
     @Override
-    public void setFieldObject(FieldObject object) {
-        this.field = object;
+    public void setFieldObject(FieldObject field) {
+        this.field = field;
     }
 
     @Override
-    public void setNpcObject(NpcObject object) {
-        this.npc = object;
+    public void setFieldSetObject(FieldSetObject fieldset) {
+        this.fieldset = fieldset;
     }
 
     @Override
-    public void setUserObject(UserObject object) {
-        this.user = object;
+    public void setNpcObject(NpcObject npc) {
+        this.npc = npc;
+    }
+
+    @Override
+    public void setPortalObject(PortalObject portal) {
+        this.portal = portal;
+    }
+
+    @Override
+    public void setQuestObject(QuestObject quest) {
+        this.quest = quest;
+    }
+
+    @Override
+    public void setReactorObject(ReactorObject reactor) {
+        this.reactor = reactor;
+    }
+
+    @Override
+    public void setUserObject(UserObject user) {
+        this.user = user;
     }
 
     @Override
@@ -175,8 +196,28 @@ public abstract class BaseScript implements MoeScript {
     }
 
     @Override
+    public Optional<FieldSetObject> getFieldSetObject() {
+        return Optional.ofNullable(fieldset);
+    }
+
+    @Override
     public Optional<NpcObject> getNpcObject() {
         return Optional.ofNullable(npc);
+    }
+
+    @Override
+    public Optional<PortalObject> getPortalObject() {
+        return Optional.ofNullable(portal);
+    }
+
+    @Override
+    public Optional<QuestObject> getQuestObject() {
+        return Optional.ofNullable(quest);
+    }
+
+    @Override
+    public Optional<ReactorObject> getReactorObject() {
+        return Optional.ofNullable(reactor);
     }
 
     @Override

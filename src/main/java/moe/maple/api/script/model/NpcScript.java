@@ -22,7 +22,17 @@
 
 package moe.maple.api.script.model;
 
+import moe.maple.api.script.model.object.NpcObject;
+
 public abstract class NpcScript extends BaseScript implements SpeakingScript {
 
+    protected NpcObject self;
+
     public NpcScript() { super(); }
+
+    @Override
+    public void setNpcObject(NpcObject npc) {
+        this.self = npc;
+        super.setNpcObject(npc);
+    }
 }
