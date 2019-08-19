@@ -74,7 +74,7 @@ public class ApiTest {
         forward.set(1);
         back.set(0);
 
-        ScriptAPI.INSTANCE.setSayMessenger((script, message, speakerTemplateId, param, previous, next) -> {
+        ScriptAPI.INSTANCE.setMessengerSay((script, message, speakerTemplateId, param, previous, next) -> {
             var idx = atomicIndex.getAndIncrement();
             log.debug("{}: idx {} / p {} / n {}", idx, message, previous, next);
 
