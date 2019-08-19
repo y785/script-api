@@ -20,24 +20,12 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object;
+package moe.maple.api.script.model.messenger;
 
-import java.util.Optional;
 
-public interface FieldedObject extends ScriptObject {
+import moe.maple.api.script.model.object.UserObject;
 
-    /**
-     * FieldObjects are thrown into a pool and assigned a key.
-     * @return object id for this object
-     */
-    int getObjectId();
-
-    /**
-     * Some script objects should always have a field attached to them.
-     * Think users, npcs, monsters, etc. This isn't 100% guaranteed, so we
-     * have to use an optional for use-cases where the outliers occur.
-     * @return the object's current field. proxied.
-     */
-    Optional<? extends FieldObject> getField();
-    default int getFieldId() { return getField().map(FieldObject::getId).orElse(0); }
+@FunctionalInterface
+public interface MessageMessenger extends ScriptMessenger {
+    void send(UserObject userObject, int type, String message);
 }

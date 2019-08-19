@@ -22,8 +22,56 @@
 
 package moe.maple.api.script.model;
 
+import org.slf4j.helpers.MessageFormatter;
+
 public interface MessagingScript extends MoeScript {
-    /**
+    /*
      * Think balloons and messages
      */
+
+    default void message(int type, String message) {
+        ScriptAPI.message(this, type, message);
+    }
+
+    default void message(String message) {
+        message(Constants.MESSAGE_DEFAULT_TYPE, message);
+    }
+
+    default void message(String message, Object... objects) {
+        message(Constants.MESSAGE_DEFAULT_TYPE, message, objects);
+    }
+    default void message(int type, String message, Object... objects) {
+        message(type, MessageFormatter.format(message, objects).getMessage());
+    }
+
+    default void balloon(int width, int timeoutInSeconds, String message) {
+        ScriptAPI.balloon(this, width, timeoutInSeconds, message);
+    }
+
+    default void balloon(int width, int timeoutInSeconds, String message, Object... objects) {
+        balloon(width, timeoutInSeconds, MessageFormatter.format(message, objects).getMessage());
+    }
+
+    default void balloon(int width, String message) {
+        balloon(width, Constants.BALLOON_DEFAULT_TIMEOUT, message);
+    }
+
+    default void balloon(int width, String message, Object... objects) {
+        balloon(width, MessageFormatter.format(message, objects).getMessage());
+    }
+
+    default void balloon(String message, Object... objects) {
+        balloon(Constants.BALLOON_DEFAULT_WIDTH, MessageFormatter.format(message, objects).getMessage());
+    }
+
+    default void balloon(String message) {
+        balloon(Constants.BALLOON_DEFAULT_WIDTH, message);
+    }
+
+    class Constants {
+        private final static int MESSAGE_DEFAULT_TYPE = 0x5;
+
+        private final static int BALLOON_DEFAULT_WIDTH = 200;
+        private final static int BALLOON_DEFAULT_TIMEOUT = 5;
+    }
 }

@@ -27,6 +27,7 @@ import moe.maple.api.script.model.chain.BasicActionChain;
 import moe.maple.api.script.model.chain.NumberActionChain;
 import moe.maple.api.script.model.messenger.*;
 import moe.maple.api.script.model.object.NpcObject;
+import moe.maple.api.script.model.object.UserObject;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.type.SpeakerType;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
@@ -51,24 +52,29 @@ public enum ScriptAPI {
     private AskMenuMessenger messengerAskMenu;
     private AskAvatarMessenger messengerAskAvatar;
 
+    private MessageMessenger messengerMessage;
+    private BalloonMessenger messengerBalloon;
+
     ScriptAPI() { }
 
+    private static void run() {
+        log.debug("User object isn't set, workflow is messy.");
+    }
+
+    @Deprecated
     private int getSpeakerIdFromScript(MoeScript script) {
-        if (script instanceof SpeakingScript)
-            return ((SpeakingScript)script).getSpeakerTemplateId();
-        return script.getNpcObject().map(NpcObject::getTemplateId).orElse(2007);
+        return script.getSpeakerTemplateId();
     }
 
     public void setDefaultMessengers() {
-        messengerSay = (script, message, speakerTemplateId, param, previous, next) -> {
-            log.debug("say-> speaker: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerTemplateId, param, previous, next, message);
-        };
-        messengerAskYesNo = (script, message, speakerTemplateId, param) -> {
-           log.debug("askYesNo-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
-        };
-        messengerAskMenu = (script, message, speakerTemplateId, param) -> {
-            log.debug("askMenu-> speaker: {}, param: {}, message: {}", speakerTemplateId, param, message);
-        };
+        messengerSay = (script, message, speakerTemplateId, param, previous, next) -> log.debug("say-> speaker: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerTemplateId, param, previous, next, message);
+        messengerAskYesNo = (script, message, speakerTemplateId, param) -> log.debug("askYesNo-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
+        messengerAskMenu = (script, message, speakerTemplateId, param) -> log.debug("askMenu-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
+        messengerAskAvatar = (userObject, message, speakerTemplateId, param,  options) -> log.debug("askAvatar-> speaker: {}, param: {}, options: {}, message: \"{}\"", speakerTemplateId, param, options, message);
+
+
+        messengerMessage = ((userObject, type, message) -> log.debug("message-> type: {}, message: \"{}\"", type, message));
+        messengerBalloon = ((userObject, message, width, timeoutInSeconds) -> log.debug("balloon-> width: {}, timeout: {}, message: \"{}\"", width, timeoutInSeconds, message));
     }
 
     public void setSayMessenger(SayMessenger msger) { this.messengerSay = msger; }
@@ -76,6 +82,21 @@ public enum ScriptAPI {
     public void setAskMenuMessenger(AskMenuMessenger msger) { this.messengerAskMenu = msger; }
     public void setAskAvatarMessenger(AskAvatarMessenger msger) { this.messengerAskAvatar = msger; }
 
+    public void setMessageMessenger(MessageMessenger msger) { this.messengerMessage = msger; }
+    public void setBalloonMessenger(BalloonMessenger msger) { this.messengerBalloon = msger; }
+
+
+    // =================================================================================================================
+
+    public static void message(MoeScript script, int type, String message) {
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerMessage.send(obj, type, message),
+                () -> log.debug("User object isn't set, workflow is messy."));
+    }
+
+    public static void balloon(MoeScript script, int width, int timeoutInSeconds, String message) {
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerBalloon.send(obj, message, width, timeoutInSeconds),
+                () -> log.debug("User object isn't set, workflow is messy."));
+    }
 
     // =================================================================================================================
 
@@ -93,11 +114,8 @@ public enum ScriptAPI {
                             var res = chain.get(idx - 1);
                             script.setScriptResponse(res);
 
-                            script.getUserObject().ifPresentOrElse(obj -> {
-                                ScriptAPI.INSTANCE.messengerSay.send(obj, message, speakerTemplateId, param, back, true);
-                            }, () -> {
-                                log.debug("User object isn't set, workflow is messy.");
-                            });
+                            script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speakerTemplateId, param, back, true),
+                                    ScriptAPI::run);
                         } else {
                             log.warn("Tried to go back while on the first message? No! :(");
                             script.end();
@@ -108,11 +126,8 @@ public enum ScriptAPI {
                             var forward = ts - 1 > idx + 1;
                             var res = chain.get(idx + 1);
                             script.setScriptResponse(res);
-                            script.getUserObject().ifPresentOrElse(obj -> {
-                                ScriptAPI.INSTANCE.messengerSay.send(obj, message, speakerTemplateId, param, true, forward);
-                            }, () -> {
-                                log.debug("User object isn't set, workflow is messy.");
-                            });
+                            script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speakerTemplateId, param, true, forward),
+                                    () -> log.debug("User object isn't set, workflow is messy."));
                         } else {
                             script.setScriptResponse(null);
                             script.resume(t, a, o);
@@ -126,25 +141,22 @@ public enum ScriptAPI {
         };
     }
 
+    @SafeVarargs
     public static BasicActionChain say(MoeScript script, Tuple<Integer, String>... paramAndMessages) {
         script.setScriptAction(null);
 
         var chain = new LinkedList<ScriptResponse>();
 
-        With.indexAndCount(paramAndMessages, (tpl, idx, ts) -> {
-            chain.add(sayResponse(script, chain, ScriptAPI.INSTANCE.getSpeakerIdFromScript(script), tpl.left(), tpl.right(), idx, ts));
-        });
+        With.indexAndCount(paramAndMessages, (tpl, idx, ts) ->
+                chain.add(sayResponse(script, chain, script.getSpeakerTemplateId(), tpl.left(), tpl.right(), idx, ts)));
         script.setScriptResponse(chain.getFirst());
 
-        var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
+        var speaker = script.getSpeakerTemplateId();
         var param = paramAndMessages[0].left();
         var message = paramAndMessages[0].right();
 
-        script.getUserObject().ifPresentOrElse(obj -> {
-            ScriptAPI.INSTANCE.messengerSay.send(obj, message, speaker, param, false, paramAndMessages.length > 1);
-        }, () -> {
-            log.debug("User object isn't set, workflow is messy.");
-        });
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speaker, param, false, paramAndMessages.length > 1),
+                () -> log.debug("User object isn't set, workflow is messy."));
 
         return script::setScriptAction;
     }
@@ -157,7 +169,7 @@ public enum ScriptAPI {
         // To be honest, this isn't really needed. // todo validate
         With.index(speakers, (i, idx) -> {
             if (i == 0)
-                speakers[idx] = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
+                speakers[idx] = script.getSpeakerTemplateId();
         });
         With.indexAndCount(messages, (msg, idx, ts) -> chain.add(sayResponse(script, chain, speakers[idx], params[idx], msg, idx, ts)));
         script.setScriptResponse(chain.getFirst());
@@ -166,11 +178,8 @@ public enum ScriptAPI {
         var param = params[0];
         var message = messages[0];
 
-        script.getUserObject().ifPresentOrElse(obj -> {
-            ScriptAPI.INSTANCE.messengerSay.send(obj, message, speaker, param, false, messages.length > 1);
-        }, () -> {
-            log.debug("User object isn't set, workflow is messy.");
-        });
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speaker, param, false, messages.length > 1),
+                () -> log.debug("User object isn't set, workflow is messy."));
 
         return script::setScriptAction;
     }
@@ -192,19 +201,14 @@ public enum ScriptAPI {
     public static BasicActionChain say(MoeScript script, int param, String... messages) {
         script.setScriptAction(null);
         var chain = new LinkedList<ScriptResponse>();
-        With.indexAndCount(messages, (msg, idx, ts) -> {
-            chain.add(sayResponse(script, chain, ScriptAPI.INSTANCE.getSpeakerIdFromScript(script), param, msg, idx, ts));
-        });
+        With.indexAndCount(messages, (msg, idx, ts) -> chain.add(sayResponse(script, chain, script.getSpeakerTemplateId(), param, msg, idx, ts)));
         script.setScriptResponse(chain.getFirst());
 
-        var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
+        var speaker = script.getSpeakerTemplateId();
         var message = messages[0];
 
-        script.getUserObject().ifPresentOrElse(obj -> {
-            ScriptAPI.INSTANCE.messengerSay.send(obj, message, speaker, param, false, messages.length > 1);
-        }, () -> {
-            log.debug("User object isn't set, workflow is messy.");
-        });
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speaker, param, false, messages.length > 1),
+                () -> log.debug("User object isn't set, workflow is messy."));
 
         return script::setScriptAction;
     }
@@ -232,13 +236,10 @@ public enum ScriptAPI {
                 }
             }
         });
-        var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
+        var speaker = script.getSpeakerTemplateId();
 
-        script.getUserObject().ifPresentOrElse(obj -> {
-            ScriptAPI.INSTANCE.messengerAskYesNo.send(obj, message, speaker, 0);
-        }, () -> {
-            log.debug("User object isn't set, workflow is messy.");
-        });
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskYesNo.send(obj, message, speaker, 0),
+                () -> log.debug("User object isn't set, workflow is messy."));
     }
 
     public static void askYesNo(MoeScript script, String message, BasicScriptAction onYes) {
@@ -272,11 +273,8 @@ public enum ScriptAPI {
         script.setScriptAction(null);
         script.setScriptResponse(askMenuResponse(script, menuItems));
 
-        script.getUserObject().ifPresentOrElse(obj -> {
-            ScriptAPI.INSTANCE.messengerAskMenu.send(obj, builder.toString(), speakerTemplateId, param);
-        }, () -> {
-            log.debug("User object isn't set, workflow is messy.");
-        });
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, builder.toString(), speakerTemplateId, param),
+                () -> log.debug("User object isn't set, workflow is messy."));
 
         return script::setScriptAction;
     }
@@ -286,7 +284,7 @@ public enum ScriptAPI {
     }
 
     public static NumberActionChain askMenu(MoeScript script, String prompt, String... menuItems) {
-        return askMenu(script, ScriptAPI.INSTANCE.getSpeakerIdFromScript(script), prompt, menuItems);
+        return askMenu(script, script.getSpeakerTemplateId(), prompt, menuItems);
     }
 
     @SafeVarargs
@@ -312,13 +310,10 @@ public enum ScriptAPI {
             }
         });
 
-        var speaker = ScriptAPI.INSTANCE.getSpeakerIdFromScript(script);
+        var speaker = script.getSpeakerTemplateId();
 
-        script.getUserObject().ifPresentOrElse(obj -> {
-            ScriptAPI.INSTANCE.messengerAskMenu.send(obj, builder.toString(), speaker, 0);
-        }, () -> {
-            log.debug("User object isn't set, workflow is messy.");
-        });
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, builder.toString(), speaker, 0),
+                () -> log.debug("User object isn't set, workflow is messy."));
     }
 
     // =================================================================================================================
@@ -345,11 +340,8 @@ public enum ScriptAPI {
         script.setScriptAction(null);
         script.setScriptResponse(askAvatarResponse(script, options));
 
-        script.getUserObject().ifPresentOrElse(obj -> {
-            ScriptAPI.INSTANCE.messengerAskAvatar.send(obj, prompt, speakerTemplateId, param, options);
-        }, () -> {
-            log.debug("User object isn't set, workflow is messy.");
-        });
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskAvatar.send(obj, prompt, speakerTemplateId, param, options),
+                () -> log.debug("User object isn't set, workflow is messy."));
 
         return script::setScriptAction;
     }
@@ -359,7 +351,7 @@ public enum ScriptAPI {
     }
 
     public static NumberActionChain askAvatar(MoeScript script, String prompt, int... options) {
-        return askAvatar(script, ScriptAPI.INSTANCE.getSpeakerIdFromScript(script), prompt, options);
+        return askAvatar(script, script.getSpeakerTemplateId(), prompt, options);
     }
 
     // =================================================================================================================

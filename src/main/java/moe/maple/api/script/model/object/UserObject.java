@@ -33,6 +33,12 @@ public interface UserObject<T> extends FieldedObject {
 
     T getUser();
 
+    /**
+     * The user's id, typically their database key or sn
+     * @return user id
+     */
+    long getId();
+
     /*
      * Normally these would be classified as a constant and thrown into
      * a static method, so that it could be called whenever. However, since
@@ -84,21 +90,40 @@ public interface UserObject<T> extends FieldedObject {
         var nJob = getJobId();
         return nJob / 1000 == 3;
     }
+
     default boolean isWildHunter() {
         var nJob = getJobId();
         return nJob / 100 == 33;
     }
 
-    boolean hasMoney();
-    boolean increaseMoney(int amount);
-    boolean decreaseMoney(int amount);
-
-    int getId();
+    /**
+     * @return a user's current job id
+     */
     int getJobId();
 
-    /*
-     * Inventory related things.
+    // =================================================================================================================
+
+    /**
+     * @return the user's current mesos/money amount
      */
+    int getMoney();
+
+    default boolean hasMoney(int amount) { return getMoney() >= Math.abs(amount); }
+
+    /**
+     * @param amount the amount to increase
+     * @return if money was increased successfully
+     */
+    boolean increaseMoney(int amount);
+
+    /**
+     * @param amount the amount to decrease
+     * @return if money was decreased successfully
+     */
+    boolean decreaseMoney(int amount);
+
+    // =================================================================================================================
+
     int itemCount(int itemId);
     default boolean hasItem(int itemId, int count) { return itemCount(itemId) > count; }
     default boolean hasItem(int itemId) { return hasItem(itemId, 1); }
