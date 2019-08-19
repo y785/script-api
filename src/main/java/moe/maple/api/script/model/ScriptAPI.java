@@ -148,11 +148,15 @@ public enum ScriptAPI {
     // =================================================================================================================
 
     public static void message(MoeScript script, int type, String message) {
+        script.setScriptResponse(null);
+        script.setScriptAction(null);
         script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerMessage.send(obj, type, message),
                 () -> log.debug("User object isn't set, workflow is messy."));
     }
 
     public static void balloon(MoeScript script, int width, int timeoutInSeconds, String message) {
+        script.setScriptResponse(null);
+        script.setScriptAction(null);
         script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerBalloon.send(obj, message, width, timeoutInSeconds),
                 () -> log.debug("User object isn't set, workflow is messy."));
     }
@@ -277,7 +281,7 @@ public enum ScriptAPI {
     }
 
     public static BasicActionChain say(MoeScript script, String message, Object... objects) {
-        return say(script, MessageFormatter.format(message, objects).getMessage());
+        return say(script, MessageFormatter.arrayFormat(message, objects).getMessage());
     }
 
     // =================================================================================================================
@@ -314,16 +318,19 @@ public enum ScriptAPI {
     private static ScriptResponse askMenuResponse(MoeScript script, int max) {
         return (t, a, o) -> {
             var min = 0;
-            var sel = ((Number)o).intValue();
-            var bad = sel < min || sel > max;
 
-            if (t != SpeakerType.ASKMENU || bad || a.intValue() != 1) {
-                if (bad)
-                    log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
+            if (t != SpeakerType.ASKMENU || a.intValue() != 1) {
                 script.end();
             } else {
-                script.setScriptResponse(null);
-                script.resume(t, a, o);
+                var sel = ((Number)o).intValue();
+                var bad = sel < min || sel > max;
+                if (bad) {
+                    log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
+                    script.end();
+                } else {
+                    script.setScriptResponse(null);
+                    script.resume(t, a, o);
+                }
             }
         };
     }

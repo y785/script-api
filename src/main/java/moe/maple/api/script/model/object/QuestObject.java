@@ -29,4 +29,6 @@ package moe.maple.api.script.model.object;
  */
 public interface QuestObject<T> extends ScriptObject {
     T getQuest();
+
+    int getId();
 }

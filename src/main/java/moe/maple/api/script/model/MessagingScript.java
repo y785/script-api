@@ -41,7 +41,7 @@ public interface MessagingScript extends MoeScript {
         message(Constants.MESSAGE_DEFAULT_TYPE, message, objects);
     }
     default void message(int type, String message, Object... objects) {
-        message(type, MessageFormatter.format(message, objects).getMessage());
+        message(type, MessageFormatter.arrayFormat(message, objects).getMessage());
     }
 
     default void balloon(int width, int timeoutInSeconds, String message) {
@@ -49,7 +49,7 @@ public interface MessagingScript extends MoeScript {
     }
 
     default void balloon(int width, int timeoutInSeconds, String message, Object... objects) {
-        balloon(width, timeoutInSeconds, MessageFormatter.format(message, objects).getMessage());
+        balloon(width, timeoutInSeconds, MessageFormatter.arrayFormat(message, objects).getMessage());
     }
 
     default void balloon(int width, String message) {
@@ -57,11 +57,11 @@ public interface MessagingScript extends MoeScript {
     }
 
     default void balloon(int width, String message, Object... objects) {
-        balloon(width, MessageFormatter.format(message, objects).getMessage());
+        balloon(width, MessageFormatter.arrayFormat(message, objects).getMessage());
     }
 
     default void balloon(String message, Object... objects) {
-        balloon(Constants.BALLOON_DEFAULT_WIDTH, MessageFormatter.format(message, objects).getMessage());
+        balloon(Constants.BALLOON_DEFAULT_WIDTH, MessageFormatter.arrayFormat(message, objects).getMessage());
     }
 
     default void balloon(String message) {

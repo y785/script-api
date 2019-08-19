@@ -121,12 +121,12 @@ public class ScriptStringBuilder {
     // =================================================================================================================
 
     public ScriptStringBuilder appendMenuItem(int menuIndex, String format, Object... objects) {
-        append("#L").append(menuIndex).append("# ").append(format, objects).append("#l");
+        append("#L").append(menuIndex).append("# ").append(format, objects).append("#l\r\n");
         return this;
     }
 
     public ScriptStringBuilder appendMenuItem(int menuIndex, String line) {
-        append("#L").append(menuIndex).append("# ").append(line).append("#l");
+        append("#L").append(menuIndex).append("# ").append(line).append("#l\r\n");
         return this;
     }
 
@@ -143,6 +143,11 @@ public class ScriptStringBuilder {
 
     public ScriptStringBuilder appendMenu(String... options) {
         return appendMenu(ScriptColor.BLUE, options);
+    }
+
+    @Override
+    public String toString() {
+        return sb.toString();
     }
 
     public enum ScriptColor {

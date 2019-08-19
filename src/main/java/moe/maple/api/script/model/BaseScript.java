@@ -88,15 +88,23 @@ public abstract class BaseScript implements MoeScript {
 
     @Override
     public void start() {
+        log.debug("Script is starting: {}", name());
         this.done = false;
         this.nextResponse = null;
         this.nextAction = null;
         this.startScriptEvents.forEach(event -> event.act(this));
-        work();
+        try {
+            work();
+        } catch (Exception e) {
+            log.error("Oh no!", e);
+        }
+        if (nextResponse == null && nextAction == null)
+            end();
     }
 
     @Override
     public void end() {
+        log.debug("Script has ended: {}", name());
         if (done)
             return;
         this.nextResponse = null;
@@ -117,25 +125,30 @@ public abstract class BaseScript implements MoeScript {
         var act = nextAction;
         var resp = nextResponse;
         if (act != null || resp != null) {
-            if (resp != null) {
-                resp.response(type, action, response);
-            } else {
-                if (act instanceof BasicScriptAction) {
-                    ((BasicScriptAction) act).act();
-                    if (nextResponse == null)
-                        this.end();
-                } else if (act instanceof IntegerScriptAction) {
-                    ((IntegerScriptAction) act).act((Integer) response);
-                    if (nextResponse == null)
-                        this.end();
-                } else if (act instanceof StringScriptAction) {
-                    ((StringScriptAction) act).act((String)response);
-                    if (nextResponse == null)
-                        this.end();
+            try {
+                if (resp != null) {
+                    resp.response(type, action, response);
                 } else {
-                    log.error("Couldn't process action: {}", act.getClass().getSimpleName());
-                    this.end();
+                    if (act instanceof BasicScriptAction) {
+                        ((BasicScriptAction) act).act();
+                        if (nextResponse == null)
+                            this.end();
+                    } else if (act instanceof IntegerScriptAction) {
+                        ((IntegerScriptAction) act).act((Integer) response);
+                        if (nextResponse == null)
+                            this.end();
+                    } else if (act instanceof StringScriptAction) {
+                        ((StringScriptAction) act).act((String) response);
+                        if (nextResponse == null)
+                            this.end();
+                    } else {
+                        log.error("Couldn't process action: {}", act.getClass().getSimpleName());
+                        this.end();
+                    }
                 }
+            } catch (Exception e) {
+                log.error(":(", e);
+                end();
             }
         } else {
             end();

@@ -23,6 +23,7 @@
 package moe.maple.api.script.test;
 
 import moe.maple.api.script.model.BaseScript;
+import moe.maple.api.script.model.NpcScript;
 import moe.maple.api.script.model.Script;
 import moe.maple.api.script.model.ScriptAPI;
 import moe.maple.api.script.model.type.SpeakerType;
@@ -56,14 +57,15 @@ public class ApiTest {
     public void apiSayLogic() {
         final String SCRIPT_NAME = "ApiSayLogic1";
 
-        class ApiSayLogic1 extends BaseScript {
+        class NpcScriptTest extends NpcScript {
             @Override
             @Script(name = SCRIPT_NAME)
             public void work() {
-                ScriptAPI.say(this, "0", "1", "2").andThen(() -> {
+                say("Test: {} {} {} {}", 0, 1, 2, 3, 4);
+                say("0", "1", "2").andThen(() -> {
                     log.debug("Beginning sub test 2: Back <-> Forward");
-                    ScriptAPI.say(this, Tuple.of(0, "3"), Tuple.of(0, "4"), Tuple.of(0, "5")).andThen(() -> {
-                        ScriptAPI.say(this, "6");
+                    say(Tuple.of(0, "3"), Tuple.of(0, "4"), Tuple.of(0, "5")).andThen(() -> {
+                        say( "6");
                     });
                 });
             }
@@ -86,7 +88,7 @@ public class ApiTest {
             assertEquals(ableToGoForward, next);
         });
 
-        var test = new ApiSayLogic1();
+        var test = new NpcScriptTest();
         assertEquals(test.name(), SCRIPT_NAME);
         test.work();
 

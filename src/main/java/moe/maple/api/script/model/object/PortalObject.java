@@ -31,4 +31,8 @@ import java.util.Optional;
  */
 public interface PortalObject<T> extends FieldedObject {
     T getPortal();
+
+    String getPortalName();
+
+    int getId();
 }
