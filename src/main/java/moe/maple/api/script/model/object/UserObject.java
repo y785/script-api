@@ -47,6 +47,16 @@ public interface UserObject<T> extends FieldedObject {
      */
     boolean transferField(int fieldId);
 
+    /**
+     * @param spawnPoint Portal Id
+     */
+    boolean transferField(int fieldId, int spawnPoint);
+
+    /**
+     * @param spawnPoint Portal name
+     */
+    boolean transferField(int fieldId, String spawnPoint);
+
     /*
      * Normally these would be classified as a constant and thrown into
      * a static method, so that it could be called whenever. However, since
@@ -168,12 +178,15 @@ public interface UserObject<T> extends FieldedObject {
     default boolean startQuest(int questId) { return setQuestState(questId, 1); }
     default boolean completeQuest(int questId) { return setQuestState(questId, 2); }
 
+    /**
+     * @return an empty string if the quest doesn't have the key
+     */
     String getQuestEx(int questId, String key);
     boolean setQuestEx(int questId, String key, String value);
 
     // =================================================================================================================
 
-    /**
+    /*
      * Aran and evan quest tutors.
      * hire/destroy should add/remove the tutor skill from the respective beginner job.
      * These are used in the beginner quests for legend/noblesse.
@@ -191,11 +204,33 @@ public interface UserObject<T> extends FieldedObject {
 
     // =================================================================================================================
 
-    /**
+    /*
      * Packet: SetStandAloneMode
      */
     void lockUI();
     void unlockUI();
+
+    // =================================================================================================================
+
+    /**
+     * Packet: UserEffectLocal | UserEffect.AvatarOriented
+     * @param path - The Effect.wz UOL, example: Effect/OnUserEff.img/guideEffect/aranTutorial/tutorialArrow1
+     * @param durationInSeconds - The duration of the effect in seconds -- This was removed in later versions.
+     */
+    void avatarOriented(String path, int durationInSeconds);
+
+    /**
+     * Packet: UserEffectLocal | UserEffect.ReservedEffect
+     * This is commonly called showEffect/showIntro/playScene in odin-based sources.
+     * @param path - The Effect.wz UOL, example: Effect/Direction1/aranTutorial/Child
+     */
+    void reservedEffect(String path);
+
+    /**
+     * Packet: UserEffectLocal | UserEffect.PlayPortalSE
+     * See: UserEffect.PlayPortalSE
+     */
+    void playPortalSE();
 
     // =================================================================================================================
 }

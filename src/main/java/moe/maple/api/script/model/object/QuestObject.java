@@ -53,4 +53,11 @@ public interface QuestObject<T> extends ScriptObject {
 
     default boolean start() { return setState(1); }
     default boolean complete() { return setState(2); }
+
+    /**
+     * @return an empty string if the quest doesn't have the key
+     */
+    String getQuestEx(String key);
+
+    boolean setQuestEx(String key, String value);
 }
