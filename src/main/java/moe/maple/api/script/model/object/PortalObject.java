@@ -20,11 +20,15 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.chain;
+package moe.maple.api.script.model.object;
 
-import moe.maple.api.script.model.action.NumberScriptAction;
+import java.util.Optional;
 
-@FunctionalInterface
-public interface NumberActionChain {
-    void andThen(NumberScriptAction next);
+/**
+ * This is a script proxy for portal objects.
+ * <T> should be your implementation of portal.
+ * @param <T>
+ */
+public interface PortalObject<T> extends FieldedObject {
+    T getPortal();
 }

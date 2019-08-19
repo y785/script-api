@@ -39,6 +39,14 @@ public interface UserObject<T> extends FieldedObject {
      */
     long getId();
 
+    /**
+     * This doesn't necessarily have to be an immediate transfer.
+     * You can register an on-script-end event to transfer after script has finished.
+     * @param fieldId the map/field to transfer to
+     * @return true if transfer was successful
+     */
+    boolean transferField(int fieldId);
+
     /*
      * Normally these would be classified as a constant and thrown into
      * a static method, so that it could be called whenever. However, since
@@ -127,4 +135,6 @@ public interface UserObject<T> extends FieldedObject {
     int itemCount(int itemId);
     default boolean hasItem(int itemId, int count) { return itemCount(itemId) > count; }
     default boolean hasItem(int itemId) { return hasItem(itemId, 1); }
+
+    // =================================================================================================================
 }

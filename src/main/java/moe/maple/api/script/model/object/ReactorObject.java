@@ -20,9 +20,13 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.action;
+package moe.maple.api.script.model.object;
 
-@FunctionalInterface
-public interface NumberScriptAction extends ScriptAction {
-    void act(Number object);
+/**
+ * This is a script proxy for reactor objects.
+ * <T> should be your implementation of reactor.
+ * @param <T>
+ */
+public interface ReactorObject<T> extends FieldedObject {
+    T getReactor();
 }

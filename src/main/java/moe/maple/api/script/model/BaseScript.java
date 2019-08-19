@@ -23,7 +23,7 @@
 package moe.maple.api.script.model;
 
 import moe.maple.api.script.model.action.BasicScriptAction;
-import moe.maple.api.script.model.action.NumberScriptAction;
+import moe.maple.api.script.model.action.IntegerScriptAction;
 import moe.maple.api.script.model.action.ScriptAction;
 import moe.maple.api.script.model.action.StringScriptAction;
 import moe.maple.api.script.model.object.FieldObject;
@@ -111,8 +111,8 @@ public abstract class BaseScript implements MoeScript {
                     ((BasicScriptAction) act).act();
                     if (nextResponse == null)
                         this.end();
-                } else if (act instanceof NumberScriptAction) {
-                    ((NumberScriptAction) act).act((Number)response);
+                } else if (act instanceof IntegerScriptAction) {
+                    ((IntegerScriptAction) act).act((Integer) response);
                     if (nextResponse == null)
                         this.end();
                 } else if (act instanceof StringScriptAction) {

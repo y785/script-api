@@ -22,18 +22,13 @@
 
 package moe.maple.api.script.model.object;
 
-import java.util.Optional;
-
 /**
- * This is a script proxy for npc objects.
- * <T> should be your implementation of npc.
+ * This is a script proxy for fieldset objects.
+ * <T> should be your implementation of fieldset.
+ * FieldSets are groups of fields, typically used for party quests
+ * or events.
  * @param <T>
  */
-public interface NpcObject<T> extends FieldedObject {
-    T getNpc();
-
-    /**
-     * @return the speakerId/templateId for packets to use. NOT objectId from odin.
-     */
-    int getTemplateId();
+public interface FieldSetObject<T> extends ScriptObject {
+    T getFieldSet();
 }

@@ -24,18 +24,16 @@ package moe.maple.api.script.model;
 
 import moe.maple.api.script.model.action.*;
 import moe.maple.api.script.model.chain.BasicActionChain;
-import moe.maple.api.script.model.chain.NumberActionChain;
+import moe.maple.api.script.model.chain.IntegerActionChain;
 import moe.maple.api.script.model.messenger.*;
-import moe.maple.api.script.model.object.NpcObject;
-import moe.maple.api.script.model.object.UserObject;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.type.SpeakerType;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
-import moe.maple.api.script.util.tuple.ImmutableTuple;
 import moe.maple.api.script.util.tuple.Tuple;
 import moe.maple.api.script.util.With;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -278,6 +276,10 @@ public enum ScriptAPI {
         return say(script, 0, messages);
     }
 
+    public static BasicActionChain say(MoeScript script, String message, Object... objects) {
+        return say(script, MessageFormatter.format(message, objects).getMessage());
+    }
+
     // =================================================================================================================
 
     public static void askYesNo(MoeScript script, String message, BasicScriptAction onYes, BasicScriptAction onNo) {
@@ -309,10 +311,9 @@ public enum ScriptAPI {
 
     // =================================================================================================================
 
-    private static ScriptResponse askMenuResponse(MoeScript script, String... menuItems) {
+    private static ScriptResponse askMenuResponse(MoeScript script, int max) {
         return (t, a, o) -> {
             var min = 0;
-            var max = menuItems.length - 1;
             var sel = ((Number)o).intValue();
             var bad = sel < min || sel > max;
 
@@ -327,12 +328,12 @@ public enum ScriptAPI {
         };
     }
 
-    public static NumberActionChain askMenu(MoeScript script, int speakerTemplateId, int param, String prompt, String... menuItems) {
+    public static IntegerActionChain askMenu(MoeScript script, int speakerTemplateId, int param, String prompt, String... menuItems) {
         var builder = new ScriptMenuBuilder();
         builder.append(prompt).appendMenu(menuItems);
 
         script.setScriptAction(null);
-        script.setScriptResponse(askMenuResponse(script, menuItems));
+        script.setScriptResponse(askMenuResponse(script, menuItems.length - 1));
 
         script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, builder.toString(), speakerTemplateId, param),
                 () -> log.debug("User object isn't set, workflow is messy."));
@@ -340,12 +341,20 @@ public enum ScriptAPI {
         return script::setScriptAction;
     }
 
-    public static NumberActionChain askMenu(MoeScript script, int speakerTemplateId, String prompt, String... menuItems) {
+    public static IntegerActionChain askMenu(MoeScript script, int speakerTemplateId, String prompt, String... menuItems) {
         return askMenu(script, speakerTemplateId, 0, prompt, menuItems);
     }
 
-    public static NumberActionChain askMenu(MoeScript script, String prompt, String... menuItems) {
+    public static IntegerActionChain askMenu(MoeScript script, String prompt, String... menuItems) {
         return askMenu(script, script.getSpeakerTemplateId(), prompt, menuItems);
+    }
+
+    public static IntegerActionChain askMenu(MoeScript script, String prompt) {
+        script.setScriptAction(null);
+        script.setScriptResponse(askMenuResponse(script, prompt.length() - prompt.replace("#L", "").length() - 1));
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, prompt, script.getSpeakerTemplateId(), 0),
+                () -> log.debug("User object isn't set, workflow is messy."));
+        return script::setScriptAction;
     }
 
     @SafeVarargs
@@ -397,7 +406,7 @@ public enum ScriptAPI {
         };
     }
 
-    public static NumberActionChain askAvatar(MoeScript script, int speakerTemplateId, int param, String prompt, int... options) {
+    public static IntegerActionChain askAvatar(MoeScript script, int speakerTemplateId, int param, String prompt, int... options) {
         script.setScriptAction(null);
         script.setScriptResponse(askAvatarResponse(script, options));
 
@@ -407,11 +416,11 @@ public enum ScriptAPI {
         return script::setScriptAction;
     }
 
-    public static NumberActionChain askAvatar(MoeScript script, int speakerTemplateId, String prompt, int... options) {
+    public static IntegerActionChain askAvatar(MoeScript script, int speakerTemplateId, String prompt, int... options) {
         return askAvatar(script, speakerTemplateId, 0, prompt, options);
     }
 
-    public static NumberActionChain askAvatar(MoeScript script, String prompt, int... options) {
+    public static IntegerActionChain askAvatar(MoeScript script, String prompt, int... options) {
         return askAvatar(script, script.getSpeakerTemplateId(), prompt, options);
     }
 

@@ -20,20 +20,9 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object;
+package moe.maple.api.script.model.action;
 
-import java.util.Optional;
-
-/**
- * This is a script proxy for npc objects.
- * <T> should be your implementation of npc.
- * @param <T>
- */
-public interface NpcObject<T> extends FieldedObject {
-    T getNpc();
-
-    /**
-     * @return the speakerId/templateId for packets to use. NOT objectId from odin.
-     */
-    int getTemplateId();
+@FunctionalInterface
+public interface IntegerScriptAction extends ScriptAction {
+    void act(Integer object);
 }

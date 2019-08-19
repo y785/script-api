@@ -24,8 +24,7 @@ package moe.maple.api.script.model;
 
 import moe.maple.api.script.model.action.BasicScriptAction;
 import moe.maple.api.script.model.chain.BasicActionChain;
-import moe.maple.api.script.model.chain.NumberActionChain;
-import moe.maple.api.script.model.object.NpcObject;
+import moe.maple.api.script.model.chain.IntegerActionChain;
 import moe.maple.api.script.util.tuple.Tuple;
 
 /**
@@ -39,6 +38,10 @@ public interface SpeakingScript extends MessagingScript {
 
     default BasicActionChain say(String... messages) {
         return ScriptAPI.say(this, messages);
+    }
+
+    default BasicActionChain say(String message, Object... objects) {
+        return ScriptAPI.say(this, message, objects);
     }
 
     default BasicActionChain say(int param, String... messages) {
@@ -73,16 +76,20 @@ public interface SpeakingScript extends MessagingScript {
 
     // =================================================================================================================
 
-    default NumberActionChain askMenu(int speakerTemplateId, int param, String prompt, String... menuItems) {
+    default IntegerActionChain askMenu(int speakerTemplateId, int param, String prompt, String... menuItems) {
         return ScriptAPI.askMenu(this, speakerTemplateId, param, prompt, menuItems);
     }
 
-    default NumberActionChain askMenu(int speakerTemplateId, String prompt, String... menuItems) {
+    default IntegerActionChain askMenu(int speakerTemplateId, String prompt, String... menuItems) {
         return ScriptAPI.askMenu(this, speakerTemplateId, prompt, menuItems);
     }
 
-    default NumberActionChain askMenu(String prompt, String... menuItems) {
+    default IntegerActionChain askMenu(String prompt, String... menuItems) {
         return ScriptAPI.askMenu(this, prompt, menuItems);
+    }
+
+    default IntegerActionChain askMenu(String prompt) {
+        return ScriptAPI.askMenu(this, prompt);
     }
 
     default void askMenu(String prompt, Tuple<String, BasicScriptAction>... options) {
@@ -91,15 +98,15 @@ public interface SpeakingScript extends MessagingScript {
 
     // =================================================================================================================
 
-    default NumberActionChain askAvatar(int speakerTemplateId, int param, String prompt, int... options) {
+    default IntegerActionChain askAvatar(int speakerTemplateId, int param, String prompt, int... options) {
         return ScriptAPI.askAvatar(this, speakerTemplateId, param, prompt, options);
     }
 
-    default NumberActionChain askAvatar(int speakerTemplateId, String prompt, int... options) {
+    default IntegerActionChain askAvatar(int speakerTemplateId, String prompt, int... options) {
         return ScriptAPI.askAvatar(this, speakerTemplateId, prompt, options);
     }
 
-    default NumberActionChain askAvatar(String prompt, int... options) {
+    default IntegerActionChain askAvatar(String prompt, int... options) {
         return ScriptAPI.askAvatar(this, prompt, options);
     }
 }

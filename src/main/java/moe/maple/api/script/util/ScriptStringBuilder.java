@@ -22,6 +22,9 @@
 
 package moe.maple.api.script.util;
 
+import moe.maple.api.script.util.builder.ScriptMenuBuilder;
+import org.slf4j.helpers.MessageFormatter;
+
 public class ScriptStringBuilder {
 
     private final StringBuilder sb;
@@ -50,6 +53,11 @@ public class ScriptStringBuilder {
 
     public ScriptStringBuilder append(CharSequence s) {
         sb.append(s);
+        return this;
+    }
+
+    public ScriptStringBuilder append(String format, Object... objects) {
+        sb.append(MessageFormatter.arrayFormat(format, objects).getMessage());
         return this;
     }
 
@@ -112,12 +120,24 @@ public class ScriptStringBuilder {
 
     // =================================================================================================================
 
+    public ScriptStringBuilder appendMenuItem(int menuIndex, String format, Object... objects) {
+        append("#L").append(menuIndex).append("# ").append(format, objects).append("#l");
+        return this;
+    }
+
+    public ScriptStringBuilder appendMenuItem(int menuIndex, String line) {
+        append("#L").append(menuIndex).append("# ").append(line).append("#l");
+        return this;
+    }
+
     public ScriptStringBuilder appendMenu(ScriptColor color, String... options) {
-        sb.append(color.prefix);
+        if (color != this.color)
+            sb.append(color.prefix);
         With.index(options, (s, i) -> {
-            sb.append("#L").append(i).append("# ").append(s).append("#l");
+            appendMenuItem(i, s);
         });
-        sb.append(this.color.prefix);
+        if (color != this.color)
+            sb.append(this.color.prefix);
         return this;
     }
 
