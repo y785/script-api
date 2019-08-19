@@ -47,10 +47,19 @@ public enum ScriptAPI {
     INSTANCE;
     private static final Logger log = LoggerFactory.getLogger( ScriptAPI.class );
 
-    private SayMessenger messengerSay;
-    private AskYesNoMessenger messengerAskYesNo;
-    private AskMenuMessenger messengerAskMenu;
+    private AskAcceptMessenger messengerAskAccept;
     private AskAvatarMessenger messengerAskAvatar;
+    private AskBoxTextMessenger messengerAskBoxText;
+    private AskMemberShopAvatar messengerAskMemberShopAvatar;
+    private AskMenuMessenger messengerAskMenu;
+    private AskNumberMessenger messengerAskNumber;
+    private AskQuizMessenger messengerAskQuiz;
+    private AskSlideMenuMessenger messengerAskSlideMenu;
+    private AskSpeedQuizMessenger messengerAskSpeedQuiz;
+    private AskTextMessenger messengerAskText;
+    private AskYesNoMessenger messengerAskYesNo;
+    private SayImageMessenger messengerSayImage;
+    private SayMessenger messengerSay;
 
     private MessageMessenger messengerMessage;
     private BalloonMessenger messengerBalloon;
@@ -58,24 +67,86 @@ public enum ScriptAPI {
     ScriptAPI() { }
 
     public void setDefaultMessengers() {
-        messengerSay = (script, message, speakerTemplateId, param, previous, next) -> log.debug("say-> speaker: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerTemplateId, param, previous, next, message);
-        messengerAskYesNo = (script, message, speakerTemplateId, param) -> log.debug("askYesNo-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
-        messengerAskMenu = (script, message, speakerTemplateId, param) -> log.debug("askMenu-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
+        messengerAskAccept = (userObject, speakerTemplateId, param, message) -> log.debug("askAccept-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
         messengerAskAvatar = (userObject, message, speakerTemplateId, param,  options) -> log.debug("askAvatar-> speaker: {}, param: {}, options: {}, message: \"{}\"", speakerTemplateId, param, options, message);
+        messengerAskBoxText = (userObject, speakerTemplateId, param, message, defaultText, column, row) -> log.debug("askBoxText-> speaker: {}, param: {}, column: {}, row: {}, default: \"{}\", message: \"{}\"", speakerTemplateId, param, column, row, defaultText, message);
+        messengerAskMemberShopAvatar = (userObject, speakerTemplateId, param, message, options) -> log.debug("askMemberShopAvatar-> speaker: {}, param: {}, options: {}, message: \"{}\"", speakerTemplateId, param, options, message);
+        messengerAskMenu = (userObject, message, speakerTemplateId, param) -> log.debug("askMenu-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
+        messengerAskNumber = (userObject, speakerTemplateId, param, message, defaultNumber, min, max) -> log.debug("askNumber-> speaker: {}, param: {}, min: {}, max: {}, default: {}, message: \"{}\"", speakerTemplateId, param, min, max, defaultNumber, message);
+        messengerAskQuiz = (userObject, speakerTemplateId, param, title, problemText, hintText, min, max, remainInitialQuiz) -> log.debug("askQuiz-> speaker: {}, param: {}, min: {}, max: {}, remain: {}, title: \"{}\", problem: \"{}\", hint: \"{}\"", speakerTemplateId, param, min, max, remainInitialQuiz, title, problemText, hintText);
+        messengerAskSlideMenu = (userObject, speakerTemplateId, slideDlgEX, index, message) -> log.debug("askSlideMenu-> speaker: {}, slideDlgEX: {}, index: {}, message: \"{}\"", speakerTemplateId, slideDlgEX, index, message);
+        messengerAskSpeedQuiz = (userObject, speakerTemplateId, param, type, answer, correct, remaining, remainInitialQuiz, title, problemText, hintText, min, max, remainInitialQuiz1) -> log.debug("askSpeedQuiz-> speaker: {}, param: {}, type: {}, answer: {}, correct: {}, remaining: {}, remain: {}, title: \"{}\", problem: \"{}\", hint: \"{}\", min: {}, max: {}, remain1: {}", speakerTemplateId, param, type, answer, correct, remaining, remainInitialQuiz, title, problemText, hintText, min, max, remainInitialQuiz1);
+        messengerAskText = (userObject, speakerTemplateId, param, message, defaultText, min, max) -> log.debug("askText-> speaker: {}, param: {}, min: {}, max: {}, default: \"{}\", message: \"{}\"", speakerTemplateId, param, min, max, defaultText, message);
+        messengerAskYesNo = (userObject, message, speakerTemplateId, param) -> log.debug("askYesNo-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
+        messengerSayImage = (userObject, speakerTemplateId, param, imagePath) -> log.debug("sayImage-> speaker: {}, param: {}, path: {}", speakerTemplateId, param, imagePath);
+        messengerSay = (userObject, message, speakerTemplateId, param, previous, next) -> log.debug("say-> speaker: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerTemplateId, param, previous, next, message);
 
 
         messengerMessage = ((userObject, type, message) -> log.debug("message-> type: {}, message: \"{}\"", type, message));
         messengerBalloon = ((userObject, message, width, timeoutInSeconds) -> log.debug("balloon-> width: {}, timeout: {}, message: \"{}\"", width, timeoutInSeconds, message));
     }
 
-    public void setSayMessenger(SayMessenger msger) { this.messengerSay = msger; }
-    public void setMessengerAskYesNo(AskYesNoMessenger msger) { this.messengerAskYesNo = msger; }
-    public void setAskMenuMessenger(AskMenuMessenger msger) { this.messengerAskMenu = msger; }
-    public void setAskAvatarMessenger(AskAvatarMessenger msger) { this.messengerAskAvatar = msger; }
+    // =================================================================================================================
 
-    public void setMessageMessenger(MessageMessenger msger) { this.messengerMessage = msger; }
-    public void setBalloonMessenger(BalloonMessenger msger) { this.messengerBalloon = msger; }
+    public void setMessengerAskAccept(AskAcceptMessenger messengerAskAccept) {
+        this.messengerAskAccept = messengerAskAccept;
+    }
 
+    public void setMessengerAskAvatar(AskAvatarMessenger messengerAskAvatar) {
+        this.messengerAskAvatar = messengerAskAvatar;
+    }
+
+    public void setMessengerAskBoxText(AskBoxTextMessenger messengerAskBoxText) {
+        this.messengerAskBoxText = messengerAskBoxText;
+    }
+
+    public void setMessengerAskMemberShopAvatar(AskMemberShopAvatar messengerAskMemberShopAvatar) {
+        this.messengerAskMemberShopAvatar = messengerAskMemberShopAvatar;
+    }
+
+    public void setMessengerAskMenu(AskMenuMessenger messengerAskMenu) {
+        this.messengerAskMenu = messengerAskMenu;
+    }
+
+    public void setMessengerAskNumber(AskNumberMessenger messengerAskNumber) {
+        this.messengerAskNumber = messengerAskNumber;
+    }
+
+    public void setMessengerAskQuiz(AskQuizMessenger messengerAskQuiz) {
+        this.messengerAskQuiz = messengerAskQuiz;
+    }
+
+    public void setMessengerAskSlideMenu(AskSlideMenuMessenger messengerAskSlideMenu) {
+        this.messengerAskSlideMenu = messengerAskSlideMenu;
+    }
+
+    public void setMessengerAskSpeedQuiz(AskSpeedQuizMessenger messengerAskSpeedQuiz) {
+        this.messengerAskSpeedQuiz = messengerAskSpeedQuiz;
+    }
+
+    public void setMessengerAskText(AskTextMessenger messengerAskText) {
+        this.messengerAskText = messengerAskText;
+    }
+
+    public void setMessengerAskYesNo(AskYesNoMessenger messengerAskYesNo) {
+        this.messengerAskYesNo = messengerAskYesNo;
+    }
+
+    public void setMessengerSayImage(SayImageMessenger messengerSayImage) {
+        this.messengerSayImage = messengerSayImage;
+    }
+
+    public void setMessengerSay(SayMessenger messengerSay) {
+        this.messengerSay = messengerSay;
+    }
+
+    public void setMessengerMessage(MessageMessenger messengerMessage) {
+        this.messengerMessage = messengerMessage;
+    }
+
+    public void setMessengerBalloon(BalloonMessenger messengerBalloon) {
+        this.messengerBalloon = messengerBalloon;
+    }
 
     // =================================================================================================================
 

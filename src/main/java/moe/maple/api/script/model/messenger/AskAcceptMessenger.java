@@ -26,5 +26,5 @@ import moe.maple.api.script.model.object.UserObject;
 
 @FunctionalInterface
 public interface AskAcceptMessenger extends ScriptMessenger {
-    void send(UserObject userObject, int speakerTemplateId, int param, String text);
+    void send(UserObject userObject, int speakerTemplateId, int param, String message);
 }

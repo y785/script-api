@@ -26,5 +26,5 @@ import moe.maple.api.script.model.object.UserObject;
 
 @FunctionalInterface
 public interface AskBoxTextMessenger extends ScriptMessenger {
-    void send(UserObject userObject, int speakerTemplateId, int param, String text, String defaultText, int column, int row);
+    void send(UserObject userObject, int speakerTemplateId, int param, String message, String defaultText, int column, int row);
 }
