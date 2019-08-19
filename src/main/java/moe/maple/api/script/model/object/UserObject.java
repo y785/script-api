@@ -40,6 +40,33 @@ public interface UserObject<T> extends FieldedObject {
     long getId();
 
     /**
+     * @return the user's name, duh
+     */
+    String getName();
+
+    // =================================================================================================================
+
+    /**
+     * This doesn't necessarily have to be immediate. Recommended
+     * procedure is to add an on-end-event for current script, to go to the next script.
+     * @param scriptName the script to chain to
+     */
+    void talkTo(String scriptName);
+
+    /**
+     * @param npcId - The NPC used to grab the script name.
+     */
+    void talkTo(int npcId);
+
+    /**
+     * See above for implementation recommendations.
+     * @param shopId the shop id to load
+     */
+    void openShop(int shopId);
+
+    // =================================================================================================================
+
+    /**
      * This doesn't necessarily have to be an immediate transfer.
      * You can register an on-script-end event to transfer after script has finished.
      * @param fieldId the map/field to transfer to
@@ -56,6 +83,8 @@ public interface UserObject<T> extends FieldedObject {
      * @param spawnPoint Portal name
      */
     boolean transferField(int fieldId, String spawnPoint);
+
+    // =================================================================================================================
 
     /*
      * Normally these would be classified as a constant and thrown into
@@ -108,7 +137,6 @@ public interface UserObject<T> extends FieldedObject {
         var nJob = getJobId();
         return nJob / 1000 == 3;
     }
-
     default boolean isWildHunter() {
         var nJob = getJobId();
         return nJob / 100 == 33;
@@ -134,6 +162,8 @@ public interface UserObject<T> extends FieldedObject {
      */
     boolean increaseMoney(int amount);
     boolean decreaseMoney(int amount);
+
+    // =================================================================================================================
 
     /**
      * Teach the user the skill provided.
