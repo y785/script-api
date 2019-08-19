@@ -165,6 +165,49 @@ public interface UserObject<T> extends FieldedObject {
 
     // =================================================================================================================
 
+    int getHealth();
+    int getMana();
+
+    int getHealthMax();
+    int getManaMax();
+
+    /**
+     * This does NOT increase a user's maximum health pool.
+     * This INCREASES the CURRENT health by an amount.
+     * This is a HEAL.
+     * @return true if field allows healing/user can be healed.
+     */
+    boolean increaseHealth(int amountToHeal);
+
+    /**
+     * This does NOT increase a user's maximum mana pool.
+     * This INCREASES the CURRENT mana by an amount.
+     * This is a HEAL.
+     * @return true if field allows healing/user can be healed.
+     */
+    boolean increaseMana(int amountToHeal);
+
+    /**
+     * This INCREASES a user's maximum health pool.
+     * This DOES NOT HEAL.
+     * @return true if was able to increase
+     */
+    boolean increaseHealthMax(int amountToIncrease);
+
+    /**
+     * This INCREASES a user's maximum mana pool.
+     * This DOES NOT HEAL.
+     * @return true if was able to increase
+     */
+    boolean increaseManaMax(int amountToIncrease);
+
+    /**
+     * Heals a user to max health/mana.
+     */
+    default boolean heal() { return increaseHealth(Integer.MAX_VALUE) && increaseMana(Integer.MAX_VALUE); }
+
+    // =================================================================================================================
+
     /**
      * Teach the user the skill provided.
      * @param skillId - Skill id
