@@ -84,70 +84,205 @@ public interface UserObject<T> extends FieldedObject, InventoryHolderObject<T>, 
      */
     boolean transferField(int fieldId, String spawnPoint);
 
+    /**
+     * Teach the user the skill provided.
+     * @param skillId - Skill id
+     * @param level   - Skill level
+     * @param mastery - Skill mastery
+     * @return true if user learned the targeted skill, level, & mastery.
+     */
+    boolean learnSkill(int skillId, int level, int mastery);
+
+    /**
+     * @param skillId - Skill id
+     * @return true if the skill was forgotten/removed.
+     */
+    boolean forgetSkill(int skillId);
+
+    default boolean learnSkill(int skillId, int level) { return learnSkill(skillId, level, 1); }
+    default boolean learnSkill(int skillId) { return learnSkill(skillId, 1, 1); }
+
+    /**
+     * Gives the user a buff based on a consumable itemId.
+     * @param buffItemId a consumable itemId
+     * @return true if the operation is successful.
+     */
+    boolean giveBuff(int buffItemId);
+
     // =================================================================================================================
 
     /*
-     * Normally these would be classified as a constant and thrown into
-     * a static method, so that it could be called whenever. However, since
-     * these change based on version,  it's important that you have to ability
-     * to override these as nexon changes jobs. So, for now, some simple implementations.
-     * Based on v92 ~ v95.
+     * Aran and evan quest tutors.
+     * hire/fire should add/remove the tutor skill from the respective beginner job.
+     * These are used in the beginner quests for legend/noblesse.
+     * Packet: UserHireTutor / UserTutorMsg
      */
-    default boolean isAdmin() {
-        var nJob = getJobId();
-        return nJob % 1000 / 100 == 9;
+
+    boolean hireTutor();
+    boolean fireTutor();
+
+    void tutorMessage(int value, int duration);
+    default void tutorMessage(int value) { tutorMessage(value, 7000); }
+
+    default void tutorMessage(String value) { tutorMessage(value, 200, 7000); }
+    void tutorMessage(String value, int width, int duration);
+
+    // =================================================================================================================
+
+    /*
+     * Packet: SetStandAloneMode
+     */
+    void setStandAloneMode(boolean set);
+    /*
+     * Packet: DirectionMode
+     */
+    void setDirectionMode(boolean set);
+
+    // =================================================================================================================
+
+    /**
+     * Packet: UserEffectLocal | UserEffect.AvatarOriented
+     * @param path - The Effect.wz UOL, example: "Effect/OnUserEff.img/guideEffect/aranTutorial/tutorialArrow1"
+     * @param durationInSeconds - The duration of the effect in seconds -- This was removed in later versions.
+     */
+    void avatarOriented(String path, int durationInSeconds);
+
+    /**
+     * Packet: UserEffectLocal | UserEffect.ReservedEffect
+     * This is commonly called showEffect/showIntro/playScene in odin-based sources.
+     * @param path - The Effect.wz UOL, example: "Effect/Direction1/aranTutorial/Child"
+     */
+    void reservedEffect(String path);
+
+    /**
+     * Packet: UserEffectLocal | UserEffect.PlayPortalSE
+     * See: UserEffect.PlayPortalSE
+     */
+    void playPortalSE();
+
+    // =================================================================================================================
+
+    /**
+     * Packet: FieldEffect | FieldEffectType.FieldEffect_Screen
+     * @param path - The Map.wz UOL, relative to "Map.wz/Effect.img", example: "maplemap/enter/50000"
+     */
+    void fieldEffectScreen(String path);
+
+    /**
+     * Packet: FieldEffect | FieldEffectType.FieldEffect_Sound
+     * @param path - The Sound.wz UOL, relative to "Sound.wz/Field.img", example: "Aran/balloon"
+     */
+    void fieldEffectSound(String path);
+
+    /**
+     * Sends a Field Object Effect to the user.
+     * @param path WZ UOL to the effect.
+     */
+    void fieldEffectObject(String path);
+
+    /**
+     * Sends a Tremble Effect to the User.
+     * @param type Heavy / Short (?) Undocumented atm.
+     * @param delay delay in milliseconds
+     */
+    void fieldEffectTremble(int type, int delay);
+
+    // =================================================================================================================
+
+
+    //================================================================================================================//
+    /**
+     * Unfortunately, there are only three Genders in MapleStory #confirmed
+     * 0 = MALE
+     * 1 = FEMALE
+     * 2 = BOTH
+     * @return The user's gender represented as an integer.
+     */
+    int getGender();
+
+    /**
+     * Gender in 2019?
+     * @return true if the User's gender is set to Male.
+     */
+    default boolean isMale() {
+        return getGender() == 0;
     }
-    default boolean isAran() {
-        var nJob = getJobId();
-        return nJob / 100 == 21 || nJob == 2000;
-    }
-    default boolean isBeginner() {
-        var nJob = getJobId();
-        return (nJob % 1000 == 0) || nJob == 2001;
-    }
-    default boolean isBattleMage() {
-        var nJob = getJobId();
-        return nJob / 100 == 32;
-    }
-    default boolean isCygnus() {
-        var nJob = getJobId();
-        return nJob / 1000 == 1;
-    }
-    default boolean isDualBlade() {
-        var nJob = getJobId();
-        return nJob / 10 == 43;
-    }
-    default boolean isExtendedSPJob() {
-        var nJob = getJobId();
-        return nJob / 1000 == 3 || nJob / 100 == 22 || nJob == 2001;
-    }
-    default boolean isEvan() {
-        var nJob = getJobId();
-        return nJob / 100 == 22 || nJob == 2001;
-    }
-    default boolean isManager() {
-        var nJob = getJobId();
-        return nJob % 1000 / 100 == 8;
-    }
-    default boolean isMechanic() {
-        var nJob = getJobId();
-        return nJob / 100 == 35;
-    }
-    default boolean isResistance() {
-        var nJob = getJobId();
-        return nJob / 1000 == 3;
-    }
-    default boolean isWildHunter() {
-        var nJob = getJobId();
-        return nJob / 100 == 33;
+    /**
+     *
+     * Always false, trust me. Not the return value.
+     * @return true if the User's gender is set to Female.
+     */
+    default boolean isFemale() {
+        return getGender() == 1;
     }
 
     /**
-     * @return a user's current job id
+     * Retrieves the User's current Hair Identifier.
+     * @return hairId as an integer
      */
-    int getJobId();
+    int getHair();
+
+    /**
+     * Retrieves the User's current Face Identifier.
+     * @return faceId as an integer
+     */
+    int getFace();
+
+    /**
+     * Sets the user's Hair identifier.
+     * @param hairId A Hair identifier
+     * @return true if the operation completes successfully.
+     */
+    boolean setHair(int hairId);
+
+    /**
+     * Sets the user's Face identifier.
+     * @param faceId A Face identifier
+     * @return true if the operation completes successfully.
+     */
+    boolean setFace(int faceId);
+
+    /**
+     * Retrieves the User's current Skin Identifier.
+     * @return skinId as an integer
+     */
+    int getSkin();
+
+    /**
+     * Retrieves the user's Strength stat.
+     * @return The user's STR as an Integer.
+     */
+    int getStrength();
+
+    /**
+     * Retrieves the user's Dexterity stat.
+     * @return The user's DEX as an Integer.
+     */
+    int getDexterity();
+
+
+    /**
+     * Retrieves the user's Intelligence stat.
+     * @return The user's INT as an Integer.
+     */
+    int getIntelligence();
+
+    /**
+     * Retrieves the user's Luck stat.
+     * @return The user's LUK as an Integer.
+     */
+    int getLuck();
+
+    /**
+     * Retrieves the user's current fame stat.
+     * @return The user's current POP as an integer
+     */
+    int getFame();
+
+    boolean sendCharacterStat(boolean exclReq);
 
     // =================================================================================================================
+
 
     /**
      * @return the user's current mesos/money amount
@@ -162,51 +297,6 @@ public interface UserObject<T> extends FieldedObject, InventoryHolderObject<T>, 
      */
     boolean increaseMoney(int amount);
     boolean decreaseMoney(int amount);
-
-    // =================================================================================================================
-
-    int getHealth();
-    int getMana();
-
-    int getHealthMax();
-    int getManaMax();
-
-    /**
-     * This does NOT increase a user's maximum health pool.
-     * This INCREASES the CURRENT health by an amount.
-     * This is a HEAL.
-     * @return true if field allows healing/user can be healed.
-     */
-    boolean increaseHealth(int amountToHeal);
-
-    /**
-     * This does NOT increase a user's maximum mana pool.
-     * This INCREASES the CURRENT mana by an amount.
-     * This is a HEAL.
-     * @return true if field allows healing/user can be healed.
-     */
-    boolean increaseMana(int amountToHeal);
-
-    /**
-     * This INCREASES a user's maximum health pool.
-     * This DOES NOT HEAL.
-     * @return true if was able to increase
-     */
-    boolean increaseHealthMax(int amountToIncrease);
-
-    /**
-     * This INCREASES a user's maximum mana pool.
-     * This DOES NOT HEAL.
-     * @return true if was able to increase
-     */
-    boolean increaseManaMax(int amountToIncrease);
-
-    /**
-     * Heals a user to max health/mana.
-     */
-    default boolean heal() { return increaseHealth(Integer.MAX_VALUE) && increaseMana(Integer.MAX_VALUE); }
-
-    // =================================================================================================================
 
     /**
      * @return user's current level
@@ -276,84 +366,104 @@ public interface UserObject<T> extends FieldedObject, InventoryHolderObject<T>, 
     // =================================================================================================================
 
     /**
-     * Teach the user the skill provided.
-     * @param skillId - Skill id
-     * @param level   - Skill level
-     * @param mastery - Skill mastery
-     * @return true if user learned the targeted skill, level, & mastery.
+     * This is intended to be used for job advancement, but doesn't have to be.
+     * @param jobCode A {@link Short} job identifier.
+     * @param isJobAdvancement if true, the user's stats should increase as they would per job advancement.
+     * @return true if the operation completes successfully.
      */
-    boolean learnSkill(int skillId, int level, int mastery);
+    boolean setJob(short jobCode, boolean isJobAdvancement);
 
     /**
-     * @param skillId - Skill id
-     * @return true if the skill was forgotten/removed.
+     * @see #setJob(short, boolean)
+     * @param jobCode A {@link Short} job identifier.
+     * @return true if the operation completes successfully.
      */
-    boolean forgetSkill(int skillId);
+    default boolean setJob(short jobCode) {
+        return setJob(jobCode, false);
+    }
 
-    default boolean learnSkill(int skillId, int level) { return learnSkill(skillId, level, 1); }
-    default boolean learnSkill(int skillId) { return learnSkill(skillId, 1, 1); }
+    /**
+     * @return a user's current job id
+     */
+    int getJobId();
 
     // =================================================================================================================
 
     /*
-     * Aran and evan quest tutors.
-     * hire/destroy should add/remove the tutor skill from the respective beginner job.
-     * These are used in the beginner quests for legend/noblesse.
-     * Packet: UserHireTutor / UserTutorMsg
+     * Normally these would be classified as a constant and thrown into
+     * a static method, so that it could be called whenever. However, since
+     * these change based on version,  it's important that you have to ability
+     * to override these as nexon changes jobs. So, for now, some simple implementations.
+     * Based on v92 ~ v95.
      */
-
-    boolean hireTutor();
-    boolean destroyTutor();
-
-    void tutorMessage(int value, int duration);
-    default void tutorMessage(int value) { tutorMessage(value, 7000); }
-
-    void tutorMessage(String value);
-    void tutorMessage(String value, int width, int duration);
+    default boolean isAdmin() {
+        var nJob = getJobId();
+        return nJob % 1000 / 100 == 9;
+    }
+    default boolean isAran() {
+        var nJob = getJobId();
+        return nJob / 100 == 21 || nJob == 2000;
+    }
+    default boolean isBeginner() {
+        var nJob = getJobId();
+        return (nJob % 1000 == 0) || nJob == 2001;
+    }
+    default boolean isBattleMage() {
+        var nJob = getJobId();
+        return nJob / 100 == 32;
+    }
+    default boolean isCygnus() {
+        var nJob = getJobId();
+        return nJob / 1000 == 1;
+    }
+    default boolean isDualBlade() {
+        var nJob = getJobId();
+        return nJob / 10 == 43;
+    }
+    default boolean isExtendedSPJob() {
+        var nJob = getJobId();
+        return nJob / 1000 == 3 || nJob / 100 == 22 || nJob == 2001;
+    }
+    default boolean isEvan() {
+        var nJob = getJobId();
+        return nJob / 100 == 22 || nJob == 2001;
+    }
+    default boolean isManager() {
+        var nJob = getJobId();
+        return nJob % 1000 / 100 == 8;
+    }
+    default boolean isMechanic() {
+        var nJob = getJobId();
+        return nJob / 100 == 35;
+    }
+    default boolean isResistance() {
+        var nJob = getJobId();
+        return nJob / 1000 == 3;
+    }
+    default boolean isWildHunter() {
+        var nJob = getJobId();
+        return nJob / 100 == 33;
+    }
 
     // =================================================================================================================
 
-    /*
-     * Packet: SetStandAloneMode
+    /**
+     * Resets the User's AP in all 4 primary stats (STR, DEX, LUK, INT)
+     * @param remain How much AP should remain after resetting (typically min of 4)
+     * @return The # of AP reset.
      */
-    void lockUI();
-    void unlockUI();
-
-    // =================================================================================================================
+    int resetAp(int remain);
 
     /**
-     * Packet: UserEffectLocal | UserEffect.AvatarOriented
-     * @param path - The Effect.wz UOL, example: "Effect/OnUserEff.img/guideEffect/aranTutorial/tutorialArrow1"
-     * @param durationInSeconds - The duration of the effect in seconds -- This was removed in later versions.
+     * Calls {@link #resetAp(int)} with a value of 4, the standard default minimum AP per stat.
+     * @return The # of AP reset.
      */
-    void avatarOriented(String path, int durationInSeconds);
+    default int resetAp() {
+        return resetAp(4);
+    }
 
-    /**
-     * Packet: UserEffectLocal | UserEffect.ReservedEffect
-     * This is commonly called showEffect/showIntro/playScene in odin-based sources.
-     * @param path - The Effect.wz UOL, example: "Effect/Direction1/aranTutorial/Child"
-     */
-    void reservedEffect(String path);
+    void openSkillGuide();
 
-    /**
-     * Packet: UserEffectLocal | UserEffect.PlayPortalSE
-     * See: UserEffect.PlayPortalSE
-     */
-    void playPortalSE();
+    void openClassCompetitionPage();
 
-    // =================================================================================================================
-
-    /**
-     * Packet: FieldEffect | FieldEffectType.FieldEffect_Screen
-     * @param path - The Map.wz UOL, relative to "Map.wz/Effect.img", example: "maplemap/enter/50000"
-     */
-    void fieldEffectScreen(String path);
-
-    /**
-     * Packet: FieldEffect | FieldEffectType.FieldEffect_Sound
-     * @param path - The Sound.wz UOL, relative to "Sound.wz/Field.img", example: "Aran/balloon"
-     */
-    void fieldEffectSound(String path);
-
-    // =================================================================================================================
 }
