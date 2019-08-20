@@ -32,4 +32,52 @@ public interface FieldObject<T> extends ScriptObject {
     T getField();
 
     int getId();
+    /**
+     * Returns a count of the mobs in a map, by ID.
+     * @param mobId the ID of the mob to count
+     * @return a count of the mob specified in the map
+     */
+    int getMobCount(int mobId);
+
+    /**
+     * @return a count of all users in the field.
+     */
+    int getUserCount();
+
+    /**
+     * Nexon's comment:
+     ** Returns the HP of the Mob.
+     ** Valid only when there is only one Mob with a specific ID.
+     ** If there is no Mob, return -1
+     * @param mobId the template ID of the mob
+     * @return See nexon's note.
+     */
+    long getMobHp(int mobId);
+
+    int countUserInArea(String areaName);
+    int countMaleInArea(String areaName);
+    int countFemaleInArea(String areaName);
+
+    /**
+     * Sends a packet to the Field, enabling or disabling a portal.
+     * @param portalName the name of the portal to enable.
+     * @param enable TRUE if enabling, FALSE if disabling.
+     * @return TRUE if the portal is now enabled, false otherwise.
+     */
+    boolean enablePortal(String portalName, boolean enable);
+    default boolean enablePortal(String portalName) {
+        return enablePortal(portalName, true);
+    }
+    default boolean disablePortal(String portalName) {
+        return enablePortal(portalName, false);
+    }
+
+    /**
+     * Summons a mob in the current field instance.
+     * @param templateId The mob's template ID. OR mob sack item?
+     * @param xPos the mob's proposed x position.
+     * @param yPos the mob's proposed y position.
+     * @return TRUE if all is well, the mob is summoned.
+     */
+    boolean summonMob(int templateId, int xPos, int yPos);//bySack?
 }
