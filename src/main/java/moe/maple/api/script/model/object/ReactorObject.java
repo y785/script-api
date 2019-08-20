@@ -20,11 +20,13 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model.object;
 
-import moe.maple.api.script.model.MoeScript;
-
-@FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+/**
+ * This is a script proxy for reactor objects.
+ * <T> should be your implementation of reactor.
+ * @param <T>
+ */
+public interface ReactorObject<T> extends FieldedObject {
+    T getReactor();
 }

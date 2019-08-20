@@ -20,11 +20,29 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.helper;
 
-import moe.maple.api.script.model.MoeScript;
+import moe.maple.api.script.model.NpcScript;
+import moe.maple.api.script.model.object.NpcObject;
 
-@FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+/**
+ * A helper script for when an NPC isn't found.
+ * Meant to be overridden by the scripts package.
+ */
+public abstract class MoeNotFound extends NpcScript {
+
+    protected String expected;
+
+    public MoeNotFound() {
+        expected = "";
+    }
+
+    public void setExpected(String name) {
+        this.expected = name;
+    }
+
+    @Override
+    public int getSpeakerTemplateId() {
+        return getNpcObject().map(NpcObject::getTemplateId).orElse(9200000);
+    }
 }

@@ -20,11 +20,19 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model.object;
 
-import moe.maple.api.script.model.MoeScript;
+import java.util.Optional;
 
-@FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+/**
+ * This is a script proxy for portal objects.
+ * <T> should be your implementation of portal.
+ * @param <T>
+ */
+public interface PortalObject<T> extends FieldedObject {
+    T getPortal();
+
+    String getPortalName();
+
+    int getId();
 }

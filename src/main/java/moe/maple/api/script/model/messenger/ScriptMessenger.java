@@ -20,11 +20,9 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model.messenger;
+import moe.maple.api.script.model.type.SpeakerType;
 
-import moe.maple.api.script.model.MoeScript;
+public interface ScriptMessenger {
 
-@FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
 }

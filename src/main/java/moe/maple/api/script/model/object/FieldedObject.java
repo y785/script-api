@@ -20,11 +20,35 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model.object;
 
-import moe.maple.api.script.model.MoeScript;
+import java.util.Optional;
 
-@FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+public interface FieldedObject extends ScriptObject {
+
+    /**
+     * FieldObjects are thrown into a pool and assigned a key.
+     * @return object id for this object
+     */
+    int getObjectId();
+
+    /**
+     * @return object's x position on the field.
+     */
+    int getX();
+
+    /**
+     *
+     * @return object's y position on the field.
+     */
+    int getY();
+
+    /**
+     * Some script objects should always have a field attached to them.
+     * Think users, npcs, monsters, etc. This isn't 100% guaranteed, so we
+     * have to use an optional for use-cases where the outliers occur.
+     * @return the object's current field. proxied.
+     */
+    Optional<? extends FieldObject> getField();
+    default int getFieldId() { return getField().map(FieldObject::getId).orElse(0); }
 }

@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model.chain;
 
-import moe.maple.api.script.model.MoeScript;
+import moe.maple.api.script.model.action.BasicScriptAction;
 
 @FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+public interface BasicActionChain {
+    void andThen(BasicScriptAction next);
 }

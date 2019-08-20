@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model.messenger;
 
-import moe.maple.api.script.model.MoeScript;
+import moe.maple.api.script.model.object.UserObject;
 
 @FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+public interface AskMemberShopAvatar extends ScriptMessenger {
+    void send(UserObject userObject, int speakerTemplateId, int param, String message, int[] options);
 }

@@ -20,11 +20,16 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model.object;
 
-import moe.maple.api.script.model.MoeScript;
+/**
+ * This is a script proxy for field/map objects.
+ * <T> should be your implementation of maps/fields.
+ * @param <T>
+ */
+public interface FieldObject<T> extends ScriptObject {
 
-@FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+    T getField();
+
+    int getId();
 }

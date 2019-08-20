@@ -20,11 +20,44 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model.object;
 
-import moe.maple.api.script.model.MoeScript;
+/**
+ * This is a script proxy for quest objects.
+ * <T> should be your implementation of quest.
+ * @param <T>
+ */
+public interface QuestObject<T> extends ScriptObject {
+    T getQuest();
 
-@FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+    int getId();
+
+    /**
+     * This should return 0-2 depending on a quests current status
+     * 0 - NotStarted
+     * 1 - Started
+     * 2 - Completed
+     * These are officially from QR_STATE_ enum in BMS
+     * @return int representing quest status
+     */
+    int getState();
+
+    /**
+     * @param state the state, see above
+     * @return true if the quest state was set
+     */
+    boolean setState(int state);
+
+    default boolean isStarted() { return getState() == 1; }
+    default boolean isCompleted() { return getState() == 2; }
+
+    default boolean start() { return setState(1); }
+    default boolean complete() { return setState(2); }
+
+    /**
+     * @return an empty string if the quest doesn't have the key
+     */
+    String getQuestEx(String key);
+
+    boolean setQuestEx(String key, String value);
 }

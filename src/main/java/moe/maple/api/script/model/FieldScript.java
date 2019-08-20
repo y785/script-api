@@ -20,11 +20,19 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model;
 
-import moe.maple.api.script.model.MoeScript;
+import moe.maple.api.script.model.object.FieldObject;
 
-@FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+public abstract class FieldScript extends BaseScript implements MessagingScript {
+
+    protected FieldObject self;
+
+    public FieldScript() { super(); }
+
+    @Override
+    public void setFieldObject(FieldObject field) {
+        this.self = field;
+        super.setFieldObject(field);
+    }
 }

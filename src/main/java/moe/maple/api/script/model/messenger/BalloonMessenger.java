@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model.messenger;
 
-import moe.maple.api.script.model.MoeScript;
+import moe.maple.api.script.model.object.UserObject;
 
 @FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+public interface BalloonMessenger extends ScriptMessenger {
+    void send(UserObject userObject, String message, int width, int timeoutInSeconds);
 }

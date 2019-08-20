@@ -20,11 +20,9 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
-
-import moe.maple.api.script.model.MoeScript;
+package moe.maple.api.script.model.action;
 
 @FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+public interface IntegerScriptAction extends ScriptAction {
+    void act(Integer object);
 }

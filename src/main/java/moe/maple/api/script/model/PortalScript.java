@@ -20,11 +20,8 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model;
 
-import moe.maple.api.script.model.MoeScript;
-
-@FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+public abstract class PortalScript extends BaseScript implements SpeakingScript {
+    public PortalScript() { super(); }
 }

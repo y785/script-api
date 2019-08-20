@@ -20,11 +20,19 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model;
 
-import moe.maple.api.script.model.MoeScript;
+import moe.maple.api.script.model.object.NpcObject;
 
-@FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+public abstract class NpcScript extends BaseScript implements SpeakingScript {
+
+    protected NpcObject self;
+
+    public NpcScript() { super(); }
+
+    @Override
+    public void setNpcObject(NpcObject npc) {
+        this.self = npc;
+        super.setNpcObject(npc);
+    }
 }

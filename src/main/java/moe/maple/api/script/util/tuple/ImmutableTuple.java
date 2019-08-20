@@ -20,11 +20,29 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.util.tuple;
 
-import moe.maple.api.script.model.MoeScript;
+public class ImmutableTuple<L, R> implements Tuple<L, R> {
 
-@FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+    private final L left;
+    private final R right;
+
+    public ImmutableTuple(L left, R right) {
+        this.left = left;
+        this.right = right;
+    }
+
+    @Override
+    public L left() {
+        return left;
+    }
+
+    @Override
+    public R right() {
+        return right;
+    }
+
+    public static <L, R> ImmutableTuple<L, R> of(L left, R right) {
+        return new ImmutableTuple<>(left, right);
+    }
 }

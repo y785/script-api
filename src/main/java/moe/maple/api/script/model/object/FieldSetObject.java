@@ -20,11 +20,15 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.event;
+package moe.maple.api.script.model.object;
 
-import moe.maple.api.script.model.MoeScript;
-
-@FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+/**
+ * This is a script proxy for fieldset objects.
+ * <T> should be your implementation of fieldset.
+ * FieldSets are groups of fields, typically used for party quests
+ * or events.
+ * @param <T>
+ */
+public interface FieldSetObject<T> extends ScriptObject {
+    T getFieldSet();
 }
