@@ -55,6 +55,14 @@ public interface QuestObject<T> extends ScriptObject {
     default boolean complete() { return setState(2); }
 
     /**
+     * Forfeits the quest.
+     * @param key a questId
+     * @param force if TRUE, it will remove it from the quest record no matter what.
+     * @return true if successful.
+     */
+    boolean remove(short key, boolean force);
+
+    /**
      * @return an empty string if the quest doesn't have the key
      */
     String getQuestEx(String key);
