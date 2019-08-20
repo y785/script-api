@@ -29,7 +29,7 @@ import java.util.Optional;
  * <T> should be your implementation of user/character.
  * @param <T>
  */
-public interface UserObject<T> extends FieldedObject {
+public interface UserObject<T> extends FieldedObject, InventoryHolderObject<T>, QuestHolderObject<T> {
 
     T getUser();
 
@@ -292,44 +292,6 @@ public interface UserObject<T> extends FieldedObject {
 
     default boolean learnSkill(int skillId, int level) { return learnSkill(skillId, level, 1); }
     default boolean learnSkill(int skillId) { return learnSkill(skillId, 1, 1); }
-
-    // =================================================================================================================
-
-    int itemCount(int itemId);
-    default boolean hasItem(int itemId, int count) { return itemCount(itemId) > count; }
-    default boolean hasItem(int itemId) { return hasItem(itemId, 1); }
-
-    // =================================================================================================================
-
-    /**
-     * This should return 0-2 depending on a quests current status
-     * 0 - NotStarted
-     * 1 - Started
-     * 2 - Completed
-     * These are officially from QR_STATE_ enum in BMS
-     * @param questId the quest
-     * @return int representing quest status
-     */
-    int getQuestState(int questId);
-
-    /**
-     * @param questId the quest
-     * @param state the state, see above
-     * @return true if the quest state was set
-     */
-    boolean setQuestState(int questId, int state);
-
-    default boolean isQuestStarted(int questId) { return getQuestState(questId) == 1; }
-    default boolean isQuestCompleted(int questId) { return getQuestState(questId) == 2; }
-
-    default boolean startQuest(int questId) { return setQuestState(questId, 1); }
-    default boolean completeQuest(int questId) { return setQuestState(questId, 2); }
-
-    /**
-     * @return an empty string if the quest doesn't have the key
-     */
-    String getQuestEx(int questId, String key);
-    boolean setQuestEx(int questId, String key, String value);
 
     // =================================================================================================================
 
