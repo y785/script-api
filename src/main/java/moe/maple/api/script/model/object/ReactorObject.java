@@ -24,9 +24,27 @@ package moe.maple.api.script.model.object;
 
 /**
  * This is a script proxy for reactor objects.
- * <T> should be your implementation of reactor.
  * @param <T>
+ * @param <U> should be your implementation of User.
  */
-public interface ReactorObject<T> extends FieldedObject {
+public interface ReactorObject<T, U> extends FieldedObject {
     T getReactor();
+    int getState();
+
+    int getTemplateId();
+
+    boolean isOnLastState();
+
+    boolean createMob(int mobTemplateId, int xPos, int yPos);
+
+    /**
+     * @return the last User to interact with this reactor.
+     */
+    U getLastUser();
+
+    /**
+     * Triggers a 'drop' action for the reactor.
+     * @return true if the drop was successful.
+     */
+    boolean drop();
 }
