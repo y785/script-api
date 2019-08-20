@@ -33,6 +33,17 @@ public interface FieldedObject extends ScriptObject {
     int getObjectId();
 
     /**
+     * @return object's x position on the field.
+     */
+    int getX();
+
+    /**
+     *
+     * @return object's y position on the field.
+     */
+    int getY();
+
+    /**
      * Some script objects should always have a field attached to them.
      * Think users, npcs, monsters, etc. This isn't 100% guaranteed, so we
      * have to use an optional for use-cases where the outliers occur.

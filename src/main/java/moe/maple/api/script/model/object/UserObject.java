@@ -246,7 +246,7 @@ public interface UserObject<T> extends FieldedObject {
      * @return true if able to decrease
      */
     boolean decreaseAbilityPoints(int amount);
-    
+
     /**
      * Returns the user's skill points based on tier.
      * If your version doesn't have skill point tiers, just return
