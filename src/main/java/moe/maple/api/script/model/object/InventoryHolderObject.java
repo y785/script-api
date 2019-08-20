@@ -74,8 +74,8 @@ public interface InventoryHolderObject<T> extends ScriptObject {
 
     /**
      * Removes an amount of items where the item matches the item id.
-     * This should <strong>ONLY REMOVE AN ITEM</strong> if you can remove <strong>THE CORRECT
-     * AMOUNT</strong>. You should remove nothing if you can't remove the proper amount.
+     * This should <strong>ONLY REMOVE AN ITEM</strong> if you can remove
+     * <strong>THE CORRECT AMOUNT</strong>.
      * @param itemTemplateId - The .wz id of the item
      * @param count
      * @return true if THE COUNT WAS REMOVED
