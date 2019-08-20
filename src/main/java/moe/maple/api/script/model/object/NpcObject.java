@@ -36,4 +36,7 @@ public interface NpcObject<T> extends FieldedObject {
      * @return the speakerId/templateId for packets to use. NOT objectId from odin.
      */
     int getTemplateId();
+
+    boolean disableNpc();
+    boolean hideNpc();
 }
