@@ -20,11 +20,12 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.messenger;
+package moe.maple.api.script.model.messenger.ask;
 
+import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.UserObject;
 
 @FunctionalInterface
-public interface AskMemberShopAvatar extends ScriptMessenger {
-    void send(UserObject userObject, int speakerTemplateId, int param, String message, int[] options);
+public interface AskBoxTextMessenger extends ScriptMessenger {
+    void send(UserObject userObject, int speakerTemplateId, int param, String message, String defaultText, int column, int row);
 }

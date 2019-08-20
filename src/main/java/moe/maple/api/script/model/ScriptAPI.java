@@ -26,6 +26,14 @@ import moe.maple.api.script.model.action.*;
 import moe.maple.api.script.model.chain.BasicActionChain;
 import moe.maple.api.script.model.chain.IntegerActionChain;
 import moe.maple.api.script.model.messenger.*;
+import moe.maple.api.script.model.messenger.ask.*;
+import moe.maple.api.script.model.messenger.effect.field.FieldScreenMessenger;
+import moe.maple.api.script.model.messenger.effect.field.FieldSoundMessenger;
+import moe.maple.api.script.model.messenger.effect.uel.AvatarOrientedMessenger;
+import moe.maple.api.script.model.messenger.effect.uel.PlayPortalSEMessenger;
+import moe.maple.api.script.model.messenger.effect.uel.ReservedEffectMessenger;
+import moe.maple.api.script.model.messenger.say.SayImageMessenger;
+import moe.maple.api.script.model.messenger.say.SayMessenger;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.type.SpeakerType;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
@@ -59,9 +67,22 @@ public enum ScriptAPI {
     private SayImageMessenger messengerSayImage;
     private SayMessenger messengerSay;
 
+    // =================================================================================================================
+
     private MessageMessenger messengerMessage;
     private BalloonMessenger messengerBalloon;
     private ProgressMessenger messengerProgress;
+
+    // =================================================================================================================
+
+    private FieldScreenMessenger messengerFieldScreen;
+    private FieldSoundMessenger messengerFieldSound;
+
+    // =================================================================================================================
+
+    private AvatarOrientedMessenger messengerAvatarOriented;
+    private PlayPortalSEMessenger messengerPlayPortalSE;
+    private ReservedEffectMessenger messengerReservedEffect;
 
     ScriptAPI() { }
 
@@ -83,6 +104,13 @@ public enum ScriptAPI {
         messengerMessage = ((userObject, type, message) -> log.debug("message-> type: {}, message: \"{}\"", type, message));
         messengerBalloon = ((userObject, message, width, timeoutInSeconds) -> log.debug("balloon-> width: {}, timeout: {}, message: \"{}\"", width, timeoutInSeconds, message));
         messengerProgress= ((userObject, message) -> log.debug("progress-> message:  \"{}\"", message));
+
+        messengerFieldScreen = (userObject, path) -> log.debug("fieldScreen-> path: {}", path);
+        messengerFieldSound = (userObject, path) -> log.debug("fieldSound-> path: {}", path);
+
+        messengerAvatarOriented = (userObject, path, durationInSeconds) -> log.debug("avatarOriented-> path: {}, duration: {}");
+        messengerPlayPortalSE = userObject -> log.debug("playPortalSE->");
+        messengerReservedEffect = (userObject, path) -> log.debug("reservedEffect-> path: {}", path);
     }
 
     // =================================================================================================================
@@ -139,6 +167,8 @@ public enum ScriptAPI {
         this.messengerSay = messengerSay;
     }
 
+    // =================================================================================================================
+
     public void setMessengerMessage(MessageMessenger messengerMessage) {
         this.messengerMessage = messengerMessage;
     }
@@ -153,6 +183,37 @@ public enum ScriptAPI {
 
     // =================================================================================================================
 
+    public void setMessengerFieldScreen(FieldScreenMessenger messengerFieldScreen) {
+        this.messengerFieldScreen = messengerFieldScreen;
+    }
+
+    public void setMessengerFieldSound(FieldSoundMessenger messengerFieldSound) {
+        this.messengerFieldSound = messengerFieldSound;
+    }
+
+    // =================================================================================================================
+
+    public void setMessengerAvatarOriented(AvatarOrientedMessenger messengerAvatarOriented) {
+        this.messengerAvatarOriented = messengerAvatarOriented;
+    }
+
+    public void setMessengerPlayPortalSE(PlayPortalSEMessenger messengerPlayPortalSE) {
+        this.messengerPlayPortalSE = messengerPlayPortalSE;
+    }
+
+    public void setMessengerReservedEffect(ReservedEffectMessenger messengerReservedEffect) {
+        this.messengerReservedEffect = messengerReservedEffect;
+    }
+
+
+    // =================================================================================================================
+
+    /**
+     * A message that is dropped into the chatbox. Or not. I don't know.
+     * @param script
+     * @param type
+     * @param message
+     */
     public static void message(MoeScript script, int type, String message) {
         script.setScriptResponse(null);
         script.setScriptAction(null);
@@ -160,6 +221,13 @@ public enum ScriptAPI {
                 () -> log.debug("User object isn't set, workflow is messy."));
     }
 
+    /**
+     * A balloon that appears above a user.
+     * @param script
+     * @param width
+     * @param timeoutInSeconds
+     * @param message
+     */
     public static void balloon(MoeScript script, int width, int timeoutInSeconds, String message) {
         script.setScriptResponse(null);
         script.setScriptAction(null);
@@ -167,10 +235,54 @@ public enum ScriptAPI {
                 () -> log.debug("User object isn't set, workflow is messy."));
     }
 
+    /**
+     * The yellow message that appears in the center of the screen.
+     * @param script
+     * @param message
+     */
     public static void progress(MoeScript script, String message) {
         script.setScriptResponse(null);
         script.setScriptAction(null);
         script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerProgress.send(obj, message),
+                () -> log.debug("User object isn't set, workflow is messy."));
+    }
+
+    // =================================================================================================================
+
+    public static void fieldEffectScreen(MoeScript script, String path) {
+        script.setScriptResponse(null);
+        script.setScriptAction(null);
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerFieldScreen.send(obj, path),
+                () -> log.debug("User object isn't set, workflow is messy."));
+    }
+
+    public static void fieldEffectSound(MoeScript script, String path) {
+        script.setScriptResponse(null);
+        script.setScriptAction(null);
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerFieldSound.send(obj, path),
+                () -> log.debug("User object isn't set, workflow is messy."));
+    }
+
+    // =================================================================================================================
+
+    public static void userAvatarOriented(MoeScript script, String path, int durationInSeconds) {
+        script.setScriptResponse(null);
+        script.setScriptAction(null);
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAvatarOriented.send(obj, path, durationInSeconds),
+                () -> log.debug("User object isn't set, workflow is messy."));
+    }
+
+    public static void userPlayPortalSE(MoeScript script) {
+        script.setScriptResponse(null);
+        script.setScriptAction(null);
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerPlayPortalSE.send(obj),
+                () -> log.debug("User object isn't set, workflow is messy."));
+    }
+
+    public static void userReservedEffect(MoeScript script, String path) {
+        script.setScriptResponse(null);
+        script.setScriptAction(null);
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerReservedEffect.send(obj, path),
                 () -> log.debug("User object isn't set, workflow is messy."));
     }
 

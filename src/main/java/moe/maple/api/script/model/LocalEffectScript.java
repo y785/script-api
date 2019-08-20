@@ -20,13 +20,32 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.messenger;
-import moe.maple.api.script.model.type.SpeakerType;
+package moe.maple.api.script.model;
 
 /**
- * Messengers are basically packets. They hold no logic other
- * than to send a packet to a user. Some packets will have a response
- * required to move forward. Implementing Messengers should require
- * no backend magic other than sending the packet required.
+ * Local User Effects, Field Effects, etc.
  */
-public interface ScriptMessenger { }
+public interface LocalEffectScript extends MoeScript {
+
+    default void avatarOriented(String path, int durationInSeconds) {
+        ScriptAPI.userAvatarOriented(this, path, durationInSeconds);
+    }
+
+    default void playPortalSE() {
+        ScriptAPI.userPlayPortalSE(this);
+    }
+
+    default void reservedEffect(String path) {
+        ScriptAPI.userReservedEffect(this, path);
+    }
+
+    // =================================================================================================================
+
+    default void fieldScreen(String path) {
+        ScriptAPI.fieldEffectScreen(this, path);
+    }
+
+    default void fieldSound(String path) {
+        ScriptAPI.fieldEffectSound(this, path);
+    }
+}

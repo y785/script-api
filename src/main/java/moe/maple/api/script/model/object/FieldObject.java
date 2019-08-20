@@ -68,9 +68,11 @@ public interface FieldObject<T> extends ScriptObject {
      * @return TRUE if the portal is now enabled, false otherwise.
      */
     boolean enablePortal(String portalName, boolean enable);
+
     default boolean enablePortal(String portalName) {
         return enablePortal(portalName, true);
     }
+
     default boolean disablePortal(String portalName) {
         return enablePortal(portalName, false);
     }

@@ -22,6 +22,8 @@
 
 package moe.maple.api.script.model.object;
 
+import org.slf4j.helpers.MessageFormatter;
+
 import java.util.Optional;
 
 /**
@@ -43,6 +45,24 @@ public interface UserObject<T> extends FieldedObject, InventoryHolderObject<T>, 
      * @return the user's name, duh
      */
     String getName();
+
+    // =================================================================================================================
+
+    /**
+     * Script variables are special values that are stored on a per-user
+     * basis. They are used cross-script for various purposes. Examples include
+     * Free Market portals and World Trip. The relationship is a String:String map.
+     * If you don't wish to store like that, you should shove the data into an unused
+     * quest like nexon does.
+     * @param key
+     * @return the value stored
+     */
+    String getScriptVariable(String key);
+    default String getScriptVariable(int value) { return getScriptVariable(Integer.toString(value)); }
+
+    boolean setScriptVariable(String key, String value);
+    default boolean setScriptVariable(String key, Integer value) { return setScriptVariable(key, Integer.toString(value)); }
+    default boolean setScriptVariable(String key, String format, Object... objects) { return setScriptVariable(key, MessageFormatter.arrayFormat(format, objects).getMessage()); }
 
     // =================================================================================================================
 
@@ -107,7 +127,14 @@ public interface UserObject<T> extends FieldedObject, InventoryHolderObject<T>, 
      * @param buffItemId a consumable itemId
      * @return true if the operation is successful.
      */
-    boolean giveBuff(int buffItemId);
+    boolean giveBuffItem(int buffItemId);
+
+    /**
+     * Gives the user a buff based on a skill id.
+     * @param skillId a skill .wz id
+     * @return true if the operation is successful.
+     */
+    boolean giveBuffSkill(int skillId);
 
     // =================================================================================================================
 
@@ -131,48 +158,16 @@ public interface UserObject<T> extends FieldedObject, InventoryHolderObject<T>, 
 
     /*
      * Packet: SetStandAloneMode
+     * Aliases: lockUI/unlockUI
      */
     void setStandAloneMode(boolean set);
+
     /*
      * Packet: DirectionMode
      */
     void setDirectionMode(boolean set);
 
     // =================================================================================================================
-
-    /**
-     * Packet: UserEffectLocal | UserEffect.AvatarOriented
-     * @param path - The Effect.wz UOL, example: "Effect/OnUserEff.img/guideEffect/aranTutorial/tutorialArrow1"
-     * @param durationInSeconds - The duration of the effect in seconds -- This was removed in later versions.
-     */
-    void avatarOriented(String path, int durationInSeconds);
-
-    /**
-     * Packet: UserEffectLocal | UserEffect.ReservedEffect
-     * This is commonly called showEffect/showIntro/playScene in odin-based sources.
-     * @param path - The Effect.wz UOL, example: "Effect/Direction1/aranTutorial/Child"
-     */
-    void reservedEffect(String path);
-
-    /**
-     * Packet: UserEffectLocal | UserEffect.PlayPortalSE
-     * See: UserEffect.PlayPortalSE
-     */
-    void playPortalSE();
-
-    // =================================================================================================================
-
-    /**
-     * Packet: FieldEffect | FieldEffectType.FieldEffect_Screen
-     * @param path - The Map.wz UOL, relative to "Map.wz/Effect.img", example: "maplemap/enter/50000"
-     */
-    void fieldEffectScreen(String path);
-
-    /**
-     * Packet: FieldEffect | FieldEffectType.FieldEffect_Sound
-     * @param path - The Sound.wz UOL, relative to "Sound.wz/Field.img", example: "Aran/balloon"
-     */
-    void fieldEffectSound(String path);
 
     /**
      * Sends a Field Object Effect to the user.
@@ -189,8 +184,6 @@ public interface UserObject<T> extends FieldedObject, InventoryHolderObject<T>, 
 
     // =================================================================================================================
 
-
-    //================================================================================================================//
     /**
      * Unfortunately, there are only three Genders in MapleStory #confirmed
      * 0 = MALE
@@ -208,7 +201,6 @@ public interface UserObject<T> extends FieldedObject, InventoryHolderObject<T>, 
         return getGender() == 0;
     }
     /**
-     *
      * Always false, trust me. Not the return value.
      * @return true if the User's gender is set to Female.
      */

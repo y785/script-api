@@ -20,13 +20,17 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.messenger;
+package moe.maple.api.script.model.messenger.effect.field;
 
-import moe.maple.api.script.model.MoeScript;
+
+import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.UserObject;
-import moe.maple.api.script.model.type.SpeakerType;
 
 @FunctionalInterface
-public interface AskYesNoMessenger extends ScriptMessenger {
-    void send(UserObject userObject, String message, int speakerTemplateId, int param);
+public interface FieldScreenMessenger extends ScriptMessenger {
+    /**
+     * Packet: FieldEffect | FieldEffectType.FieldEffect_Screen
+     * @param path - The Map.wz UOL, relative to "Map.wz/Effect.img", example: "maplemap/enter/50000"
+     */
+    void send(UserObject userObject, String path);
 }

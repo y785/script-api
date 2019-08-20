@@ -20,13 +20,12 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.messenger;
+package moe.maple.api.script.model.messenger.say;
 
-import moe.maple.api.script.model.MoeScript;
+import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.UserObject;
-import moe.maple.api.script.model.type.SpeakerType;
 
 @FunctionalInterface
-public interface AskAvatarMessenger extends ScriptMessenger {
-    void send(UserObject userObject, String message, int speakerTemplateId, int param, int[] options);
+public interface SayImageMessenger extends ScriptMessenger {
+    void send(UserObject userObject, int speakerTemplateId, int param, String... imagePath);
 }

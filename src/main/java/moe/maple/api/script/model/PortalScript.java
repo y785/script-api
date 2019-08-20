@@ -22,6 +22,17 @@
 
 package moe.maple.api.script.model;
 
+import moe.maple.api.script.model.object.PortalObject;
+
 public abstract class PortalScript extends BaseScript implements SpeakingScript {
+
+    protected PortalObject self;
+
     public PortalScript() { super(); }
+
+    @Override
+    public void setPortalObject(PortalObject portal) {
+        this.self = portal;
+        super.setPortalObject(portal);
+    }
 }

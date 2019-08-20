@@ -20,13 +20,16 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.messenger;
-import moe.maple.api.script.model.type.SpeakerType;
+package moe.maple.api.script.model.messenger.effect.uel;
 
-/**
- * Messengers are basically packets. They hold no logic other
- * than to send a packet to a user. Some packets will have a response
- * required to move forward. Implementing Messengers should require
- * no backend magic other than sending the packet required.
- */
-public interface ScriptMessenger { }
+import moe.maple.api.script.model.messenger.ScriptMessenger;
+import moe.maple.api.script.model.object.UserObject;
+
+@FunctionalInterface
+public interface PlayPortalSEMessenger extends ScriptMessenger {
+    /**
+     * Packet: UserEffectLocal | UserEffect.PlayPortalSE
+     * See: UserEffect.PlayPortalSE
+     */
+    void send(UserObject userObject);
+}

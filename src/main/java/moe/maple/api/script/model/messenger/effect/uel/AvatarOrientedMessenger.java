@@ -20,13 +20,17 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.messenger;
+package moe.maple.api.script.model.messenger.effect.uel;
 
-import moe.maple.api.script.model.MoeScript;
+import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.UserObject;
-import moe.maple.api.script.model.type.SpeakerType;
 
 @FunctionalInterface
-public interface AskMenuMessenger extends ScriptMessenger {
-    void send(UserObject userObject, String message, int speakerTemplateId, int param);
+public interface AvatarOrientedMessenger extends ScriptMessenger {
+    /**
+     * Packet: UserEffectLocal | UserEffect.AvatarOriented
+     * @param path - The Effect.wz UOL, example: "Effect/OnUserEff.img/guideEffect/aranTutorial/tutorialArrow1"
+     * @param durationInSeconds - The duration of the effect in seconds -- This was removed in later versions.
+     */
+    void send(UserObject userObject, String path, int durationInSeconds);
 }

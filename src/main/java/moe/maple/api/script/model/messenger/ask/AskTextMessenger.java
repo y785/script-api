@@ -20,13 +20,12 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.messenger;
-import moe.maple.api.script.model.type.SpeakerType;
+package moe.maple.api.script.model.messenger.ask;
 
-/**
- * Messengers are basically packets. They hold no logic other
- * than to send a packet to a user. Some packets will have a response
- * required to move forward. Implementing Messengers should require
- * no backend magic other than sending the packet required.
- */
-public interface ScriptMessenger { }
+import moe.maple.api.script.model.messenger.ScriptMessenger;
+import moe.maple.api.script.model.object.UserObject;
+
+@FunctionalInterface
+public interface AskTextMessenger extends ScriptMessenger {
+    void send(UserObject userObject, int speakerTemplateId, int param, String message, String defaultText, int min, int max);
+}

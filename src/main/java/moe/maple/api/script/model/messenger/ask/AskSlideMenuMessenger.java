@@ -20,11 +20,12 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.messenger;
+package moe.maple.api.script.model.messenger.ask;
 
+import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.UserObject;
 
 @FunctionalInterface
-public interface AskQuizMessenger extends ScriptMessenger {
-    void send(UserObject userObject, int speakerTemplateId, int param, String title, String problemText, String hintText, int min, int max, int remainInitialQuiz);
+public interface AskSlideMenuMessenger extends ScriptMessenger {
+    void send(UserObject userObject, int speakerTemplateId, boolean slideDlgEX, int index, String message);
 }

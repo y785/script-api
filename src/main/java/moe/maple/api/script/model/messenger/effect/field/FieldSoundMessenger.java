@@ -20,11 +20,16 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.messenger;
+package moe.maple.api.script.model.messenger.effect.field;
 
+import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.UserObject;
 
 @FunctionalInterface
-public interface AskTextMessenger extends ScriptMessenger {
-    void send(UserObject userObject, int speakerTemplateId, int param, String message, String defaultText, int min, int max);
+public interface FieldSoundMessenger extends ScriptMessenger {
+    /**
+     * Packet: FieldEffect | FieldEffectType.FieldEffect_Sound
+     * @param path - The Sound.wz UOL, relative to "Sound.wz/Field.img", example: "Aran/balloon"
+     */
+    void send(UserObject userObject, String path);
 }

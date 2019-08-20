@@ -24,7 +24,7 @@ package moe.maple.api.script.model;
 
 import org.slf4j.helpers.MessageFormatter;
 
-public interface MessagingScript extends MoeScript {
+public interface MessagingScript extends LocalEffectScript {
     /*
      * Think balloons and messages
      */
