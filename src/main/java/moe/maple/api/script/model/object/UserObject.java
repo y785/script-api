@@ -209,6 +209,73 @@ public interface UserObject<T> extends FieldedObject {
     // =================================================================================================================
 
     /**
+     * @return user's current level
+     */
+    int getLevel();
+
+    /**
+     * @return user's current experience
+     */
+    long getExperience();
+
+    /**
+     * Increases a user's current experience.
+     * @param amount - The amount to increase by
+     * @param quest  - For how the packet is shown. true should show the notice into
+     *                 the chatlog. false should show it on the right status.
+     *                 Most scripts will have no need to change this, but :shrug:.
+     * @return true if able to increase
+     */
+    boolean increaseExp(int amount, boolean quest);
+
+    default boolean increaseExp(int amount) { return increaseExp(amount, true); }
+
+    /**
+     * @return user's ability points
+     */
+    int getAbilityPoints();
+
+    /**
+     * @param amount - The amount to increase by
+     * @return true if able to increase
+     */
+    boolean increaseAbilityPoints(int amount);
+
+    /**
+     * @param amount - The amount to increase by
+     * @return true if able to decrease
+     */
+    boolean decreaseAbilityPoints(int amount);
+    
+    /**
+     * Returns the user's skill points based on tier.
+     * If your version doesn't have skill point tiers, just return
+     * the current skill point amount.
+     * @param tier
+     */
+    int getSkillPoints(int tier);
+    int getSkillPoints();
+
+    /**
+     * Increases a user's available skill points.
+     * @param amount - The amount to increase by
+     * @param tier   - The tier to increase. Used for jobs that have split
+     *                 skill points. Evan & Dual Blade. Later versions split all
+     *                 skills, while lower don't.
+     */
+    boolean increaseSkillPoints(int amount, int tier);
+
+    /**
+     * Increases a user's available skill points.
+     * If your user has tiered skill points, you should default to
+     * the current active tier.
+     * @param amount - The amount to increase by
+     */
+    boolean increaseSkillPoints(int amount);
+
+    // =================================================================================================================
+
+    /**
      * Teach the user the skill provided.
      * @param skillId - Skill id
      * @param level   - Skill level
