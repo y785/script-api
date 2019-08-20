@@ -138,4 +138,33 @@ public interface InventoryHolderObject<T> extends ScriptObject {
     default boolean hasItem(int itemTemplateId) { return hasItem(itemTemplateId, 1); }
 
     // =================================================================================================================
+
+    /**
+     * Increases the # of usable slots in an inventory tab based on an Inventory Type enumeration.
+     * Valid inventory types for incrementation are 1 through 5 (EQUIP, CONSUME, INSTALL, ETC, CASH respectively).
+     * @param inventoryType Inventory Type as an integer.
+     * @param howMany How many slots to add.
+     * @return true if the operation was successful.
+     */
+    boolean increaseSlotCount(int inventoryType, int howMany);
+
+    default boolean increaseSlotCountForEquip(int howMany) {
+        return increaseSlotCount(1, howMany);
+    }
+
+    default boolean increaseSlotCountForUse(int howMany) {
+        return increaseSlotCount(2, howMany);
+    }
+
+    default boolean increaseSlotCountForSetup(int howMany) {
+        return increaseSlotCount(3, howMany);
+    }
+
+    default boolean increaseSlotCountForEtc(int howMany) {
+        return increaseSlotCount(4, howMany);
+    }
+
+    default boolean increaseSlotCountForCash(int howMany) {
+        return increaseSlotCount(5, howMany);
+    }
 }
