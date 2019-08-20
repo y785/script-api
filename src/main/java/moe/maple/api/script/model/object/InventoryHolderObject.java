@@ -31,6 +31,29 @@ import moe.maple.api.script.util.tuple.Tuple;
 public interface InventoryHolderObject<T> extends ScriptObject {
 
     /**
+     * This is an inventory transaction that only applies changes <strong>if
+     * all actions can be completed</strong>.
+     * @param money     - The +/- meso amount to increase/decrease by
+     * @param itemId    - The .wz id of the item to add or remove
+     * @param itemCount - The +/- amount to increase/decrease by
+     * @return true if all actions were completed
+     */
+    boolean exchange(int money, int itemId, int itemCount);
+
+    /**
+     * This is an inventory transaction that only applies changes <strong>if
+     * all actions can be completed</strong>.
+     * @param money                     - The +/- meso amount to increase/decrease by
+     * @param itemTemplateIdAndCount    - An array of Tuples. Left parameter should
+     *                                    be the .wz id of the item. Right parameter
+     *                                    should be the amount to add or remove.
+     * @return true if all actions were completed
+     */
+    boolean exchange(int money, Tuple<Integer, Integer>... itemTemplateIdAndCount);
+
+    // =================================================================================================================
+
+    /**
      * Adds an item into this objects inventory.
      * @param itemTemplateId - The .wz id of the item
      * @param count          - The amount to add.
