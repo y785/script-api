@@ -2,6 +2,7 @@
 ### Features
 - Non-blocking
 - No vm
+- 1 dependency (Logging)
 - Moe
 #### Maven
 ```
@@ -18,6 +19,14 @@
       <version>1.0.0</version>
   </dependency>
 </dependencies>
+```
+#### Dependencies
+```
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+    <version>1.7.25</version>
+</dependency>
 ```
 #### Examples
 [The main script repo](https://github.com/y785/moe-scripts)
