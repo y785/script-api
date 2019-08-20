@@ -31,5 +31,8 @@ public interface FieldObject<T> extends ScriptObject {
 
     T getField();
 
+    /**
+     * @return the field object's .wz id
+     */
     int getId();
 }
