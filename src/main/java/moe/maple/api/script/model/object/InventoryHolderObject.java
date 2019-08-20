@@ -51,7 +51,7 @@ public interface InventoryHolderObject<T> extends ScriptObject {
      * @param itemTemplateId
      * @return true if ALL ITEMS were added
      */
-    boolean addItem(int... itemTemplateId);
+    boolean addItemAll(int... itemTemplateId);
 
     /**
      * Add ALL ITEMS in the array with their count.
@@ -61,7 +61,7 @@ public interface InventoryHolderObject<T> extends ScriptObject {
      *                                 should be the amount to add.
      * @return true if ALL ITEMS were added
      */
-    boolean addItem(Tuple<Integer, Integer>... itemTemplateIdAndCount);
+    boolean addItemAll(Tuple<Integer, Integer>... itemTemplateIdAndCount);
 
     // =================================================================================================================
 
@@ -88,7 +88,7 @@ public interface InventoryHolderObject<T> extends ScriptObject {
      * @param itemTemplateId - The .wz id of the item
      * @return true if <strong>ALL ITEMS WERE REMOVED</strong>
      */
-    boolean removeItem(int... itemTemplateId);
+    boolean removeItemAll(int... itemTemplateId);
 
     /**
      * Removes <strong>ALL ITEMS</strong> in the array with their count.
@@ -98,7 +98,7 @@ public interface InventoryHolderObject<T> extends ScriptObject {
      *                                 should be the amount to add.
      * @return true if <strong>ALL WERE REMOVED</strong>
      */
-    boolean removeItem(Tuple<Integer, Integer>... itemTemplateIdAndCount);
+    boolean removeItemAll(Tuple<Integer, Integer>... itemTemplateIdAndCount);
 
     // =================================================================================================================
 
