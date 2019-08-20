@@ -20,31 +20,16 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object;
+package moe.maple.api.script.model.messenger;
+
+
+import moe.maple.api.script.model.object.UserObject;
 
 /**
- * This is a script proxy for reactor objects.
- * @param <T>
- * @param <U> should be your implementation of User.
+ * @author umbreon22
+ * For 'ScriptProgressMessage'.
  */
-public interface ReactorObject<T, U> extends FieldedObject {
-    T getReactor();
-    int getState();
-
-    int getTemplateId();
-
-    boolean isOnLastState();
-
-    boolean createMob(int mobTemplateId, int xPos, int yPos);
-
-    /**
-     * @return the last User to interact with this reactor.
-     */
-    U getLastUser();
-
-    /**
-     * Triggers a 'drop' action for the reactor.
-     * @return true if the drop was successful.
-     */
-    boolean drop();
+@FunctionalInterface
+public interface ProgressMessenger extends ScriptMessenger {
+    void send(UserObject userObject, String message);
 }

@@ -16,7 +16,7 @@
   <dependency>
       <groupId>com.github.y785</groupId>
       <artifactId>script-api</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0-ALPHA</version>
   </dependency>
 </dependencies>
 ```

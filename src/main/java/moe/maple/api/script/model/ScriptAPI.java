@@ -61,6 +61,7 @@ public enum ScriptAPI {
 
     private MessageMessenger messengerMessage;
     private BalloonMessenger messengerBalloon;
+    private ProgressMessenger messengerProgress;
 
     ScriptAPI() { }
 
@@ -81,6 +82,7 @@ public enum ScriptAPI {
 
         messengerMessage = ((userObject, type, message) -> log.debug("message-> type: {}, message: \"{}\"", type, message));
         messengerBalloon = ((userObject, message, width, timeoutInSeconds) -> log.debug("balloon-> width: {}, timeout: {}, message: \"{}\"", width, timeoutInSeconds, message));
+        messengerProgress= ((userObject, message) -> log.debug("progress-> message:  \"{}\"", message));
     }
 
     // =================================================================================================================
@@ -145,6 +147,10 @@ public enum ScriptAPI {
         this.messengerBalloon = messengerBalloon;
     }
 
+    public void setMessengerProgress(ProgressMessenger messengerProgress) {
+        this.messengerProgress = messengerProgress;
+    }
+
     // =================================================================================================================
 
     public static void message(MoeScript script, int type, String message) {
@@ -158,6 +164,13 @@ public enum ScriptAPI {
         script.setScriptResponse(null);
         script.setScriptAction(null);
         script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerBalloon.send(obj, message, width, timeoutInSeconds),
+                () -> log.debug("User object isn't set, workflow is messy."));
+    }
+
+    public static void progress(MoeScript script, String message) {
+        script.setScriptResponse(null);
+        script.setScriptAction(null);
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerProgress.send(obj, message),
                 () -> log.debug("User object isn't set, workflow is messy."));
     }
 
