@@ -440,6 +440,35 @@ public enum ScriptAPI {
 
     // =================================================================================================================
 
+    public static void askAccept(MoeScript script, String message, BasicScriptAction onYes, BasicScriptAction onNo) {
+        script.setScriptAction(null);
+        script.setScriptResponse((t, a, o) -> {
+            if (t != SpeakerType.ASKACCEPT) {
+                script.end();
+            } else {
+                var an = a.intValue();
+                if (an == 1 || an == 0) {
+                    var act = an == 0 ? onNo : onYes;
+                    script.setScriptResponse(null);
+                    script.setScriptAction(act);
+                    script.resume(t, a, o);
+                } else {
+                    script.end();
+                }
+            }
+        });
+        var speaker = script.getSpeakerTemplateId();
+
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskAccept.send(obj, speaker, 0, message),
+                () -> log.debug("User object isn't set, workflow is messy."));
+    }
+
+    public static void askAccept(MoeScript script, String message, BasicScriptAction onYes) {
+        askAccept(script, message, onYes, script::end);
+    }
+
+    // =================================================================================================================
+
     private static ScriptResponse askMenuResponse(MoeScript script, int max) {
         return (t, a, o) -> {
             var min = 0;

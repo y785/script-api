@@ -76,6 +76,16 @@ public interface SpeakingScript extends MessagingScript {
 
     // =================================================================================================================
 
+    default void askAccept(String message, BasicScriptAction onYes) {
+        ScriptAPI.askAccept(this, message, onYes);
+    }
+
+    default void askAccept(String message, BasicScriptAction onYes, BasicScriptAction onNo) {
+        ScriptAPI.askAccept(this, message, onYes, onNo);
+    }
+
+    // =================================================================================================================
+
     default IntegerActionChain askMenu(int speakerTemplateId, int param, String prompt, String... menuItems) {
         return ScriptAPI.askMenu(this, speakerTemplateId, param, prompt, menuItems);
     }
