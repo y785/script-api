@@ -20,44 +20,17 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object;
-
-import moe.maple.api.script.util.tuple.Tuple;
-
-import java.util.Optional;
+package moe.maple.api.script.model.object.field;
 
 /**
- * This is a script proxy for reactor objects.
- * @param <T>
- * @param <U> should be your implementation of User.
+ * Mob/Monster generic object.
  */
-public interface ReactorObject<T, U> extends FieldedObject {
-    T getReactor();
+public interface MobObject<T> extends LifeObject {
 
-    int getState();
-
-    int getTemplateId();
-
-    boolean isOnLastState();
-
-    boolean createMob(int mobTemplateId, int xPos, int yPos);
+    T getMob();
 
     /**
-     * @return the last User to interact with this reactor.
+     * @return the .wz id of the mob
      */
-    Optional<U> getLastUser();
-
-    /**
-     * Triggers a 'drop' action for the reactor.
-     * @return true if the drop was successful.
-     */
-    boolean drop();
-
-    /**
-     * Drops items from the reactor's position
-     * @param itemAndCount - Left is the item's .wz id
-     *                     - Right is the count
-     * @return true if items were dropped
-     */
-    boolean dropItems(Tuple<Integer, Integer>... itemAndCount);
+    int getId();
 }

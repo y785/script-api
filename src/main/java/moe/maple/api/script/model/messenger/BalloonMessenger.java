@@ -22,7 +22,7 @@
 
 package moe.maple.api.script.model.messenger;
 
-import moe.maple.api.script.model.object.UserObject;
+import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
 public interface BalloonMessenger extends ScriptMessenger {

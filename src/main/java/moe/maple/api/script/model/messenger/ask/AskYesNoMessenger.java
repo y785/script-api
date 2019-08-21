@@ -22,10 +22,8 @@
 
 package moe.maple.api.script.model.messenger.ask;
 
-import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.model.messenger.ScriptMessenger;
-import moe.maple.api.script.model.object.UserObject;
-import moe.maple.api.script.model.type.SpeakerType;
+import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
 public interface AskYesNoMessenger extends ScriptMessenger {

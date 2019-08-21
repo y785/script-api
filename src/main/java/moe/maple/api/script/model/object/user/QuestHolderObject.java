@@ -20,17 +20,15 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object;
+package moe.maple.api.script.model.object.user;
+
+import moe.maple.api.script.model.object.ScriptObject;
 
 /**
- * This is a script proxy for quest objects.
- * <T> should be your implementation of quest.
- * @param <T>
+ * An object that has a single quest or a collection of quests.
+ * Typically a user/character.
  */
-public interface QuestObject<T> extends ScriptObject {
-    T getQuest();
-
-    int getId();
+public interface QuestHolderObject<T> extends ScriptObject {
 
     /**
      * This should return 0-2 depending on a quests current status
@@ -38,34 +36,27 @@ public interface QuestObject<T> extends ScriptObject {
      * 1 - Started
      * 2 - Completed
      * These are officially from QR_STATE_ enum in BMS
+     * @param questId the quest
      * @return int representing quest status
      */
-    int getState();
+    int getQuestState(int questId);
 
     /**
+     * @param questId the quest
      * @param state the state, see above
      * @return true if the quest state was set
      */
-    boolean setState(int state);
+    boolean setQuestState(int questId, int state);
 
-    default boolean isStarted() { return getState() == 1; }
-    default boolean isCompleted() { return getState() == 2; }
+    default boolean isQuestStarted(int questId) { return getQuestState(questId) == 1; }
+    default boolean isQuestCompleted(int questId) { return getQuestState(questId) == 2; }
 
-    default boolean start() { return setState(1); }
-    default boolean complete() { return setState(2); }
-
-    /**
-     * Forfeits the quest.
-     * @param key a questId
-     * @param force if TRUE, it will remove it from the quest record no matter what.
-     * @return true if successful.
-     */
-    boolean remove(short key, boolean force);
+    default boolean startQuest(int questId) { return setQuestState(questId, 1); }
+    default boolean completeQuest(int questId) { return setQuestState(questId, 2); }
 
     /**
      * @return an empty string if the quest doesn't have the key
      */
-    String getQuestEx(String key);
-
-    boolean setQuestEx(String key, String value);
+    String getQuestEx(int questId, String key);
+    boolean setQuestEx(int questId, String key, String value);
 }

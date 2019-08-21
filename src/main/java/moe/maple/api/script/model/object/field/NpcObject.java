@@ -20,19 +20,21 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object;
-
-import java.util.Optional;
+package moe.maple.api.script.model.object.field;
 
 /**
- * This is a script proxy for portal objects.
- * <T> should be your implementation of portal.
+ * This is a script proxy for npc objects.
+ * <T> should be your implementation of npc.
  * @param <T>
  */
-public interface PortalObject<T> extends FieldedObject {
-    T getPortal();
+public interface NpcObject<T> extends FieldedObject {
+    T getNpc();
 
-    String getPortalName();
+    /**
+     * @return the speakerId/templateId for packets to use. NOT objectId from odin.
+     */
+    int getTemplateId();
 
-    int getId();
+    boolean disableNpc();
+    boolean hideNpc();
 }

@@ -20,12 +20,45 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.messenger.ask;
+package moe.maple.api.script.model.object.field;
 
-import moe.maple.api.script.model.messenger.ScriptMessenger;
-import moe.maple.api.script.model.object.user.UserObject;
+import moe.maple.api.script.model.object.field.FieldedObject;
+import moe.maple.api.script.util.tuple.Tuple;
 
-@FunctionalInterface
-public interface AskAcceptMessenger extends ScriptMessenger {
-    void send(UserObject userObject, int speakerTemplateId, int param, String message);
+import java.util.Optional;
+
+/**
+ * This is a script proxy for reactor objects.
+ * @param <T>
+ * @param <U> should be your implementation of User.
+ */
+public interface ReactorObject<T, U> extends FieldedObject {
+    T getReactor();
+
+    int getState();
+
+    int getTemplateId();
+
+    boolean isOnLastState();
+
+    boolean createMob(int mobTemplateId, int xPos, int yPos);
+
+    /**
+     * @return the last User to interact with this reactor.
+     */
+    Optional<U> getLastUser();
+
+    /**
+     * Triggers a 'drop' action for the reactor.
+     * @return true if the drop was successful.
+     */
+    boolean drop();
+
+    /**
+     * Drops items from the reactor's position
+     * @param itemAndCount - Left is the item's .wz id
+     *                     - Right is the count
+     * @return true if items were dropped
+     */
+    boolean dropItems(Tuple<Integer, Integer>... itemAndCount);
 }

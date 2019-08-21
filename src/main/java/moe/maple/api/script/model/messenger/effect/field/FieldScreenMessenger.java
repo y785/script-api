@@ -24,7 +24,7 @@ package moe.maple.api.script.model.messenger.effect.field;
 
 
 import moe.maple.api.script.model.messenger.ScriptMessenger;
-import moe.maple.api.script.model.object.UserObject;
+import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
 public interface FieldScreenMessenger extends ScriptMessenger {

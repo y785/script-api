@@ -20,23 +20,38 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object;
+package moe.maple.api.script.model.object.field;
+
+import moe.maple.api.script.model.object.FieldObject;
+import moe.maple.api.script.model.object.ScriptObject;
 
 import java.util.Optional;
 
-/**
- * This is a script proxy for npc objects.
- * <T> should be your implementation of npc.
- * @param <T>
- */
-public interface NpcObject<T> extends FieldedObject {
-    T getNpc();
+public interface FieldedObject extends ScriptObject {
 
     /**
-     * @return the speakerId/templateId for packets to use. NOT objectId from odin.
+     * FieldObjects are thrown into a pool and assigned a key.
+     * @return object id for this object
      */
-    int getTemplateId();
+    int getObjectId();
 
-    boolean disableNpc();
-    boolean hideNpc();
+    /**
+     * @return object's x position on the field.
+     */
+    int getX();
+
+    /**
+     *
+     * @return object's y position on the field.
+     */
+    int getY();
+
+    /**
+     * Some script objects should always have a field attached to them.
+     * Think users, npcs, monsters, etc. This isn't 100% guaranteed, so we
+     * have to use an optional for use-cases where the outliers occur.
+     * @return the object's current field. proxied.
+     */
+    Optional<? extends FieldObject> getField();
+    default int getFieldId() { return getField().map(FieldObject::getId).orElse(0); }
 }

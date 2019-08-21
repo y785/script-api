@@ -24,6 +24,11 @@ package moe.maple.api.script.model;
 
 import moe.maple.api.script.model.action.ScriptAction;
 import moe.maple.api.script.model.object.*;
+import moe.maple.api.script.model.object.field.NpcObject;
+import moe.maple.api.script.model.object.field.PortalObject;
+import moe.maple.api.script.model.object.field.ReactorObject;
+import moe.maple.api.script.model.object.user.QuestObject;
+import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.event.ScriptEvent;
 import moe.maple.api.script.model.type.SpeakerType;

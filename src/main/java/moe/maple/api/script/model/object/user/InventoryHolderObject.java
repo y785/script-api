@@ -20,8 +20,9 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object;
+package moe.maple.api.script.model.object.user;
 
+import moe.maple.api.script.model.object.ScriptObject;
 import moe.maple.api.script.util.tuple.Tuple;
 
 /**

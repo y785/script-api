@@ -20,11 +20,10 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object;
+package moe.maple.api.script.model.object.user;
 
+import moe.maple.api.script.model.object.field.FieldedObject;
 import org.slf4j.helpers.MessageFormatter;
-
-import java.util.Optional;
 
 /**
  * This is a script proxy for user/character objects.

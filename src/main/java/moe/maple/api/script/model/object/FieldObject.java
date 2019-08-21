@@ -22,6 +22,9 @@
 
 package moe.maple.api.script.model.object;
 
+import moe.maple.api.script.model.object.field.MobObject;
+import moe.maple.api.script.model.object.user.UserObject;
+
 import java.util.Collection;
 
 /**
@@ -47,14 +50,18 @@ public interface FieldObject<T> extends ScriptObject {
      */
     default int getUserCount() { return getUsers().size(); }
 
+    // =================================================================================================================
+
+    Collection<MobObject> getMobs();
+
     /**
      * Returns a count of the mobs in a map, by ID.
      * @param mobId the ID of the mob to count
      * @return a count of the mob specified in the map
      */
-    int getMobCount(int mobId);
-
-    // =================================================================================================================
+    default int getMobCount(int mobId) {
+        return (int)getMobs().stream().filter(mob -> mob.getId() == mobId).count();
+    }
 
     /**
      * Nexon's comment:
@@ -65,6 +72,8 @@ public interface FieldObject<T> extends ScriptObject {
      * @return See nexon's note.
      */
     long getMobHp(int mobId);
+
+    // =================================================================================================================
 
     int countUserInArea(String areaName);
     int countMaleInArea(String areaName);

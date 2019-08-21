@@ -22,7 +22,7 @@
 
 package moe.maple.api.script.model;
 
-import moe.maple.api.script.model.object.PortalObject;
+import moe.maple.api.script.model.object.field.PortalObject;
 
 public abstract class PortalScript extends BaseScript implements SpeakingScript {
 

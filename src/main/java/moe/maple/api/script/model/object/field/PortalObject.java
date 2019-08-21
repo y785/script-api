@@ -20,35 +20,17 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object;
+package moe.maple.api.script.model.object.field;
 
-import java.util.Optional;
+/**
+ * This is a script proxy for portal objects.
+ * <T> should be your implementation of portal.
+ * @param <T>
+ */
+public interface PortalObject<T> extends FieldedObject {
+    T getPortal();
 
-public interface FieldedObject extends ScriptObject {
+    String getPortalName();
 
-    /**
-     * FieldObjects are thrown into a pool and assigned a key.
-     * @return object id for this object
-     */
-    int getObjectId();
-
-    /**
-     * @return object's x position on the field.
-     */
-    int getX();
-
-    /**
-     *
-     * @return object's y position on the field.
-     */
-    int getY();
-
-    /**
-     * Some script objects should always have a field attached to them.
-     * Think users, npcs, monsters, etc. This isn't 100% guaranteed, so we
-     * have to use an optional for use-cases where the outliers occur.
-     * @return the object's current field. proxied.
-     */
-    Optional<? extends FieldObject> getField();
-    default int getFieldId() { return getField().map(FieldObject::getId).orElse(0); }
+    int getId();
 }

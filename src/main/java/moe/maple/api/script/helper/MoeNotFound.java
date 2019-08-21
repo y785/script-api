@@ -23,7 +23,7 @@
 package moe.maple.api.script.helper;
 
 import moe.maple.api.script.model.NpcScript;
-import moe.maple.api.script.model.object.NpcObject;
+import moe.maple.api.script.model.object.field.NpcObject;
 
 /**
  * A helper script for when an NPC isn't found.
