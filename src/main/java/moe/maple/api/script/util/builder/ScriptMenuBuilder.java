@@ -25,13 +25,14 @@ package moe.maple.api.script.util.builder;
 import moe.maple.api.script.util.tuple.Tuple;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * @author umbreon22
  * A builder for AskMenu.
  */
 
-public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> implements CharacterSequenceBuilder<ScriptMenuBuilder>, AppendingBuilder<ScriptMenuBuilder> {
+public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> implements CharacterSequenceBuilder<ScriptMenuBuilder>, AppendingBuilder<ScriptMenuBuilder>, ScriptFormatter<ScriptMenuBuilder> {
 
     private final StringBuilder textBuilder;
     private int runningMenuIndex;//Used with sequential array menus
@@ -89,12 +90,21 @@ public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> i
         return this;
     }
 
+    public <T> ScriptMenuBuilder appendMenu(Function<T, String> formatter, T... options) {
+        for (T obj : options) {
+            appendMenuItem(runningMenuIndex++, formatter.apply(obj));
+        }
+        return this;
+    }
+
     private ScriptMenuBuilder appendMenuItem(int index, String option) {
         if(isValidOption(option)) {
             textBuilder.append("#L").append(index).append("#").append(option).append("#l\r\n");
         }
         return this;
     }
+
+
 
     public ScriptMenuBuilder appendMenuWith(FontStyle menuStyle, FontColor menuColor, String... options) {
         boolean appendStyle = menuStyle != FontStyle.NONE && menuStyle != this.currentStyle;

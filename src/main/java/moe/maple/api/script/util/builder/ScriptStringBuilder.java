@@ -22,7 +22,7 @@
 
 package moe.maple.api.script.util.builder;
 
-public class ScriptStringBuilder extends StyleAndColorBuilder<ScriptStringBuilder> implements CharacterSequenceBuilder<ScriptStringBuilder>, AppendingBuilder<ScriptStringBuilder> {
+public class ScriptStringBuilder extends ScriptMenuBuilder {
 
     private final StringBuilder textBuilder;
 
@@ -98,5 +98,10 @@ public class ScriptStringBuilder extends StyleAndColorBuilder<ScriptStringBuilde
             return "Invalid input.";
         }
         return textBuilder.toString();
+    }
+
+    @Override
+    public String toString() {
+        return build();
     }
 }
