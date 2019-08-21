@@ -27,11 +27,14 @@ import moe.maple.api.script.model.chain.BasicActionChain;
 import moe.maple.api.script.model.chain.IntegerActionChain;
 import moe.maple.api.script.model.messenger.*;
 import moe.maple.api.script.model.messenger.ask.*;
+import moe.maple.api.script.model.messenger.effect.field.FieldObjectMessenger;
 import moe.maple.api.script.model.messenger.effect.field.FieldScreenMessenger;
 import moe.maple.api.script.model.messenger.effect.field.FieldSoundMessenger;
+import moe.maple.api.script.model.messenger.effect.field.FieldTrembleMessenger;
 import moe.maple.api.script.model.messenger.effect.uel.AvatarOrientedMessenger;
 import moe.maple.api.script.model.messenger.effect.uel.PlayPortalSEMessenger;
 import moe.maple.api.script.model.messenger.effect.uel.ReservedEffectMessenger;
+import moe.maple.api.script.model.messenger.misc.StatChangedMessenger;
 import moe.maple.api.script.model.messenger.say.SayImageMessenger;
 import moe.maple.api.script.model.messenger.say.SayMessenger;
 import moe.maple.api.script.model.response.ScriptResponse;
@@ -72,21 +75,34 @@ public enum ScriptAPI {
     private MessageMessenger messengerMessage;
     private BalloonMessenger messengerBalloon;
     private ProgressMessenger messengerProgress;
+    private StatChangedMessenger messengerStatChanged;
 
     // =================================================================================================================
 
+    /*
+     * Field Effects
+     */
+
+    private FieldObjectMessenger messengerFieldObject;
     private FieldScreenMessenger messengerFieldScreen;
     private FieldSoundMessenger messengerFieldSound;
+    private FieldTrembleMessenger messengerFieldTremble;
 
     // =================================================================================================================
+
+    /*
+     * User Effect Locals
+     */
 
     private AvatarOrientedMessenger messengerAvatarOriented;
     private PlayPortalSEMessenger messengerPlayPortalSE;
     private ReservedEffectMessenger messengerReservedEffect;
 
+
     ScriptAPI() { }
 
     public void setDefaultMessengers() {
+        // Basic script messages
         messengerAskAccept = (userObject, speakerTemplateId, param, message) -> log.debug("askAccept-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
         messengerAskAvatar = (userObject, message, speakerTemplateId, param,  options) -> log.debug("askAvatar-> speaker: {}, param: {}, options: {}, message: \"{}\"", speakerTemplateId, param, options, message);
         messengerAskBoxText = (userObject, speakerTemplateId, param, message, defaultText, column, row) -> log.debug("askBoxText-> speaker: {}, param: {}, column: {}, row: {}, default: \"{}\", message: \"{}\"", speakerTemplateId, param, column, row, defaultText, message);
@@ -101,13 +117,19 @@ public enum ScriptAPI {
         messengerSayImage = (userObject, speakerTemplateId, param, imagePath) -> log.debug("sayImage-> speaker: {}, param: {}, path: {}", speakerTemplateId, param, imagePath);
         messengerSay = (userObject, message, speakerTemplateId, param, previous, next) -> log.debug("say-> speaker: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerTemplateId, param, previous, next, message);
 
+        // Misc Packets
         messengerMessage = ((userObject, type, message) -> log.debug("message-> type: {}, message: \"{}\"", type, message));
         messengerBalloon = ((userObject, message, width, timeoutInSeconds) -> log.debug("balloon-> width: {}, timeout: {}, message: \"{}\"", width, timeoutInSeconds, message));
         messengerProgress= ((userObject, message) -> log.debug("progress-> message:  \"{}\"", message));
+        messengerStatChanged = (userObject, exclRequest) -> log.debug("statChanged-> excl: {}", exclRequest);
 
+        // Field Effects
+        messengerFieldObject = (userObject, path) -> log.debug("fieldObject-> path: {}", path);
         messengerFieldScreen = (userObject, path) -> log.debug("fieldScreen-> path: {}", path);
         messengerFieldSound = (userObject, path) -> log.debug("fieldSound-> path: {}", path);
+        messengerFieldTremble = (userObject, type, delay) -> log.debug("fieldTremble-> type: {}, delay: {}", type, delay);
 
+        // User Local Effects
         messengerAvatarOriented = (userObject, path, durationInSeconds) -> log.debug("avatarOriented-> path: {}, duration: {}");
         messengerPlayPortalSE = userObject -> log.debug("playPortalSE->");
         messengerReservedEffect = (userObject, path) -> log.debug("reservedEffect-> path: {}", path);
@@ -181,7 +203,16 @@ public enum ScriptAPI {
         this.messengerProgress = messengerProgress;
     }
 
+    public void setMessengerStatChanged(StatChangedMessenger messengerStatChanged) {
+        this.messengerStatChanged = messengerStatChanged;
+    }
+
     // =================================================================================================================
+
+
+    public void setMessengerFieldObject(FieldObjectMessenger messengerFieldObject) {
+        this.messengerFieldObject = messengerFieldObject;
+    }
 
     public void setMessengerFieldScreen(FieldScreenMessenger messengerFieldScreen) {
         this.messengerFieldScreen = messengerFieldScreen;
@@ -189,6 +220,10 @@ public enum ScriptAPI {
 
     public void setMessengerFieldSound(FieldSoundMessenger messengerFieldSound) {
         this.messengerFieldSound = messengerFieldSound;
+    }
+
+    public void setMessengerFieldTremble(FieldTrembleMessenger messengerFieldTremble) {
+        this.messengerFieldTremble = messengerFieldTremble;
     }
 
     // =================================================================================================================
@@ -204,7 +239,6 @@ public enum ScriptAPI {
     public void setMessengerReservedEffect(ReservedEffectMessenger messengerReservedEffect) {
         this.messengerReservedEffect = messengerReservedEffect;
     }
-
 
     // =================================================================================================================
 
@@ -247,6 +281,13 @@ public enum ScriptAPI {
                 () -> log.debug("User object isn't set, workflow is messy."));
     }
 
+    public static void statChanged(MoeScript script, boolean exclRequest) {
+        script.setScriptResponse(null);
+        script.setScriptAction(null);
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerStatChanged.send(obj, exclRequest),
+                () -> log.debug("User object isn't set, workflow is messy."));
+    }
+
     // =================================================================================================================
 
     public static void fieldEffectScreen(MoeScript script, String path) {
@@ -260,6 +301,13 @@ public enum ScriptAPI {
         script.setScriptResponse(null);
         script.setScriptAction(null);
         script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerFieldSound.send(obj, path),
+                () -> log.debug("User object isn't set, workflow is messy."));
+    }
+
+    public static void fieldEffectTremble(MoeScript script, int type, int delay) {
+        script.setScriptResponse(null);
+        script.setScriptAction(null);
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerFieldTremble.send(obj, type, delay),
                 () -> log.debug("User object isn't set, workflow is messy."));
     }
 

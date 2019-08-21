@@ -29,7 +29,8 @@ public interface LifeObject extends FieldedObject {
 
     // =================================================================================================================
 
-    int getHealthCurrent();
+    long getHealthCurrent();
+
     int getManaCurrent();
 
     int getHealthMax();

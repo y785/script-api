@@ -43,6 +43,10 @@ public interface LocalEffectScript extends MoeScript {
 
     // =================================================================================================================
 
+    default void fieldObject(String path) {
+        ScriptAPI.fieldEffectScreen(this, path);
+    }
+
     default void fieldScreen(String path) {
         ScriptAPI.fieldEffectScreen(this, path);
     }
@@ -57,5 +61,9 @@ public interface LocalEffectScript extends MoeScript {
 
     default void fieldSound(String format, Object... objects) {
         ScriptAPI.fieldEffectSound(this, MessageFormatter.arrayFormat(format, objects).getMessage());
+    }
+
+    default void fieldTremble(int type, int delay) {
+        ScriptAPI.fieldEffectTremble(this, type, delay);
     }
 }

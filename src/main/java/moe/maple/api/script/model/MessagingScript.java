@@ -68,6 +68,10 @@ public interface MessagingScript extends LocalEffectScript {
         balloon(Constants.BALLOON_DEFAULT_WIDTH, message);
     }
 
+    default void statChanged(boolean exclRequest) {
+        ScriptAPI.statChanged(this, exclRequest);
+    }
+
     class Constants {
         private final static int MESSAGE_DEFAULT_TYPE = 0x5;
 

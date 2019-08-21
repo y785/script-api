@@ -158,7 +158,6 @@ public interface UserObject<T> extends LifeObject, InventoryHolderObject<T>, Que
 
     /*
      * Packet: SetStandAloneMode
-     * Aliases: lockUI/unlockUI
      */
     void setStandAloneMode(boolean set);
 
@@ -166,21 +165,6 @@ public interface UserObject<T> extends LifeObject, InventoryHolderObject<T>, Que
      * Packet: DirectionMode
      */
     void setDirectionMode(boolean set);
-
-    // =================================================================================================================
-
-    /**
-     * Sends a Field Object Effect to the user.
-     * @param path WZ UOL to the effect.
-     */
-    void fieldEffectObject(String path);
-
-    /**
-     * Sends a Tremble Effect to the User.
-     * @param type Heavy / Short (?) Undocumented atm.
-     * @param delay delay in milliseconds
-     */
-    void fieldEffectTremble(int type, int delay);
 
     // =================================================================================================================
 
@@ -270,8 +254,6 @@ public interface UserObject<T> extends LifeObject, InventoryHolderObject<T>, Que
      * @return The user's current POP as an integer
      */
     int getFame();
-
-    boolean sendCharacterStat(boolean exclReq);
 
     // =================================================================================================================
 
