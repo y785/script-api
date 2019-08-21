@@ -22,6 +22,8 @@
 
 package moe.maple.api.script.model;
 
+import org.slf4j.helpers.MessageFormatter;
+
 /**
  * Local User Effects, Field Effects, etc.
  */
@@ -45,7 +47,15 @@ public interface LocalEffectScript extends MoeScript {
         ScriptAPI.fieldEffectScreen(this, path);
     }
 
+    default void fieldScreen(String format, Object... objects) {
+        ScriptAPI.fieldEffectSound(this, MessageFormatter.arrayFormat(format, objects).getMessage());
+    }
+
     default void fieldSound(String path) {
         ScriptAPI.fieldEffectSound(this, path);
+    }
+
+    default void fieldSound(String format, Object... objects) {
+        ScriptAPI.fieldEffectSound(this, MessageFormatter.arrayFormat(format, objects).getMessage());
     }
 }
