@@ -58,5 +58,10 @@ public interface QuestHolderObject<T> extends ScriptObject {
      * @return an empty string if the quest doesn't have the key
      */
     String getQuestEx(int questId, String key);
+
+    default boolean containsQuestEx(int questId, String key, String value) {
+        return getQuestEx(questId, key).contentEquals(value);
+    }
+
     boolean setQuestEx(int questId, String key, String value);
 }

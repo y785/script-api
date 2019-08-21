@@ -34,6 +34,10 @@ public interface LocalEffectScript extends MoeScript {
         ScriptAPI.userAvatarOriented(this, path, durationInSeconds);
     }
 
+    default void avatarOriented(String path) {
+        ScriptAPI.userAvatarOriented(this, path, 7);
+    }
+
     default void playPortalSE() {
         ScriptAPI.userPlayPortalSE(this);
     }
