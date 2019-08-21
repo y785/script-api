@@ -337,7 +337,7 @@ public enum ScriptAPI {
 
     // =================================================================================================================
 
-    private static ScriptResponse sayResponse(MoeScript script, List<ScriptResponse> chain, Integer speakerTemplateId, Integer param, String message, Integer idx, Integer ts) {
+    private static ScriptResponse sayResponse(MoeScript script, List<ScriptResponse> chain, Integer[] speakers, Tuple<Integer, String>[] paramAndMessage, Integer idx, Integer ts) {
         return (t, a, o) -> {
             if (t != SpeakerType.SAY) { // Wrong type, b-baka.
                 script.end();
@@ -345,10 +345,14 @@ public enum ScriptAPI {
                 switch (a.intValue()) {
                     case -1: // Escape
                         script.end();
+                        break;
                     case 0: // Back.
                         if (idx != 0) {
                             var back = idx-1 != 0;
                             var res = chain.get(idx - 1);
+                            var message = paramAndMessage[idx-1].right();
+                            var param = paramAndMessage[idx-1].left();
+                            var speakerTemplateId = speakers[idx-1];
                             script.setScriptResponse(res);
 
                             script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speakerTemplateId, param, back, true),
@@ -362,6 +366,9 @@ public enum ScriptAPI {
                         if (ts - 1 >= idx + 1) {
                             var forward = ts - 1 > idx + 1;
                             var res = chain.get(idx + 1);
+                            var message = paramAndMessage[idx+1].right();
+                            var param = paramAndMessage[idx+1].left();
+                            var speakerTemplateId = speakers[idx+1];
                             script.setScriptResponse(res);
                             script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speakerTemplateId, param, true, forward),
                                     () -> log.debug("User object isn't set, workflow is messy."));
@@ -373,22 +380,27 @@ public enum ScriptAPI {
                     default:
                         log.warn("Unhandled action({}) for {}", t, a);
                         script.end();
+                        break;
                 }
             }
         };
     }
 
     @SafeVarargs
-    public static BasicActionChain say(MoeScript script, Tuple<Integer, String>... paramAndMessages) {
+    public static BasicActionChain say(MoeScript script, Integer[] speakers, Tuple<Integer, String>... paramAndMessages) {
         script.setScriptAction(null);
+        script.setScriptResponse(null);
+
+        With.index(speakers, (i, idx) -> {
+            if (i == 0)
+                speakers[idx] = script.getSpeakerTemplateId();
+        });
 
         var chain = new LinkedList<ScriptResponse>();
-
-        With.indexAndCount(paramAndMessages, (tpl, idx, ts) ->
-                chain.add(sayResponse(script, chain, script.getSpeakerTemplateId(), tpl.left(), tpl.right(), idx, ts)));
+        With.indexAndCount(paramAndMessages, (msg, idx, ts) -> chain.add(sayResponse(script, chain, speakers, paramAndMessages, idx, ts)));
         script.setScriptResponse(chain.getFirst());
 
-        var speaker = script.getSpeakerTemplateId();
+        var speaker = speakers[0];
         var param = paramAndMessages[0].left();
         var message = paramAndMessages[0].right();
 
@@ -398,27 +410,23 @@ public enum ScriptAPI {
         return script::setScriptAction;
     }
 
-    public static BasicActionChain say(MoeScript script, Integer[] speakers, Integer[] params, String... messages) {
+    @SafeVarargs
+    public static BasicActionChain say(MoeScript script, Tuple<Integer, String>... paramAndMessages) {
         script.setScriptAction(null);
 
-        var chain = new LinkedList<ScriptResponse>();
+        Integer[] speakers = new Integer[paramAndMessages.length];
+        Arrays.fill(speakers, script.getSpeakerTemplateId());
+        return say(script, speakers, paramAndMessages);
+    }
 
-        // To be honest, this isn't really needed. // todo validate
-        With.index(speakers, (i, idx) -> {
-            if (i == 0)
-                speakers[idx] = script.getSpeakerTemplateId();
+    public static BasicActionChain say(MoeScript script, Integer[] speakers, Integer[] params, String... messages) {
+        Tuple<Integer, String>[] tlps = new Tuple[messages.length];
+        With.index(messages, (m, i) -> {
+            var par = params.length - 1 >= i ? params[i] : 0;
+            tlps[i] = Tuple.of(par, m);
         });
-        With.indexAndCount(messages, (msg, idx, ts) -> chain.add(sayResponse(script, chain, speakers[idx], params[idx], msg, idx, ts)));
-        script.setScriptResponse(chain.getFirst());
 
-        var speaker = speakers[0];
-        var param = params[0];
-        var message = messages[0];
-
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speaker, param, false, messages.length > 1),
-                () -> log.debug("User object isn't set, workflow is messy."));
-
-        return script::setScriptAction;
+        return say(script, speakers, tlps);
     }
 
     public static BasicActionChain say(MoeScript script, Integer[] speakers, int param, String... messages) {
@@ -436,18 +444,7 @@ public enum ScriptAPI {
     }
 
     public static BasicActionChain say(MoeScript script, int param, String... messages) {
-        script.setScriptAction(null);
-        var chain = new LinkedList<ScriptResponse>();
-        With.indexAndCount(messages, (msg, idx, ts) -> chain.add(sayResponse(script, chain, script.getSpeakerTemplateId(), param, msg, idx, ts)));
-        script.setScriptResponse(chain.getFirst());
-
-        var speaker = script.getSpeakerTemplateId();
-        var message = messages[0];
-
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speaker, param, false, messages.length > 1),
-                () -> log.debug("User object isn't set, workflow is messy."));
-
-        return script::setScriptAction;
+        return say(script, script.getSpeakerTemplateId(), param, messages);
     }
 
     public static BasicActionChain say(MoeScript script, String... messages) {
@@ -540,7 +537,7 @@ public enum ScriptAPI {
 
     public static IntegerActionChain askMenu(MoeScript script, int speakerTemplateId, int param, String prompt, String... menuItems) {
         var builder = new ScriptMenuBuilder();
-        builder.append(prompt).appendMenu(menuItems);
+        builder.append(prompt).newLine().blue().appendMenu(menuItems);
 
         script.setScriptAction(null);
         script.setScriptResponse(askMenuResponse(script, menuItems.length - 1));

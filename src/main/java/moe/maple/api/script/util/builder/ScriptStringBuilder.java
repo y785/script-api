@@ -26,9 +26,14 @@ public class ScriptStringBuilder extends ScriptMenuBuilder {
 
     private final StringBuilder textBuilder;
 
-    public ScriptStringBuilder() {
-        this.textBuilder = new StringBuilder();
+    public ScriptStringBuilder(StringBuilder sb) {
+        super(sb);
+        this.textBuilder = sb;
         resetColorAndStyle();
+    }
+
+    public ScriptStringBuilder() {
+        this(new StringBuilder());
     }
 
     public ScriptStringBuilder get() {

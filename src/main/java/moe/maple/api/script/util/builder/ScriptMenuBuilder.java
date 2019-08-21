@@ -23,6 +23,8 @@
 package moe.maple.api.script.util.builder;
 
 import moe.maple.api.script.util.tuple.Tuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -37,10 +39,14 @@ public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> i
     private final StringBuilder textBuilder;
     private int runningMenuIndex;//Used with sequential array menus
 
-    public ScriptMenuBuilder() {
-        this.textBuilder = new StringBuilder();
+    public ScriptMenuBuilder(StringBuilder builder) {
+        this.textBuilder = builder;
         this.runningMenuIndex = 0;
         resetColorAndStyle();
+    }
+
+    public ScriptMenuBuilder() {
+        this(new StringBuilder());
     }
 
     public ScriptMenuBuilder get() {

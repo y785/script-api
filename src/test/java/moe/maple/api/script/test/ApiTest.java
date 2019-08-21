@@ -26,7 +26,11 @@ import moe.maple.api.script.model.BaseScript;
 import moe.maple.api.script.model.NpcScript;
 import moe.maple.api.script.model.Script;
 import moe.maple.api.script.model.ScriptAPI;
+import moe.maple.api.script.model.object.FieldObject;
+import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.model.type.SpeakerType;
+import moe.maple.api.script.util.builder.ScriptFormatter;
+import moe.maple.api.script.util.builder.ScriptStringBuilder;
 import moe.maple.api.script.util.tuple.Tuple;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,11 +62,10 @@ public class ApiTest {
     public void apiSayLogic() {
         final String SCRIPT_NAME = "ApiSayLogic1";
 
+        @Script(name = SCRIPT_NAME)
         class NpcScriptTest extends NpcScript {
             @Override
-            @Script(name = SCRIPT_NAME)
             public void work() {
-                say("Test: {} {} {} {}", 0, 1, 2, 3, 4);
                 say("0", "1", "2").andThen(() -> {
                     log.debug("Beginning sub test 2: Back <-> Forward");
                     say(Tuple.of(0, "3"), Tuple.of(0, "4"), Tuple.of(0, "5")).andThen(() -> {
@@ -89,6 +93,7 @@ public class ApiTest {
         });
 
         var test = new NpcScriptTest();
+        test.setUserObject(new TestUserObject());
         assertEquals(test.name(), SCRIPT_NAME);
         test.work();
 

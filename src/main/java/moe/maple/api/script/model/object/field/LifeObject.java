@@ -33,7 +33,8 @@ public interface LifeObject extends FieldedObject {
 
     int getManaCurrent();
 
-    int getHealthMax();
+    long getHealthMax();
+
     int getManaMax();
 
     /**
@@ -51,6 +52,9 @@ public interface LifeObject extends FieldedObject {
      * @return true if field allows healing/user can be healed.
      */
     boolean increaseMana(int amountToHeal);
+
+    boolean decreaseHealth(int amountToReduce);
+    boolean decreaseMana(int amountToReduce);
 
     /**
      * This INCREASES an object's maximum health pool.
