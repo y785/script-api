@@ -22,6 +22,7 @@
 
 package moe.maple.api.script.model;
 
+import moe.maple.api.script.util.builder.ScriptFormatter;
 import org.slf4j.helpers.MessageFormatter;
 
 public interface MessagingScript extends LocalEffectScript {
@@ -41,7 +42,7 @@ public interface MessagingScript extends LocalEffectScript {
         message(Constants.MESSAGE_DEFAULT_TYPE, message, objects);
     }
     default void message(int type, String message, Object... objects) {
-        message(type, MessageFormatter.arrayFormat(message, objects).getMessage());
+        message(type, ScriptFormatter.format(message, objects));
     }
 
     default void balloon(int width, int timeoutInSeconds, String message) {
@@ -49,7 +50,7 @@ public interface MessagingScript extends LocalEffectScript {
     }
 
     default void balloon(int width, int timeoutInSeconds, String message, Object... objects) {
-        balloon(width, timeoutInSeconds, MessageFormatter.arrayFormat(message, objects).getMessage());
+        balloon(width, timeoutInSeconds, ScriptFormatter.format(message, objects));
     }
 
     default void balloon(int width, String message) {
@@ -57,11 +58,11 @@ public interface MessagingScript extends LocalEffectScript {
     }
 
     default void balloon(int width, String message, Object... objects) {
-        balloon(width, MessageFormatter.arrayFormat(message, objects).getMessage());
+        balloon(width, ScriptFormatter.format(message, objects));
     }
 
     default void balloon(String message, Object... objects) {
-        balloon(Constants.BALLOON_DEFAULT_WIDTH, MessageFormatter.arrayFormat(message, objects).getMessage());
+        balloon(Constants.BALLOON_DEFAULT_WIDTH, ScriptFormatter.format(message, objects));
     }
 
     default void balloon(String message) {

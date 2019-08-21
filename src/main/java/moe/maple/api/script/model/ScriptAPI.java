@@ -39,6 +39,7 @@ import moe.maple.api.script.model.messenger.say.SayImageMessenger;
 import moe.maple.api.script.model.messenger.say.SayMessenger;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.type.SpeakerType;
+import moe.maple.api.script.util.builder.ScriptFormatter;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
 import moe.maple.api.script.util.tuple.Tuple;
 import moe.maple.api.script.util.With;
@@ -454,7 +455,7 @@ public enum ScriptAPI {
     }
 
     public static BasicActionChain say(MoeScript script, String message, Object... objects) {
-        return say(script, MessageFormatter.arrayFormat(message, objects).getMessage());
+        return say(script, ScriptFormatter.format(message, objects));
     }
 
     // =================================================================================================================

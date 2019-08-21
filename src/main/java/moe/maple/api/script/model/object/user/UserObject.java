@@ -24,6 +24,7 @@ package moe.maple.api.script.model.object.user;
 
 import moe.maple.api.script.model.object.field.FieldedObject;
 import moe.maple.api.script.model.object.field.LifeObject;
+import moe.maple.api.script.util.builder.ScriptFormatter;
 import org.slf4j.helpers.MessageFormatter;
 
 /**
@@ -62,7 +63,7 @@ public interface UserObject<T> extends LifeObject, InventoryHolderObject<T>, Que
 
     boolean setScriptVariable(String key, String value);
     default boolean setScriptVariable(String key, Integer value) { return setScriptVariable(key, Integer.toString(value)); }
-    default boolean setScriptVariable(String key, String format, Object... objects) { return setScriptVariable(key, MessageFormatter.arrayFormat(format, objects).getMessage()); }
+    default boolean setScriptVariable(String key, String format, Object... objects) { return setScriptVariable(key, ScriptFormatter.format(format, objects)); }
 
     // =================================================================================================================
 

@@ -22,6 +22,7 @@
 
 package moe.maple.api.script.model;
 
+import moe.maple.api.script.util.builder.ScriptFormatter;
 import org.slf4j.helpers.MessageFormatter;
 
 /**
@@ -52,7 +53,7 @@ public interface LocalEffectScript extends MoeScript {
     }
 
     default void fieldScreen(String format, Object... objects) {
-        ScriptAPI.fieldEffectScreen(this, MessageFormatter.arrayFormat(format, objects).getMessage());
+        ScriptAPI.fieldEffectScreen(this, ScriptFormatter.format(format, objects));
     }
 
     default void fieldSound(String path) {
@@ -60,7 +61,7 @@ public interface LocalEffectScript extends MoeScript {
     }
 
     default void fieldSound(String format, Object... objects) {
-        ScriptAPI.fieldEffectSound(this, MessageFormatter.arrayFormat(format, objects).getMessage());
+        ScriptAPI.fieldEffectSound(this, ScriptFormatter.format(format, objects));
     }
 
     default void fieldTremble(int type, int delay) {
