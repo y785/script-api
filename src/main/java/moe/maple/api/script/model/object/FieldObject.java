@@ -22,6 +22,8 @@
 
 package moe.maple.api.script.model.object;
 
+import java.util.Collection;
+
 /**
  * This is a script proxy for field/map objects.
  * <T> should be your implementation of maps/fields.
@@ -36,6 +38,15 @@ public interface FieldObject<T> extends ScriptObject {
      */
     int getId();
 
+    // =================================================================================================================
+
+    Collection<UserObject> getUsers();
+
+    /**
+     * @return a count of all users in the field.
+     */
+    default int getUserCount() { return getUsers().size(); }
+
     /**
      * Returns a count of the mobs in a map, by ID.
      * @param mobId the ID of the mob to count
@@ -43,10 +54,7 @@ public interface FieldObject<T> extends ScriptObject {
      */
     int getMobCount(int mobId);
 
-    /**
-     * @return a count of all users in the field.
-     */
-    int getUserCount();
+    // =================================================================================================================
 
     /**
      * Nexon's comment:
