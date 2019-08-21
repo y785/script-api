@@ -48,7 +48,7 @@ public interface LocalEffectScript extends MoeScript {
     }
 
     default void fieldScreen(String format, Object... objects) {
-        ScriptAPI.fieldEffectSound(this, MessageFormatter.arrayFormat(format, objects).getMessage());
+        ScriptAPI.fieldEffectScreen(this, MessageFormatter.arrayFormat(format, objects).getMessage());
     }
 
     default void fieldSound(String path) {
