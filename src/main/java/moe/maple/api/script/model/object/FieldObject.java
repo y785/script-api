@@ -35,6 +35,7 @@ public interface FieldObject<T> extends ScriptObject {
      * @return the field object's .wz id
      */
     int getId();
+
     /**
      * Returns a count of the mobs in a map, by ID.
      * @param mobId the ID of the mob to count
