@@ -23,6 +23,7 @@
 package moe.maple.api.script.model.object.user;
 
 import moe.maple.api.script.model.object.field.FieldedObject;
+import moe.maple.api.script.model.object.field.LifeObject;
 import org.slf4j.helpers.MessageFormatter;
 
 /**
@@ -30,7 +31,7 @@ import org.slf4j.helpers.MessageFormatter;
  * <T> should be your implementation of user/character.
  * @param <T>
  */
-public interface UserObject<T> extends FieldedObject, InventoryHolderObject<T>, QuestHolderObject<T> {
+public interface UserObject<T> extends LifeObject, InventoryHolderObject<T>, QuestHolderObject<T> {
 
     T getUser();
 
