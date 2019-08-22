@@ -50,6 +50,7 @@ public abstract class BaseScript implements MoeScript {
     protected LinkedList<ScriptEvent> startScriptEvents;
     protected LinkedList<ScriptEvent> endScriptEvents;
 
+    protected ServerObject server;
     protected FieldObject field;
     protected FieldSetObject fieldset;
     protected NpcObject npc;
@@ -180,6 +181,12 @@ public abstract class BaseScript implements MoeScript {
 
     // =================================================================================================================
 
+
+    @Override
+    public void setServerObject(ServerObject object) {
+        this.server = object;
+    }
+
     @Override
     public void setFieldObject(FieldObject field) {
         this.field = field;
@@ -213,6 +220,11 @@ public abstract class BaseScript implements MoeScript {
     @Override
     public void setUserObject(UserObject user) {
         this.user = user;
+    }
+
+    @Override
+    public Optional<ServerObject> getServerObject() {
+        return Optional.ofNullable(server);
     }
 
     @Override

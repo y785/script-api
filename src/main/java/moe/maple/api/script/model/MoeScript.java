@@ -65,6 +65,7 @@ public interface MoeScript {
 
     // =================================================================================================================
 
+    void setServerObject(ServerObject object);
     void setFieldObject(FieldObject object);
     void setFieldSetObject(FieldSetObject object);
     void setNpcObject(NpcObject object);
@@ -73,6 +74,7 @@ public interface MoeScript {
     void setReactorObject(ReactorObject object);
     void setUserObject(UserObject object);
 
+    Optional<ServerObject> getServerObject();
     Optional<FieldObject> getFieldObect();
     Optional<FieldSetObject> getFieldSetObject();
     Optional<NpcObject> getNpcObject();
