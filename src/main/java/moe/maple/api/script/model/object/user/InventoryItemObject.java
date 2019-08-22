@@ -20,8 +20,14 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object;
+package moe.maple.api.script.model.object.user;
 
-public interface ScriptObject<T> {
-    T get();
+import moe.maple.api.script.model.object.ScriptObject;
+
+public interface InventoryItemObject<T> extends ItemObject<T> {
+
+    /**
+     * This item's position in the inventory.
+     */
+    int getSlotId();
 }

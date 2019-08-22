@@ -25,6 +25,11 @@ package moe.maple.api.script.model.object.user;
 import moe.maple.api.script.model.object.ScriptObject;
 import moe.maple.api.script.util.tuple.Tuple;
 
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * An object that has a single inventory or a collection of inventories.
  * Typically a user/character.
@@ -168,4 +173,25 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
     default boolean increaseSlotCountForCash(int howMany) {
         return increaseSlotCount(5, howMany);
     }
+
+    // =================================================================================================================
+
+    /**
+     * Get the
+     * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
+     * @return the inventory's item collection
+     */
+    Collection<InventoryItemObject> getItems(int inventoryType);
+
+    default Stream<InventoryItemObject> streamItems(int inventoryType) { return getItems(inventoryType).stream(); }
+    default Stream<InventoryItemObject> streamItems(int inventoryType, Predicate<InventoryItemObject> filter) { return streamItems(inventoryType).filter(filter); }
+
+    default Collection<InventoryItemObject> getItemsEquip() { return getItems(1); }
+    default Collection<InventoryItemObject> getItemsConsume() { return getItems(2); }
+    default Collection<InventoryItemObject> getItemsInstall() { return getItems(3); }
+    default Collection<InventoryItemObject> getItemsEtc() { return getItems(4); }
+    default Collection<InventoryItemObject> getItemsCash() { return getItems(5); }
+
+    default Stream<InventoryItemObject> streamItemsEquipped() { return streamItems(1).filter(i -> i.getSlotId() < 0); }
+    default Collection<InventoryItemObject> getItemsEquipped() { return streamItemsEquipped().collect(Collectors.toList()); }
 }

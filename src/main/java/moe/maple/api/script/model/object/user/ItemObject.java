@@ -20,8 +20,23 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object;
+package moe.maple.api.script.model.object.user;
 
-public interface ScriptObject<T> {
-    T get();
+import moe.maple.api.script.model.object.ScriptObject;
+
+public interface ItemObject <T> extends ScriptObject<T> {
+
+    int getId();
+
+    // =================================================================================================================
+
+    /**
+     * You will need to override these depending on version or custom edits.
+     * These are just meant to be helpful for basic scripts.
+     */
+
+    default boolean isWeddingRing() {
+        var nItemID = getId();
+        return nItemID == 1112803 || nItemID == 1112806 || nItemID == 1112807 || nItemID == 1112809;
+    }
 }

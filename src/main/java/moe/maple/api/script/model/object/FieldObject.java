@@ -26,6 +26,8 @@ import moe.maple.api.script.model.object.field.MobObject;
 import moe.maple.api.script.model.object.user.UserObject;
 
 import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * This is a script proxy for field/map objects.
@@ -42,6 +44,8 @@ public interface FieldObject<T> extends ScriptObject<T> {
     // =================================================================================================================
 
     Collection<UserObject> getUsers();
+    default Stream<UserObject> streamUsers() { return getUsers().stream(); }
+    default Stream<UserObject> streamUsers(Predicate<UserObject> filter) { return streamUsers().filter(filter); }
 
     /**
      * @return a count of all users in the field.
@@ -51,6 +55,8 @@ public interface FieldObject<T> extends ScriptObject<T> {
     // =================================================================================================================
 
     Collection<MobObject> getMobs();
+    default Stream<MobObject> streamMobs() { return getMobs().stream(); }
+    default Stream<MobObject> streamMobs(Predicate<MobObject> filter) { return streamMobs().filter(filter); }
 
     /**
      * Returns a count of the mobs in a map, by ID.
@@ -58,7 +64,7 @@ public interface FieldObject<T> extends ScriptObject<T> {
      * @return a count of the mob specified in the map
      */
     default int getMobCount(int mobId) {
-        return (int)getMobs().stream().filter(mob -> mob.getId() == mobId).count();
+        return (int)streamMobs(mob -> mob.getId() == mobId).count();
     }
 
     /**
