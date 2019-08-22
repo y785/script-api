@@ -26,10 +26,10 @@ import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
-public interface FieldObjectMessenger extends ScriptMessenger {
+public interface FieldObjectMessenger<User> extends ScriptMessenger {
     /**
      * Packet: FieldEffect | FieldEffectType.FieldEffect_Object
      * @param path - .wz UOL
      */
-    void send(UserObject userObject, String path);
+    void send(UserObject<User> userObject, String path);
 }

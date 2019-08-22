@@ -26,6 +26,6 @@ package moe.maple.api.script.model.messenger;
 import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
-public interface MessageMessenger extends ScriptMessenger {
-    void send(UserObject userObject, int type, String message);
+public interface MessageMessenger<User> extends ScriptMessenger {
+    void send(UserObject<User> userObject, int type, String message);
 }

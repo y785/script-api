@@ -25,6 +25,6 @@ package moe.maple.api.script.model.messenger;
 import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
-public interface BalloonMessenger extends ScriptMessenger {
-    void send(UserObject userObject, String message, int width, int timeoutInSeconds);
+public interface BalloonMessenger<User> extends ScriptMessenger {
+    void send(UserObject<User> userObject, String message, int width, int timeoutInSeconds);
 }

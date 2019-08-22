@@ -27,10 +27,10 @@ import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
-public interface FieldScreenMessenger extends ScriptMessenger {
+public interface FieldScreenMessenger<User> extends ScriptMessenger {
     /**
      * Packet: FieldEffect | FieldEffectType.FieldEffect_Screen
      * @param path - The Map.wz UOL, relative to "Map.wz/Effect.img", example: "maplemap/enter/50000"
      */
-    void send(UserObject userObject, String path);
+    void send(UserObject<User> userObject, String path);
 }

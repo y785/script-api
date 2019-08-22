@@ -26,10 +26,10 @@ import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
-public interface PlayPortalSEMessenger extends ScriptMessenger {
+public interface PlayPortalSEMessenger<User> extends ScriptMessenger {
     /**
      * Packet: UserEffectLocal | UserEffect.PlayPortalSE
      * See: UserEffect.PlayPortalSE
      */
-    void send(UserObject userObject);
+    void send(UserObject<User> userObject);
 }

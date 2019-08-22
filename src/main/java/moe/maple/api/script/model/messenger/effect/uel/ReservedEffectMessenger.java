@@ -26,11 +26,11 @@ import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
-public interface ReservedEffectMessenger extends ScriptMessenger {
+public interface ReservedEffectMessenger<User> extends ScriptMessenger {
     /**
      * Packet: UserEffectLocal | UserEffect.ReservedEffect
      * This is commonly called showEffect/showIntro/playScene in odin-based sources.
      * @param path - The Effect.wz UOL, example: "Effect/Direction1/aranTutorial/Child"
      */
-    void send(UserObject userObject, String path);
+    void send(UserObject<User> userObject, String path);
 }

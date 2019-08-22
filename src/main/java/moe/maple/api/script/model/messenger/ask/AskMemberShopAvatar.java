@@ -26,6 +26,6 @@ import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
-public interface AskMemberShopAvatar extends ScriptMessenger {
-    void send(UserObject userObject, int speakerTemplateId, int param, String message, int[] options);
+public interface AskMemberShopAvatar<User> extends ScriptMessenger {
+    void send(UserObject<User> userObject, int speakerTemplateId, int param, String message, int[] options);
 }
