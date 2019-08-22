@@ -24,6 +24,9 @@ package moe.maple.api.script.util.builder;
 
 import org.slf4j.helpers.MessageFormatter;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 /**
  *  Generic class for MessageFormatter.
  *  Just because slf4j is a dependency and I trust nothing.
@@ -47,4 +50,22 @@ public interface ScriptFormatter<Builder extends CharacterSequenceBuilder<Builde
     static String format(String format, Object object) {
         return MessageFormatter.format(format, object).getMessage();
     }
+
+
+    default Builder appendFormattedNumber(Number number) {
+        append(formatWithLocale(number));
+        return get();
+    }
+
+    NumberFormat commaFormatter = NumberFormat.getNumberInstance(Locale.getDefault());
+    /**
+     * Formats a number using the server's Locale
+     * Ex. (Locale.US) 1000 => 1,000
+     * @param hopefullyANumber HOPEFULLY
+     * @return A formatted number as a {@link String}
+     */
+    static String formatWithLocale(Number hopefullyANumber) {
+        return commaFormatter.format(hopefullyANumber);
+    }
+
 }
