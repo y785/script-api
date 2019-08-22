@@ -439,4 +439,9 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
 
     void openClassCompetitionPage();
 
+    /**
+     * @return The user's current channelId.
+     */
+    int getChannelId();
+
 }
