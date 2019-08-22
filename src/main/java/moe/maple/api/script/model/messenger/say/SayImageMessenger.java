@@ -27,5 +27,8 @@ import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
 public interface SayImageMessenger<User> extends ScriptMessenger {
-    void send(UserObject<User> userObject, int speakerTemplateId, int param, String... imagePath);
+    void send(UserObject<User> userObject, int speakerType, int speakerTemplateId, int param, String... imagePath);
+    default void send(UserObject<User> userObject, int speakerTemplateId, int param, String... imagePath) {
+        send(userObject, 0, speakerTemplateId, param, imagePath);
+    }
 }
