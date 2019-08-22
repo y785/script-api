@@ -24,7 +24,7 @@ package moe.maple.api.script.model;
 
 import moe.maple.api.script.model.object.field.ReactorObject;
 
-public abstract class ReactorScript extends BaseScript {
+public abstract class ReactorScript extends BaseScript implements MessagingScript {
 
     protected ReactorObject self;
 
