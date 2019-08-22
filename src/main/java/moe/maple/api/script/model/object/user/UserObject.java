@@ -65,7 +65,7 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
 
     boolean removeGuild(int cost);
     default boolean removeGuild() { return removeGuild(0); }
-    
+
     int getBuddyCapacity();
 
     boolean increaseBuddyCapacity(int amount, int cost);
