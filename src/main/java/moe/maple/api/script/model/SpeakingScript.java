@@ -25,6 +25,7 @@ package moe.maple.api.script.model;
 import moe.maple.api.script.model.action.BasicScriptAction;
 import moe.maple.api.script.model.chain.BasicActionChain;
 import moe.maple.api.script.model.chain.IntegerActionChain;
+import moe.maple.api.script.model.chain.StringActionChain;
 import moe.maple.api.script.util.tuple.Tuple;
 
 /**
@@ -40,28 +41,32 @@ public interface SpeakingScript extends MessagingScript {
         return ScriptAPI.say(this, messages);
     }
 
-    default BasicActionChain say(String message, Object... objects) {
-        return ScriptAPI.say(this, message, objects);
-    }
-
-    default BasicActionChain say(int param, String... messages) {
-        return ScriptAPI.say(this, param, messages);
-    }
-
-    default BasicActionChain say(int speakerTemplateId, int param, String... messages) {
-        return ScriptAPI.say(this, speakerTemplateId, param, messages);
+    default BasicActionChain say(Integer[] speakers, Tuple<Integer, String>... paramAndMessages) {
+        return ScriptAPI.say(this, speakers, paramAndMessages);
     }
 
     default BasicActionChain say(Tuple<Integer, String>... paramAndMessages) {
         return ScriptAPI.say(this, paramAndMessages);
     }
 
+    default BasicActionChain say(Integer[] speakers, Integer[] params, String... messages) {
+        return ScriptAPI.say(this, speakers, params, messages);
+    }
+
     default BasicActionChain say(Integer[] speakers, int param, String... messages) {
         return ScriptAPI.say(this, speakers, param, messages);
     }
 
-    default BasicActionChain say(Integer[] speakers, Integer[] params, String... messages) {
-        return ScriptAPI.say(this, speakers, params, messages);
+    default BasicActionChain say(int speakerTemplateId, int param, String... messages) {
+        return ScriptAPI.say(this, speakerTemplateId, param, messages);
+    }
+
+    default BasicActionChain say(int param, String... messages) {
+        return ScriptAPI.say(this, param, messages);
+    }
+
+    default BasicActionChain say(String message, Object... objects) {
+        return ScriptAPI.say(this, message, objects);
     }
 
     // =================================================================================================================
@@ -118,5 +123,57 @@ public interface SpeakingScript extends MessagingScript {
 
     default IntegerActionChain askAvatar(String prompt, int... options) {
         return ScriptAPI.askAvatar(this, prompt, options);
+    }
+
+    // =================================================================================================================
+
+    default StringActionChain askText(int speakerTemplateId, int param, String message, String defaultText, int min, int max) {
+        return ScriptAPI.askText(this, speakerTemplateId, param, message, defaultText, min, max);
+    }
+
+    default StringActionChain askText(int param, String message, String defaultText, int min, int max) {
+        return ScriptAPI.askText(this, param, message, defaultText, min, max);
+    }
+
+    default StringActionChain askText(String message, String defaultText, int min, int max) {
+        return ScriptAPI.askText(this, message, defaultText, min, max);
+    }
+
+    default StringActionChain askText(String message, String defaultText, int min) {
+        return ScriptAPI.askText(this, message, defaultText, min);
+    }
+
+    default StringActionChain askText(String message, String defaultText) {
+        return ScriptAPI.askText(this, message, defaultText);
+    }
+
+    default StringActionChain askText(String message) {
+        return ScriptAPI.askText(this, message);
+    }
+
+    // =================================================================================================================
+
+    default IntegerActionChain askNumber(int speakerTemplateId, int param, String message, int defaultNumber, int min, int max) {
+        return ScriptAPI.askNumber(this, speakerTemplateId, param, message, defaultNumber, min, max);
+    }
+
+    default IntegerActionChain askNumber(int param, String message, int defaultNumber, int min, int max) {
+        return ScriptAPI.askNumber(this, param, message, defaultNumber, min, max);
+    }
+
+    default IntegerActionChain askNumber(String message, int defaultNumber, int min, int max) {
+        return ScriptAPI.askNumber(this, message, defaultNumber, min, max);
+    }
+
+    default IntegerActionChain askNumber(String message, int defaultNumber, int min) {
+        return ScriptAPI.askNumber(this, message, defaultNumber, min);
+    }
+
+    default IntegerActionChain askNumber(String message, int defaultNumber) {
+        return ScriptAPI.askNumber(this, message, defaultNumber);
+    }
+
+    default IntegerActionChain askNumber(String message) {
+        return ScriptAPI.askNumber(this, message);
     }
 }

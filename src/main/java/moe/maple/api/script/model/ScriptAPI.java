@@ -25,6 +25,7 @@ package moe.maple.api.script.model;
 import moe.maple.api.script.model.action.*;
 import moe.maple.api.script.model.chain.BasicActionChain;
 import moe.maple.api.script.model.chain.IntegerActionChain;
+import moe.maple.api.script.model.chain.StringActionChain;
 import moe.maple.api.script.model.messenger.*;
 import moe.maple.api.script.model.messenger.ask.*;
 import moe.maple.api.script.model.messenger.effect.field.FieldObjectMessenger;
@@ -522,8 +523,8 @@ public enum ScriptAPI {
             if (t != SpeakerType.ASKMENU || a.intValue() != 1) {
                 script.end();
             } else {
-                var sel = ((Number)o).intValue();
-                var bad = sel < min || sel > max;
+                var sel = ((Integer)o);
+                var bad = sel == null || sel < min || sel > max;
                 if (bad) {
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
                     script.end();
@@ -573,8 +574,8 @@ public enum ScriptAPI {
         script.setScriptResponse((t, a, o) -> {
             var min = 0;
             var max = options.length - 1;
-            var sel = ((Number)o).intValue();
-            var bad = sel < min || sel > max;
+            var sel = ((Integer)o);
+            var bad = sel == null || sel < min || sel > max;
 
             if (t != SpeakerType.ASKMENU || bad || a.intValue() != 1) {
                 if (bad)
@@ -599,8 +600,8 @@ public enum ScriptAPI {
         return (t, a, o) -> {
             var min = 0;
             var max = options.length - 1;
-            var sel = ((Number)o).intValue();
-            var bad = sel < min || sel > max;
+            var sel = ((Integer)o);
+            var bad = sel == null || sel < min || sel > max;
 
             if (t != SpeakerType.ASKAVATAR || bad || a.intValue() != 1) {
                 if (bad)
@@ -632,4 +633,98 @@ public enum ScriptAPI {
     }
 
     // =================================================================================================================
+
+    private static ScriptResponse askTextResponse(MoeScript script, int min, int max) {
+        return (t, a, o) -> {
+            var sel = ((String)o);
+            var bad = sel == null || sel.length() < min || sel.length() > max;
+
+            if (t != SpeakerType.ASKTEXT || bad || a.intValue() != 1) {
+                if (bad)
+                    log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
+                script.end();
+            } else {
+                script.setScriptResponse(null);
+                script.resume(t, a, o);
+            }
+        };
+    }
+
+    public static StringActionChain askText(MoeScript script, int speakerTemplateId, int param, String message, String defaultText, int min, int max) {
+        script.setScriptAction(null);
+        script.setScriptResponse(askTextResponse(script, min, max));
+
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskText.send(obj, speakerTemplateId, param, message, defaultText, min, max),
+                () -> log.debug("User object isn't set, workflow is messy."));
+        return script::setScriptAction;
+    }
+
+    public static StringActionChain askText(MoeScript script, int param, String message, String defaultText, int min, int max) {
+        return askText(script, script.getSpeakerTemplateId(), param, message, defaultText, min, max);
+    }
+
+    public static StringActionChain askText(MoeScript script, String message, String defaultText, int min, int max) {
+        return askText(script, script.getSpeakerTemplateId(), 0, message, defaultText, min, max);
+    }
+
+    public static StringActionChain askText(MoeScript script, String message, String defaultText, int min) {
+        return askText(script, script.getSpeakerTemplateId(), 0, message, defaultText, min, 32);
+    }
+
+    public static StringActionChain askText(MoeScript script, String message, String defaultText) {
+        return askText(script, script.getSpeakerTemplateId(), 0, message, defaultText, 0, 32);
+    }
+
+    public static StringActionChain askText(MoeScript script, String message) {
+        return askText(script, script.getSpeakerTemplateId(), 0, message, "", 0, 32);
+    }
+
+    // =================================================================================================================
+
+    private static ScriptResponse askNumberResponse(MoeScript script, int min, int max) {
+        return (t, a, o) -> {
+            var sel = ((Integer)o);
+            var bad = sel == null || sel < min || sel > max;
+
+            if (t != SpeakerType.ASKNUMBER || bad || a.intValue() != 1) {
+                if (bad)
+                    log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
+                script.end();
+            } else {
+                script.setScriptResponse(null);
+                script.resume(t, a, o);
+            }
+        };
+    }
+
+    public static IntegerActionChain askNumber(MoeScript script, int speakerTemplateId, int param, String message, int defaultNumber, int min, int max) {
+        script.setScriptAction(null);
+        script.setScriptResponse(askNumberResponse(script, min, max));
+
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskNumber.send(obj, speakerTemplateId, param, message, defaultNumber, min, max),
+                () -> log.debug("User object isn't set, workflow is messy."));
+
+        return script::setScriptAction;
+    }
+
+    public static IntegerActionChain askNumber(MoeScript script, int param, String message, int defaultNumber, int min, int max) {
+        return askNumber(script, script.getSpeakerTemplateId(), param, message, defaultNumber, min, max);
+    }
+
+    public static IntegerActionChain askNumber(MoeScript script, String message, int defaultNumber, int min, int max) {
+        return askNumber(script, script.getSpeakerTemplateId(), 0, message, defaultNumber, min, max);
+    }
+
+    public static IntegerActionChain askNumber(MoeScript script, String message, int defaultNumber, int min) {
+        return askNumber(script, script.getSpeakerTemplateId(), 0, message, defaultNumber, min, Integer.MAX_VALUE);
+    }
+
+    public static IntegerActionChain askNumber(MoeScript script, String message, int defaultNumber) {
+        return askNumber(script, script.getSpeakerTemplateId(), 0, message, defaultNumber, 0, Integer.MAX_VALUE);
+    }
+
+    public static IntegerActionChain askNumber(MoeScript script, String message) {
+        return askNumber(script, script.getSpeakerTemplateId(), 0, message, 0, 0, Integer.MAX_VALUE);
+    }
+
 }
