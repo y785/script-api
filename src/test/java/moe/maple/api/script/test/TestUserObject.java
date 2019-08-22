@@ -23,17 +23,16 @@
 package moe.maple.api.script.test;
 
 import moe.maple.api.script.model.object.FieldObject;
+import moe.maple.api.script.model.object.GuildObject;
+import moe.maple.api.script.model.object.PartyObject;
+import moe.maple.api.script.model.object.user.InventoryItemObject;
 import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.util.tuple.Tuple;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public class TestUserObject implements UserObject {
-    @Override
-    public Object getUser() {
-        return null;
-    }
-
     @Override
     public long getId() {
         return 0;
@@ -42,6 +41,41 @@ public class TestUserObject implements UserObject {
     @Override
     public String getName() {
         return null;
+    }
+
+    @Override
+    public Optional<GuildObject> getGuild() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<PartyObject> getParty() {
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean isCreateGuildPossible(int cost) {
+        return false;
+    }
+
+    @Override
+    public boolean createNewGuild(int cost) {
+        return false;
+    }
+
+    @Override
+    public boolean removeGuild(int cost) {
+        return false;
+    }
+
+    @Override
+    public int getBuddyCapacity() {
+        return 0;
+    }
+
+    @Override
+    public boolean increaseBuddyCapacity(int amount, int cost) {
+        return false;
     }
 
     @Override
@@ -280,6 +314,11 @@ public class TestUserObject implements UserObject {
     }
 
     @Override
+    public int getChannelId() {
+        return 0;
+    }
+
+    @Override
     public long getHealthCurrent() {
         return 0;
     }
@@ -395,13 +434,28 @@ public class TestUserObject implements UserObject {
     }
 
     @Override
+    public boolean removeSlot(int tab, short position) {
+        return false;
+    }
+
+    @Override
     public int getItemCount(int itemTemplateId) {
+        return 0;
+    }
+
+    @Override
+    public int getHoldCount(int inventoryType) {
         return 0;
     }
 
     @Override
     public boolean increaseSlotCount(int inventoryType, int howMany) {
         return false;
+    }
+
+    @Override
+    public Collection<InventoryItemObject> getItems(int inventoryType) {
+        return null;
     }
 
     @Override
@@ -422,5 +476,10 @@ public class TestUserObject implements UserObject {
     @Override
     public boolean setQuestEx(int questId, String key, String value) {
         return false;
+    }
+
+    @Override
+    public Object get() {
+        return null;
     }
 }
