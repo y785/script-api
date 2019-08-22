@@ -26,7 +26,7 @@ import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
-public interface AskSpeedQuizMessenger extends ScriptMessenger {
+public interface AskSpeedQuizMessenger<User> extends ScriptMessenger {
     /* This is...a big one. */
-    void send(UserObject userObject, int speakerTemplateId, int param, int type, int answer, int correct, int remaining, int remainInitialQuiz, String title, String problemText, String hintText, int min, int max, int remainInitialQuiz1);
+    void send(UserObject<User> userObject, int speakerTemplateId, int param, int type, int answer, int correct, int remaining, int remainInitialQuiz, String title, String problemText, String hintText, int min, int max, int remainInitialQuiz1);
 }

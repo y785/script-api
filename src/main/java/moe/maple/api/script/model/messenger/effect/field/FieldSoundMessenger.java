@@ -26,10 +26,10 @@ import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
-public interface FieldSoundMessenger extends ScriptMessenger {
+public interface FieldSoundMessenger<User> extends ScriptMessenger {
     /**
      * Packet: FieldEffect | FieldEffectType.FieldEffect_Sound
      * @param path - The Sound.wz UOL, relative to "Sound.wz/Field.img", example: "Aran/balloon"
      */
-    void send(UserObject userObject, String path);
+    void send(UserObject<User> userObject, String path);
 }

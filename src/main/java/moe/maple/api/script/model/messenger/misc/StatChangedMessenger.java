@@ -26,10 +26,10 @@ import moe.maple.api.script.model.messenger.ScriptMessenger;
 import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
-public interface StatChangedMessenger extends ScriptMessenger {
+public interface StatChangedMessenger<User> extends ScriptMessenger {
     /**
      * Sends a stat change, typically referred to as dispose
      * @param exclRequest true will unlock the ui/context
      */
-    void send(UserObject userObject, boolean exclRequest);
+    void send(UserObject<User> userObject, boolean exclRequest);
 }
