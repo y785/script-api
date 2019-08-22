@@ -567,7 +567,7 @@ public enum ScriptAPI {
     @SafeVarargs
     public static void askMenu(MoeScript script, String prompt, Tuple<String, BasicScriptAction>... options) {
         var builder = new ScriptMenuBuilder();
-        builder.append(prompt).appendMenu(Stream.of(options).map(Tuple::left).collect(Collectors.joining()));
+        builder.append(prompt).newLine().blue().appendMenu(Tuple::left, options);
 
         script.setScriptAction(null);
         script.setScriptResponse((t, a, o) -> {
