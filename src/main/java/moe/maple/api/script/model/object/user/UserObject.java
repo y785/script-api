@@ -22,10 +22,14 @@
 
 package moe.maple.api.script.model.object.user;
 
+import moe.maple.api.script.model.object.GuildObject;
+import moe.maple.api.script.model.object.PartyObject;
 import moe.maple.api.script.model.object.field.FieldedObject;
 import moe.maple.api.script.model.object.field.LifeObject;
 import moe.maple.api.script.util.builder.ScriptFormatter;
 import org.slf4j.helpers.MessageFormatter;
+
+import java.util.Optional;
 
 /**
  * This is a script proxy for user/character objects.
@@ -44,6 +48,28 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
      * @return the user's name, duh
      */
     String getName();
+
+    // =================================================================================================================
+
+    Optional<GuildObject> getGuild();
+    Optional<PartyObject> getParty();
+
+    default boolean isInGuild() { return getGuild().isPresent(); }
+    default boolean isInParty() { return getParty().isPresent(); }
+
+    boolean isCreateGuildPossible(int cost);
+    default boolean isCreateGuildPossible() { return isCreateGuildPossible(0); }
+
+    boolean createNewGuild(int cost);
+    default boolean createNewGuild() { return createNewGuild(0); }
+
+    boolean removeGuild(int cost);
+    default boolean removeGuild() { return removeGuild(0); }
+    
+    int getBuddyCapacity();
+
+    boolean increaseBuddyCapacity(int amount, int cost);
+    default boolean increaseBuddyCapacity(int amount) { return increaseBuddyCapacity(amount, 0); }
 
     // =================================================================================================================
 

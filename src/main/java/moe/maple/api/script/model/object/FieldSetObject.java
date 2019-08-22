@@ -31,6 +31,7 @@ package moe.maple.api.script.model.object;
  */
 public interface FieldSetObject<T> extends ScriptObject<T> {
 
+    String getName();
 
     //The below is reflective of BMS, not necessarily the final interface.
     String getVar(String name);
@@ -44,17 +45,23 @@ public interface FieldSetObject<T> extends ScriptObject<T> {
      */
     int enter(int characterId, int fieldIndex);
 
-    int incExpAll(int exp);//퀘스트 반복 횟수 Number of Quest Repeats? check BMS.
-
     int getReactorState(int fieldIndex, String name);//-1 on error
 
     void setReactorState(int fieldIndex, String name, int state, int delay);
 
-    long getQuestTime();
+    // =================================================================================================================
 
     int getTimeout();
 
     void resetQuestTime();
+
+    long getQuestTime();
+
+    // =================================================================================================================
+
+    int increaseExpAll(int exp);//퀘스트 반복 횟수 Number of Quest Repeats? check BMS.
+
+    // =================================================================================================================
 
     /**
      * Transfers all Users in the FieldSet to your specified Field ID.
@@ -84,7 +91,5 @@ public interface FieldSetObject<T> extends ScriptObject<T> {
     boolean resetTimeOut(int timeMaybeCheckBMS);
 
     void setTargetFieldID(int targetFieldID);
-
-    String getName();
 
 }

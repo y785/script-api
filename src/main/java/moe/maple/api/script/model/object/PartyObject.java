@@ -24,39 +24,17 @@ package moe.maple.api.script.model.object;
 
 import moe.maple.api.script.model.object.user.UserObject;
 
-/**
- * Created on 8/22/2019.
- */
-public interface GuildObject<Guild> extends ScriptObject<Guild> {
+import java.util.Collection;
 
-    boolean isMaster(long userId);
-    default boolean isMaster(UserObject userObject) { return isMaster(userObject.getId()); }
+public interface PartyObject<Party> extends ScriptObject<Party> {
 
-    boolean isSubMaster(long userId);
-    default boolean isSubMaster(UserObject userObject) { return isSubMaster(userObject.getId()); }
+    long getId();
+
+    boolean isBoss(long userId);
+    default boolean isBoss(UserObject userObject) { return isBoss(userObject.getId()); }
 
     boolean isMember(long userId);
     default boolean isMember(UserObject userObject) { return isMember(userObject.getId()); }
 
-    boolean isMarkExist();
-
-    int getCapacity();
-
-    boolean increaseCapacity(int amount, int cost);
-    default boolean increaseCapacity(int amount) { return increaseCapacity(amount, 0); }
-
-    boolean setMark(int cost);
-    default boolean setGuildMark() { return setMark(0); }
-
-    boolean removeMark(int cost);
-    default boolean removeGuildMark() { return removeMark(0); }
-
-    // =================================================================================================================
-
-    /** BMS Missing:
-     * 	system function(integer)		isGuildQuestRegistered;
-     * 	system function(integer)		canEnterGuildQuest;
-     * 	system function				clearGuildQuest;
-     * 	system function				incGuildPoint( integer );
-     */
+    // Collection<UserObject> getUsers();
 }
