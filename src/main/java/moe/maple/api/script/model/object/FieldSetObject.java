@@ -32,6 +32,7 @@ package moe.maple.api.script.model.object;
 public interface FieldSetObject<T> extends ScriptObject<T> {
 
 
+    //The below is reflective of BMS, not necessarily the final interface.
     String getVar(String name);
     void setVar(String name, String value);
 

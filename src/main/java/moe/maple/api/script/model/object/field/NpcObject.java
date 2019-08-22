@@ -36,4 +36,11 @@ public interface NpcObject<T> extends FieldedObject<T> {
 
     boolean disableNpc();
     boolean hideNpc();
+
+    /**
+     * Sets the NPC's current 'act'.
+     * @param specialAction A string action, you may find these in their WZ node.
+     * @return true if the action was set successfully.
+     */
+    boolean setAction(String specialAction);
 }
