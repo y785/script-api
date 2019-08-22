@@ -27,10 +27,9 @@ package moe.maple.api.script.model.object.field;
  * <T> should be your implementation of portal.
  * @param <T>
  */
-public interface PortalObject<T> extends FieldedObject {
-    T getPortal();
-
-    String getPortalName();
+public interface PortalObject<T> extends FieldedObject<T> {
 
     int getId();
+
+    String getName();
 }

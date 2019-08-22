@@ -22,6 +22,6 @@
 
 package moe.maple.api.script.model.object;
 
-public interface ScriptObject {
-
+public interface ScriptObject<T> {
+    T getObject();
 }

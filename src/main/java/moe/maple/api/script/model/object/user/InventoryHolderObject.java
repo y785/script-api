@@ -29,7 +29,7 @@ import moe.maple.api.script.util.tuple.Tuple;
  * An object that has a single inventory or a collection of inventories.
  * Typically a user/character.
  */
-public interface InventoryHolderObject<T> extends ScriptObject {
+public interface InventoryHolderObject<T> extends ScriptObject<T> {
 
     /**
      * This is an inventory transaction that only applies changes <strong>if

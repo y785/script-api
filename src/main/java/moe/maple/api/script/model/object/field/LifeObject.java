@@ -25,9 +25,7 @@ package moe.maple.api.script.model.object.field;
 /**
  * Created on 8/19/2019.
  */
-public interface LifeObject extends FieldedObject {
-
-    // =================================================================================================================
+public interface LifeObject<T> extends FieldedObject<T> {
 
     long getHealthCurrent();
 

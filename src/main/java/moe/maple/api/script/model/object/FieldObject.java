@@ -32,9 +32,7 @@ import java.util.Collection;
  * <T> should be your implementation of maps/fields.
  * @param <T>
  */
-public interface FieldObject<T> extends ScriptObject {
-
-    T getField();
+public interface FieldObject<T> extends ScriptObject<T> {
 
     /**
      * @return the field object's .wz id

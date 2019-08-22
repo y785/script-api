@@ -28,7 +28,7 @@ import moe.maple.api.script.model.object.ScriptObject;
  * An object that has a single quest or a collection of quests.
  * Typically a user/character.
  */
-public interface QuestHolderObject<T> extends ScriptObject {
+public interface QuestHolderObject<T> extends ScriptObject<T> {
 
     /**
      * This should return 0-2 depending on a quests current status

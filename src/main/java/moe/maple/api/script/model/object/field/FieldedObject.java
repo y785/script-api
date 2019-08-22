@@ -27,7 +27,7 @@ import moe.maple.api.script.model.object.ScriptObject;
 
 import java.util.Optional;
 
-public interface FieldedObject extends ScriptObject {
+public interface FieldedObject<T> extends ScriptObject<T> {
 
     /**
      * FieldObjects are thrown into a pool and assigned a key.

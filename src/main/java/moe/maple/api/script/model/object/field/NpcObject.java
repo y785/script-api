@@ -27,8 +27,7 @@ package moe.maple.api.script.model.object.field;
  * <T> should be your implementation of npc.
  * @param <T>
  */
-public interface NpcObject<T> extends FieldedObject {
-    T getNpc();
+public interface NpcObject<T> extends FieldedObject<T> {
 
     /**
      * @return the speakerId/templateId for packets to use. NOT objectId from odin.

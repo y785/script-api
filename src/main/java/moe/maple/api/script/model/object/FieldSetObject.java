@@ -29,6 +29,5 @@ package moe.maple.api.script.model.object;
  * or events.
  * @param <T>
  */
-public interface FieldSetObject<T> extends ScriptObject {
-    T getFieldSet();
+public interface FieldSetObject<T> extends ScriptObject<T> {
 }

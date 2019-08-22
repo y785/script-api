@@ -29,7 +29,7 @@ import moe.maple.api.script.model.object.ScriptObject;
  * <T> should be your implementation of quest.
  * @param <T>
  */
-public interface QuestObject<T> extends ScriptObject {
+public interface QuestObject<T> extends ScriptObject<T> {
     T getQuest();
 
     int getId();

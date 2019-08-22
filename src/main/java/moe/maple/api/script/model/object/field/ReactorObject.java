@@ -23,6 +23,7 @@
 package moe.maple.api.script.model.object.field;
 
 import moe.maple.api.script.model.object.field.FieldedObject;
+import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.util.tuple.Tuple;
 
 import java.util.Optional;
@@ -30,10 +31,8 @@ import java.util.Optional;
 /**
  * This is a script proxy for reactor objects.
  * @param <T>
- * @param <U> should be your implementation of User.
  */
-public interface ReactorObject<T, U> extends FieldedObject {
-    T getReactor();
+public interface ReactorObject<T> extends FieldedObject<T> {
 
     int getState();
 
@@ -46,7 +45,7 @@ public interface ReactorObject<T, U> extends FieldedObject {
     /**
      * @return the last User to interact with this reactor.
      */
-    Optional<U> getLastUser();
+    Optional<? extends UserObject> getLastUser();
 
     /**
      * Triggers a 'drop' action for the reactor.

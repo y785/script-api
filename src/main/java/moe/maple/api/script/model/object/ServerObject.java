@@ -20,21 +20,42 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object.field;
+package moe.maple.api.script.model.object;
+
+import java.util.Optional;
 
 /**
- * Mob/Monster generic object.
+ * Server Objects have the ability to generate other
+ * script objects.
  */
-public interface MobObject<T> extends LifeObject<T> {
+public interface ServerObject<T> extends ScriptObject<T> {
 
     /**
-     * @return the .wz id of the mob
+     * This should return the current state of the contimove.
+     * ContiState.Wait is used for boarding, etc.
+     * ContiState:
+     * 0 - Dormant
+     * 1 - Wait
+     * 2 - Start
+     * 3 - Move
+     * 4 - Mob Gen
+     * 5 - Mob Destroy
+     * 6 - End
+     * ... and so on
+     * @param fieldIdStart - The start of the contimove
+     * @return 0 if contimove doesn't exist, otherwise it's current state
      */
-    int getId();
+    int getContiState(int fieldIdStart);
 
     /**
-     * Depending on your implementation on mobs, you might need
-     * to override this.
+     * @param fieldSetName - The name of the FieldSet
+     * @return the fieldset if it exists
      */
-    default boolean isAlive() { return getHealthCurrent() <= 0; }
+    Optional<FieldSetObject> getFieldSet(String fieldSetName);
+
+    /**
+     * @param fieldId - The .wz id of the field
+     * @return the fieldobject if it exists
+     */
+    Optional<FieldObject> getField(int fieldId);
 }

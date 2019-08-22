@@ -32,9 +32,7 @@ import org.slf4j.helpers.MessageFormatter;
  * <T> should be your implementation of user/character.
  * @param <T>
  */
-public interface UserObject<T> extends LifeObject, InventoryHolderObject<T>, QuestHolderObject<T> {
-
-    T getUser();
+public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, QuestHolderObject<T> {
 
     /**
      * The user's id, typically their database key or sn
