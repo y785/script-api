@@ -22,13 +22,22 @@
 
 package moe.maple.api.script.model.object;
 
+import moe.maple.api.script.model.object.data.provider.ProviderHub;
+import moe.maple.api.script.model.object.data.safety.ValidationHub;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.Temporal;
 import java.util.Optional;
+import java.util.TimeZone;
 
 /**
  * Server Objects have the ability to generate other
  * script objects.
  */
-public interface ServerObject<T> extends ScriptObject<T> {
+public interface ServerObject<T> extends ScriptObject<T>, ValidationHub, ProviderHub {
 
     /**
      * This should return the current state of the contimove.
@@ -58,4 +67,29 @@ public interface ServerObject<T> extends ScriptObject<T> {
      * @return the fieldobject if it exists
      */
     Optional<FieldObject> getField(int fieldId);
+
+    /**
+     * @return A {@link ZonedDateTime} of the current moment.
+     */
+    default ZonedDateTime getTime() {
+        return ZonedDateTime.now(getTimeZone().toZoneId());
+    }
+
+    /**
+     * @return The server's configured {@link TimeZone}.
+     */
+    default TimeZone getTimeZone() {
+        return TimeZone.getDefault();
+    }
+
+    /**
+     * @return A count of the server's total channels.
+     */
+    int getChannelCount();
+
+    /**
+     * @return The server's human readable name.
+     */
+    String name();
+
 }

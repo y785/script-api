@@ -18,7 +18,7 @@ public interface DataProvider<Key, Value> extends DataValidator<Key> {
      * @return A stream of {@link Key}
      */
     Stream<Key> keyStream();
-    
+
     /**
      * @return A stream of {@link Value}
      */
