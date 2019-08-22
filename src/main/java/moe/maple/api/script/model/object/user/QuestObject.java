@@ -67,7 +67,7 @@ public interface QuestObject<T> extends ScriptObject<T> {
     /**
      * @return an empty string if the quest doesn't have the key
      */
-    String getQuestEx(String key);
+    String getEx(String key);
 
-    boolean setQuestEx(String key, String value);
+    boolean setEx(String key, String value);
 }

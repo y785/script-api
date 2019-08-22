@@ -20,27 +20,21 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.object.field;
+package moe.maple.api.script.model.object;
 
-/**
- * This is a script proxy for npc objects.
- * <T> should be your implementation of npc.
- * @param <T>
- */
-public interface NpcObject<T> extends FieldedObject<T> {
+import moe.maple.api.script.model.object.user.UserObject;
 
-    /**
-     * @return the speakerId/templateId for packets to use. NOT objectId from odin.
-     */
-    int getTemplateId();
+import java.util.Collection;
 
-    boolean disableNpc();
-    boolean hideNpc();
+public interface PartyObject<Party> extends ScriptObject<Party> {
 
-    /**
-     * Sets the NPC's current 'act'.
-     * @param specialAction A string action, you may find these in their WZ node.
-     * @return true if the action was set successfully.
-     */
-    boolean setAction(String specialAction);
+    long getId();
+
+    boolean isBoss(long userId);
+    default boolean isBoss(UserObject userObject) { return isBoss(userObject.getId()); }
+
+    boolean isMember(long userId);
+    default boolean isMember(UserObject userObject) { return isMember(userObject.getId()); }
+
+    // Collection<UserObject> getUsers();
 }

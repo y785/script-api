@@ -129,6 +129,34 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
      */
     boolean removeItemAll(Tuple<Integer, Integer>... itemTemplateIdAndCount);
 
+    /**
+     * Remove <strong>ALL ITEMS</strong> at the specified slot position.
+     * @param tab An Inventory index as an int
+     * @param position A {@link Short} slot position
+     * @return true if the item was removed successfully.
+     */
+    boolean removeSlot(int tab, short position);
+
+    default boolean removeSlotEquip(short position) {
+        return removeSlot(1, position);
+    }
+
+    default boolean removeSlotUse(short position) {
+        return removeSlot(2, position);
+    }
+
+    default boolean removeSlotSetup(short position) {
+        return removeSlot(3, position);
+    }
+
+    default boolean removeSlotEtc(short position) {
+        return removeSlot(4, position);
+    }
+
+    default boolean removeSlotCash(short position) {
+        return removeSlot(5, position);
+    }
+
     // =================================================================================================================
 
     /**
@@ -136,6 +164,15 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
      * @return the total count of the itemTemplateId
      */
     int getItemCount(int itemTemplateId);
+
+
+    /**
+     *  Retrieves the # of non-empty slots in an inventory.
+     *  @param inventoryType @see {@link #increaseSlotCount(int, int)}
+     * @return # of filled slots
+     */
+    int getHoldCount(int inventoryType);
+
 
     /**
      * @return true if this object holds the total count

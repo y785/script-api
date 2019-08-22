@@ -107,4 +107,13 @@ public interface FieldObject<T> extends ScriptObject<T> {
      * @return TRUE if all is well, the mob is summoned.
      */
     boolean summonMob(int templateId, int xPos, int yPos);//bySack?
+
+
+    //============= Below are not settled upon, may likely change. Copied from BMS notes. =============/
+    //TODO: create defaults for types. This is mirroring BMS's method.
+    void notice(Integer type, String... message);/// Type(  0 : normal, 1 : alert, 4 : slide, 7 : NPCSay ), Message, NPCID(Only type=7)
+
+    boolean isItemInArea(String areaName, int itemID); // AreaName, ItemID
+
+    boolean removeMob(int mobId);//Probably
 }
