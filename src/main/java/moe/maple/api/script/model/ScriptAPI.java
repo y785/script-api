@@ -39,20 +39,17 @@ import moe.maple.api.script.model.messenger.misc.StatChangedMessenger;
 import moe.maple.api.script.model.messenger.say.SayImageMessenger;
 import moe.maple.api.script.model.messenger.say.SayMessenger;
 import moe.maple.api.script.model.response.ScriptResponse;
-import moe.maple.api.script.model.type.SpeakerType;
+import moe.maple.api.script.model.type.ScriptMessageType;
 import moe.maple.api.script.util.builder.ScriptFormatter;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
 import moe.maple.api.script.util.tuple.Tuple;
 import moe.maple.api.script.util.With;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.helpers.MessageFormatter;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public enum ScriptAPI {
     INSTANCE;
@@ -105,19 +102,31 @@ public enum ScriptAPI {
 
     public void setDefaultMessengers() {
         // Basic script messages
-        messengerAskAccept = (userObject, speakerTemplateId, param, message) -> log.debug("askAccept-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
-        messengerAskAvatar = (userObject, message, speakerTemplateId, param,  options) -> log.debug("askAvatar-> speaker: {}, param: {}, options: {}, message: \"{}\"", speakerTemplateId, param, options, message);
-        messengerAskBoxText = (userObject, speakerTemplateId, param, message, defaultText, column, row) -> log.debug("askBoxText-> speaker: {}, param: {}, column: {}, row: {}, default: \"{}\", message: \"{}\"", speakerTemplateId, param, column, row, defaultText, message);
-        messengerAskMemberShopAvatar = (userObject, speakerTemplateId, param, message, options) -> log.debug("askMemberShopAvatar-> speaker: {}, param: {}, options: {}, message: \"{}\"", speakerTemplateId, param, options, message);
-        messengerAskMenu = (userObject, message, speakerTemplateId, param) -> log.debug("askMenu-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
-        messengerAskNumber = (userObject, speakerTemplateId, param, message, defaultNumber, min, max) -> log.debug("askNumber-> speaker: {}, param: {}, min: {}, max: {}, default: {}, message: \"{}\"", speakerTemplateId, param, min, max, defaultNumber, message);
-        messengerAskQuiz = (userObject, speakerTemplateId, param, title, problemText, hintText, min, max, remainInitialQuiz) -> log.debug("askQuiz-> speaker: {}, param: {}, min: {}, max: {}, remain: {}, title: \"{}\", problem: \"{}\", hint: \"{}\"", speakerTemplateId, param, min, max, remainInitialQuiz, title, problemText, hintText);
-        messengerAskSlideMenu = (userObject, speakerTemplateId, slideDlgEX, index, message) -> log.debug("askSlideMenu-> speaker: {}, slideDlgEX: {}, index: {}, message: \"{}\"", speakerTemplateId, slideDlgEX, index, message);
-        messengerAskSpeedQuiz = (userObject, speakerTemplateId, param, type, answer, correct, remaining, remainInitialQuiz, title, problemText, hintText, min, max, remainInitialQuiz1) -> log.debug("askSpeedQuiz-> speaker: {}, param: {}, type: {}, answer: {}, correct: {}, remaining: {}, remain: {}, title: \"{}\", problem: \"{}\", hint: \"{}\", min: {}, max: {}, remain1: {}", speakerTemplateId, param, type, answer, correct, remaining, remainInitialQuiz, title, problemText, hintText, min, max, remainInitialQuiz1);
-        messengerAskText = (userObject, speakerTemplateId, param, message, defaultText, min, max) -> log.debug("askText-> speaker: {}, param: {}, min: {}, max: {}, default: \"{}\", message: \"{}\"", speakerTemplateId, param, min, max, defaultText, message);
-        messengerAskYesNo = (userObject, message, speakerTemplateId, param) -> log.debug("askYesNo-> speaker: {}, param: {}, message: \"{}\"", speakerTemplateId, param, message);
-        messengerSayImage = (userObject, speakerTemplateId, param, imagePath) -> log.debug("sayImage-> speaker: {}, param: {}, path: {}", speakerTemplateId, param, imagePath);
-        messengerSay = (userObject, message, speakerTemplateId, param, previous, next) -> log.debug("say-> speaker: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerTemplateId, param, previous, next, message);
+        messengerAskAccept = (userObject, speakerType, speakerTemplateId, param, message)
+                -> log.debug("askAccept-> speakerType: {}, speakerTemplate: {}, param: {}, message: \"{}\"", speakerType, speakerTemplateId, param, message);
+        messengerAskAvatar = (userObject, speakerType, speakerTemplateId, param, message, options)
+                -> log.debug("askAvatar-> speakerType: {}, speakerTemplate: {}, param: {}, message: \"{}\", options: {}", speakerType, speakerTemplateId, param, message, options);
+        messengerAskBoxText = (userObject, speakerType, speakerTemplateId, param, message, defaultText, column, row)
+                -> log.debug("askBoxText-> speakerType: {}, speakerTemplate: {}, param: {}, column: {}, row: {}, default: \"{}\", message: \"{}\"", speakerType, speakerTemplateId, param, column, row, defaultText, message);
+        messengerAskMemberShopAvatar = (userObject, speakerType, speakerTemplateId, param, message, options)
+                -> log.debug("askMemberShopAvatar-> speakerType: {}, speakerTemplate: {}, param: {}, message: \"{}\", options: {}", speakerType, speakerTemplateId, param, message, options);
+        messengerAskMenu = (userObject, speakerType, speakerTemplateId, param, message)
+                -> log.debug("askMenu-> speakerType: {}, speakerTemplate: {}, param: {}, message: \"{}\"", speakerType, speakerTemplateId, param, message);
+        messengerAskNumber = (userObject, speakerType, speakerTemplateId, param, message, defaultNumber, min, max)
+                -> log.debug("askNumber-> speakerType: {}, speakerTemplate: {}, param: {}, min: {}, max: {}, default: {}, message: \"{}\"", speakerType, speakerTemplateId, param, min, max, defaultNumber, message);
+        messengerAskQuiz = (userObject, speakerType, speakerTemplateId, param, title, problemText, hintText, min, max, remainInitialQuiz)
+                -> log.debug("askQuiz-> speakerType: {}, speakerTemplate: {}, param: {}, min: {}, max: {}, remain: {}, title: \"{}\", problem: \"{}\", hint: \"{}\"", speakerType, speakerTemplateId, param, min, max, remainInitialQuiz, title, problemText, hintText);
+        messengerAskSlideMenu = (userObject, speakerType, speakerTemplateId, slideDlgEX, index, message)
+                -> log.debug("askSlideMenu-> speakerType: {}, speakerTemplate: {}, slideDlgEX: {}, index: {}, message: \"{}\"", speakerType, speakerTemplateId, slideDlgEX, index, message);
+        messengerAskSpeedQuiz = (userObject, speakerType, speakerTemplateId, param, type, answer, correct, remaining, remainInitialQuiz, title, problemText, hintText, min, max, remainInitialQuiz1) -> log.debug("askSpeedQuiz-> speakerType: {}, speakerTemplate: {}, param: {}, type: {}, answer: {}, correct: {}, remaining: {}, remain: {}, title: \"{}\", problem: \"{}\", hint: \"{}\", min: {}, max: {}, remain1: {}", speakerType, speakerTemplateId, param, type, answer, correct, remaining, remainInitialQuiz, title, problemText, hintText, min, max, remainInitialQuiz1);
+        messengerAskText = (userObject, speakerType, speakerTemplateId, param, message, defaultText, min, max)
+                -> log.debug("askText-> speakerType: {}, speakerTemplate: {}, param: {}, min: {}, max: {}, default: \"{}\", message: \"{}\"", speakerType, speakerTemplateId, param, min, max, defaultText, message);
+        messengerAskYesNo = (userObject, speakerType, speakerTemplateId, param, message)
+                -> log.debug("askYesNo-> speakerType: {}, speakerTemplate: {}, param: {}, message: \"{}\"", speakerType, speakerTemplateId, param, message);
+        messengerSayImage = (userObject, speakerType, speakerTemplateId, param, imagePath)
+                -> log.debug("sayImage-> speakerType: {}, speakerTemplate: {}, param: {}, path: {}", speakerType, speakerTemplateId, param, imagePath);
+        messengerSay = (userObject, speakerType, speakerTemplateId, param, message, previous, next)
+                -> log.debug("say-> speakerType: {}, speakerTemplate: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerType, speakerTemplateId, param, message, previous, next);
 
         // Misc Packets
         messengerMessage = ((userObject, type, message) -> log.debug("message-> type: {}, message: \"{}\"", type, message));
@@ -340,7 +349,7 @@ public enum ScriptAPI {
 
     private static ScriptResponse sayResponse(MoeScript script, List<ScriptResponse> chain, Integer[] speakers, Tuple<Integer, String>[] paramAndMessage, Integer idx, Integer ts) {
         return (t, a, o) -> {
-            if (t != SpeakerType.SAY) { // Wrong type, b-baka.
+            if (t != ScriptMessageType.SAY) { // Wrong type, b-baka.
                 script.end();
             } else {
                 switch (a.intValue()) {
@@ -356,7 +365,7 @@ public enum ScriptAPI {
                             var speakerTemplateId = speakers[idx-1];
                             script.setScriptResponse(res);
 
-                            script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speakerTemplateId, param, back, true),
+                            script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speakerTemplateId, param, message, back, true),
                                     () -> log.debug("User object isn't set, workflow is messy."));
                         } else {
                             log.warn("Tried to go back while on the first message? No! :(");
@@ -371,7 +380,7 @@ public enum ScriptAPI {
                             var param = paramAndMessage[idx+1].left();
                             var speakerTemplateId = speakers[idx+1];
                             script.setScriptResponse(res);
-                            script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speakerTemplateId, param, true, forward),
+                            script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj,speakerTemplateId, param,  message, true, forward),
                                     () -> log.debug("User object isn't set, workflow is messy."));
                         } else {
                             script.setScriptResponse(null);
@@ -405,7 +414,7 @@ public enum ScriptAPI {
         var param = paramAndMessages[0].left();
         var message = paramAndMessages[0].right();
 
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, message, speaker, param, false, paramAndMessages.length > 1),
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speaker, param, message,false, paramAndMessages.length > 1),
                 () -> log.debug("User object isn't set, workflow is messy."));
 
         return script::setScriptAction;
@@ -461,7 +470,7 @@ public enum ScriptAPI {
     public static void askYesNo(MoeScript script, String message, BasicScriptAction onYes, BasicScriptAction onNo) {
         script.setScriptAction(null);
         script.setScriptResponse((t, a, o) -> {
-            if (t != SpeakerType.ASKYESNO) {
+            if (t != ScriptMessageType.ASKYESNO) {
                 script.end();
             } else {
                 var an = a.intValue();
@@ -477,7 +486,7 @@ public enum ScriptAPI {
         });
         var speaker = script.getSpeakerTemplateId();
 
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskYesNo.send(obj, message, speaker, 0),
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskYesNo.send(obj, speaker, 0,  message),
                 () -> log.debug("User object isn't set, workflow is messy."));
     }
 
@@ -490,7 +499,7 @@ public enum ScriptAPI {
     public static void askAccept(MoeScript script, String message, BasicScriptAction onYes, BasicScriptAction onNo) {
         script.setScriptAction(null);
         script.setScriptResponse((t, a, o) -> {
-            if (t != SpeakerType.ASKACCEPT) {
+            if (t != ScriptMessageType.ASKACCEPT) {
                 script.end();
             } else {
                 var an = a.intValue();
@@ -520,7 +529,7 @@ public enum ScriptAPI {
         return (t, a, o) -> {
             var min = 0;
 
-            if (t != SpeakerType.ASKMENU || a.intValue() != 1) {
+            if (t != ScriptMessageType.ASKMENU || a.intValue() != 1) {
                 script.end();
             } else {
                 var sel = ((Integer)o);
@@ -543,7 +552,7 @@ public enum ScriptAPI {
         script.setScriptAction(null);
         script.setScriptResponse(askMenuResponse(script, menuItems.length - 1));
 
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, builder.toString(), speakerTemplateId, param),
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, speakerTemplateId, param, builder.toString()),
                 () -> log.debug("User object isn't set, workflow is messy."));
 
         return script::setScriptAction;
@@ -560,7 +569,7 @@ public enum ScriptAPI {
     public static IntegerActionChain askMenu(MoeScript script, String prompt) {
         script.setScriptAction(null);
         script.setScriptResponse(askMenuResponse(script, prompt.length() - prompt.replace("#L", "").length() - 1));
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, prompt, script.getSpeakerTemplateId(), 0),
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, script.getSpeakerTemplateId(), 0, prompt),
                 () -> log.debug("User object isn't set, workflow is messy."));
         return script::setScriptAction;
     }
@@ -577,7 +586,7 @@ public enum ScriptAPI {
             var sel = ((Integer)o);
             var bad = sel == null || sel < min || sel > max;
 
-            if (t != SpeakerType.ASKMENU || bad || a.intValue() != 1) {
+            if (t != ScriptMessageType.ASKMENU || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
                 script.end();
@@ -590,7 +599,7 @@ public enum ScriptAPI {
 
         var speaker = script.getSpeakerTemplateId();
 
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, builder.toString(), speaker, 0),
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, speaker, 0, builder.toString()),
                 () -> log.debug("User object isn't set, workflow is messy."));
     }
 
@@ -603,7 +612,7 @@ public enum ScriptAPI {
             var sel = ((Integer)o);
             var bad = sel == null || sel < min || sel > max;
 
-            if (t != SpeakerType.ASKAVATAR || bad || a.intValue() != 1) {
+            if (t != ScriptMessageType.ASKAVATAR || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
                 script.end();
@@ -618,7 +627,7 @@ public enum ScriptAPI {
         script.setScriptAction(null);
         script.setScriptResponse(askAvatarResponse(script, options));
 
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskAvatar.send(obj, prompt, speakerTemplateId, param, options),
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskAvatar.send(obj, speakerTemplateId, param, prompt,  options),
                 () -> log.debug("User object isn't set, workflow is messy."));
 
         return script::setScriptAction;
@@ -639,7 +648,7 @@ public enum ScriptAPI {
             var sel = ((String)o);
             var bad = sel == null || sel.length() < min || sel.length() > max;
 
-            if (t != SpeakerType.ASKTEXT || bad || a.intValue() != 1) {
+            if (t != ScriptMessageType.ASKTEXT || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
                 script.end();
@@ -686,7 +695,7 @@ public enum ScriptAPI {
             var sel = ((Integer)o);
             var bad = sel == null || sel < min || sel > max;
 
-            if (t != SpeakerType.ASKNUMBER || bad || a.intValue() != 1) {
+            if (t != ScriptMessageType.ASKNUMBER || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
                 script.end();

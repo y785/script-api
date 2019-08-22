@@ -21,7 +21,6 @@
  */
 
 package moe.maple.api.script.model.messenger;
-import moe.maple.api.script.model.type.SpeakerType;
 
 /**
  * Messengers are basically packets. They hold no logic other

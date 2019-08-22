@@ -27,5 +27,8 @@ import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
 public interface AskNumberMessenger<User> extends ScriptMessenger {
-    void send(UserObject<User> userObject, int speakerTemplateId, int param, String message, int defaultNumber, int min, int max);
+    void send(UserObject<User> userObject, int speakerType, int speakerTemplateId, int param, String message, int defaultNumber, int min, int max);
+    default void send(UserObject<User> userObject, int speakerTemplateId, int param, String message, int defaultNumber, int min, int max) {
+        send(userObject, 0, speakerTemplateId, param, message, defaultNumber, min, max);
+    }
 }

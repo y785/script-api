@@ -34,7 +34,7 @@ import moe.maple.api.script.model.object.user.QuestObject;
 import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.event.ScriptEvent;
-import moe.maple.api.script.model.type.SpeakerType;
+import moe.maple.api.script.model.type.ScriptMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +122,7 @@ public abstract class BaseScript implements MoeScript {
     }
 
     @Override
-    public void resume(SpeakerType type, Number action, Object response) {
+    public void resume(ScriptMessageType type, Number action, Object response) {
         var act = nextAction;
         var resp = nextResponse;
         if (act != null || resp != null) {

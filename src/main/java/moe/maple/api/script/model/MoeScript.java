@@ -31,7 +31,7 @@ import moe.maple.api.script.model.object.user.QuestObject;
 import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.event.ScriptEvent;
-import moe.maple.api.script.model.type.SpeakerType;
+import moe.maple.api.script.model.type.ScriptMessageType;
 
 import java.util.Optional;
 
@@ -53,7 +53,7 @@ public interface MoeScript {
     void reset();
     default void resetAndStart() { reset(); start(); }
 
-    void resume(SpeakerType type, Number action, Object response);
+    void resume(ScriptMessageType type, Number action, Object response);
 
     // =================================================================================================================
 

@@ -27,5 +27,8 @@ import moe.maple.api.script.model.object.user.UserObject;
 
 @FunctionalInterface
 public interface AskSlideMenuMessenger<User> extends ScriptMessenger {
-    void send(UserObject<User> userObject, int speakerTemplateId, boolean slideDlgEX, int index, String message);
+    void send(UserObject<User> userObject, int speakerType, int speakerTemplateId, boolean slideDlgEX, int index, String message);
+    default void send(UserObject<User> userObject, int speakerTemplateId, boolean slideDlgEX, int index, String message) {
+        send(userObject, 0, speakerTemplateId, slideDlgEX, index, message);
+    }
 }
