@@ -29,7 +29,8 @@ import moe.maple.api.script.model.ScriptAPI;
 import moe.maple.api.script.model.messenger.say.SayMessenger;
 import moe.maple.api.script.model.object.FieldObject;
 import moe.maple.api.script.model.object.user.UserObject;
-import moe.maple.api.script.model.type.SpeakerType;
+import moe.maple.api.script.model.type.ScriptMessageType;
+import moe.maple.api.script.model.type.ScriptMessageType;
 import moe.maple.api.script.util.builder.ScriptFormatter;
 import moe.maple.api.script.util.builder.ScriptStringBuilder;
 import moe.maple.api.script.util.tuple.Tuple;
@@ -83,7 +84,7 @@ public class ApiTest {
         forward.set(1);
         back.set(0);
 
-        ScriptAPI.INSTANCE.setMessengerSay((userObject, message, speakerTemplateId, param, previous, next) -> {
+        ScriptAPI.INSTANCE.setMessengerSay((userObject, speakerType, speakerTemplateId, param, message, previous, next) -> {
             var idx = atomicIndex.getAndIncrement();
             log.debug("{}: idx {} / p {} / n {}", idx, message, previous, next);
 
@@ -102,16 +103,16 @@ public class ApiTest {
         assertTrue(test.isPaused());
 
         back.set(1);
-        test.resume(SpeakerType.SAY, 1, null); forward.set(0); back.set(1);
-        test.resume(SpeakerType.SAY, 1, null); forward.set(1); back.set(0);
+        test.resume(ScriptMessageType.SAY, 1, null); forward.set(0); back.set(1);
+        test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(0);
 
-        test.resume(SpeakerType.SAY, 1, null); forward.set(1); back.set(1);
-        test.resume(SpeakerType.SAY, 1, null); forward.set(1); back.set(0);
-        test.resume(SpeakerType.SAY, 0, null); forward.set(1); back.set(1);
-        test.resume(SpeakerType.SAY, 1, null); forward.set(0); back.set(1);
-        test.resume(SpeakerType.SAY, 1, null); forward.set(0); back.set(0);
-        test.resume(SpeakerType.SAY, 1, null);
-        test.resume(SpeakerType.SAY, 1, null);
+        test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(1);
+        test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(0);
+        test.resume(ScriptMessageType.SAY, 0, null); forward.set(1); back.set(1);
+        test.resume(ScriptMessageType.SAY, 1, null); forward.set(0); back.set(1);
+        test.resume(ScriptMessageType.SAY, 1, null); forward.set(0); back.set(0);
+        test.resume(ScriptMessageType.SAY, 1, null);
+        test.resume(ScriptMessageType.SAY, 1, null);
 
         assertTrue(test.isDone());
         assertTrue(!test.isPaused());
@@ -143,12 +144,12 @@ public class ApiTest {
         assertTrue(!test.isDone());
         assertTrue(test.isPaused());
 
-        test.resume(SpeakerType.ASKMENU, 1, 1);
+        test.resume(ScriptMessageType.ASKMENU, 1, 1);
 
         assertTrue(!test.isDone());
         assertTrue(test.isPaused());
 
-        test.resume(SpeakerType.ASKMENU, 1, 0);
+        test.resume(ScriptMessageType.ASKMENU, 1, 0);
 
         assertTrue(test.isDone());
         assertTrue(!test.isPaused());
@@ -157,8 +158,8 @@ public class ApiTest {
         assertTrue(!test.isDone());
         assertTrue(!test.isPaused());
 
-        test.resume(SpeakerType.ASKMENU, 1, 1);
-        test.resume(SpeakerType.ASKMENU, 1, 1);
+        test.resume(ScriptMessageType.ASKMENU, 1, 1);
+        test.resume(ScriptMessageType.ASKMENU, 1, 1);
 
         assertTrue(test.isDone());
         assertTrue(!test.isPaused());

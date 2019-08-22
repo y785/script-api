@@ -54,13 +54,13 @@ public class TestUserObject implements UserObject<Integer> {
     }
 
     @Override
-    public boolean isCreateGuildPossible(int cost) {
-        return false;
+    public int isCreateGuildPossible(int cost) {
+        return 0;
     }
 
     @Override
-    public boolean createNewGuild(int cost) {
-        return false;
+    public void createNewGuild(int cost) {
+
     }
 
     @Override
@@ -394,7 +394,7 @@ public class TestUserObject implements UserObject<Integer> {
     }
 
     @Override
-    public boolean exchange(int money, Tuple[] itemTemplateIdAndCount) {
+    public boolean exchange(int money, Tuple<Integer, Integer>... itemTemplateIdAndCount) {
         return false;
     }
 
@@ -409,7 +409,7 @@ public class TestUserObject implements UserObject<Integer> {
     }
 
     @Override
-    public boolean addItemAll(Tuple[] itemTemplateIdAndCount) {
+    public boolean addItemAll(Tuple<Integer, Integer>... itemTemplateIdAndCount) {
         return false;
     }
 
@@ -429,7 +429,7 @@ public class TestUserObject implements UserObject<Integer> {
     }
 
     @Override
-    public boolean removeItemAll(Tuple[] itemTemplateIdAndCount) {
+    public boolean removeItemAll(Tuple<Integer, Integer>... itemTemplateIdAndCount) {
         return false;
     }
 
@@ -480,6 +480,6 @@ public class TestUserObject implements UserObject<Integer> {
 
     @Override
     public Integer get() {
-        return 0;
+        return null;
     }
 }
