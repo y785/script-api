@@ -1,6 +1,7 @@
-package moe.maple.api.script.model.object.safety;
+package moe.maple.api.script.model.object.data.safety;
 
 /**
+ * @author umbreon22
  * A container for Validators.
  * Created on 8/21/2019.
  */
