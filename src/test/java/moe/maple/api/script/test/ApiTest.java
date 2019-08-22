@@ -26,6 +26,7 @@ import moe.maple.api.script.model.BaseScript;
 import moe.maple.api.script.model.NpcScript;
 import moe.maple.api.script.model.Script;
 import moe.maple.api.script.model.ScriptAPI;
+import moe.maple.api.script.model.messenger.say.SayMessenger;
 import moe.maple.api.script.model.object.FieldObject;
 import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.model.type.SpeakerType;
@@ -82,7 +83,7 @@ public class ApiTest {
         forward.set(1);
         back.set(0);
 
-        ScriptAPI.INSTANCE.setMessengerSay((script, message, speakerTemplateId, param, previous, next) -> {
+        ScriptAPI.INSTANCE.setMessengerSay((userObject, message, speakerTemplateId, param, previous, next) -> {
             var idx = atomicIndex.getAndIncrement();
             log.debug("{}: idx {} / p {} / n {}", idx, message, previous, next);
 

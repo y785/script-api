@@ -32,7 +32,7 @@ import moe.maple.api.script.util.tuple.Tuple;
 import java.util.Collection;
 import java.util.Optional;
 
-public class TestUserObject implements UserObject {
+public class TestUserObject implements UserObject<Integer> {
     @Override
     public long getId() {
         return 0;
@@ -479,7 +479,7 @@ public class TestUserObject implements UserObject {
     }
 
     @Override
-    public Object get() {
-        return null;
+    public Integer get() {
+        return 0;
     }
 }

@@ -57,11 +57,17 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
     default boolean isInGuild() { return getGuild().isPresent(); }
     default boolean isInParty() { return getParty().isPresent(); }
 
-    boolean isCreateGuildPossible(int cost);
-    default boolean isCreateGuildPossible() { return isCreateGuildPossible(0); }
+    /**
+     * @return status code, bms
+     */
+    int isCreateGuildPossible(int cost);
+    default int isCreateGuildPossible() { return isCreateGuildPossible(0); }
 
-    boolean createNewGuild(int cost);
-    default boolean createNewGuild() { return createNewGuild(0); }
+    /**
+     * Sends the Create Guild Dialogue -> Contract for party members.
+     */
+    void createNewGuild(int cost);
+    default void createNewGuild() { createNewGuild(0); }
 
     boolean removeGuild(int cost);
     default boolean removeGuild() { return removeGuild(0); }
