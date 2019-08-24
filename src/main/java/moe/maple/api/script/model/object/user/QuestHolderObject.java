@@ -28,9 +28,9 @@ import java.util.Optional;
 
 /**
  * An object that has a collection of quests.
- * @param <User> Typically a user/character.
+ * @param <T> Typically a user/character.
  */
-public interface QuestHolderObject<User> extends ScriptObject<User> {
+public interface QuestHolderObject<T> extends ScriptObject<T> {
 
     /**
      * This should return 0-2 depending on a quests current status
