@@ -24,44 +24,67 @@ package moe.maple.api.script.model.object.user;
 
 import moe.maple.api.script.model.object.ScriptObject;
 
+import java.util.Optional;
+
 /**
- * An object that has a single quest or a collection of quests.
- * Typically a user/character.
+ * An object that has a collection of quests.
+ * @param <User> Typically a user/character.
  */
-public interface QuestHolderObject<T> extends ScriptObject<T> {
+public interface QuestHolderObject<User> extends ScriptObject<User> {
 
     /**
      * This should return 0-2 depending on a quests current status
      * 0 - NotStarted
-     * 1 - Started
-     * 2 - Completed
-     * These are officially from QR_STATE_ enum in BMS
-     * @param questId the quest
+     * 1 - In Progress
+     * 2 - Complete
      * @return int representing quest status
      */
-    int getQuestState(int questId);
+    int getState(int questId);
 
     /**
      * @param questId the quest
      * @param state the state, see above
      * @return true if the quest state was set
      */
-    boolean setQuestState(int questId, int state);
+    default boolean setState(int questId, int state) {
+        return getQuest(questId).map(quest->quest.setState(state)).orElse(false);
+    }
 
-    default boolean isQuestStarted(int questId) { return getQuestState(questId) == 1; }
-    default boolean isQuestCompleted(int questId) { return getQuestState(questId) == 2; }
+    default boolean start(int questId) {
+        return getQuest(questId).map(QuestObject::start).orElse(false);
+    }
 
-    default boolean startQuest(int questId) { return setQuestState(questId, 1); }
-    default boolean completeQuest(int questId) { return setQuestState(questId, 2); }
+    default boolean complete(int questId) {
+        return getQuest(questId).map(QuestObject::complete).orElse(false);
+    }
+
+    /**
+     * Forfeits the quest.
+     * @param key a questId
+     * @param force if TRUE, it will remove it from the quest record no matter what.
+     * @return true if successful.
+     */
+    boolean remove(short key, boolean force);
+
+    default boolean isInProgress(int questId) { return getState(questId) == 1; }
+    default boolean isComplete(int questId) { return getState(questId) == 2; }
+
 
     /**
      * @return an empty string if the quest doesn't have the key
      */
-    String getQuestEx(int questId, String key);
-
-    default boolean containsQuestEx(int questId, String key, String value) {
-        return getQuestEx(questId, key).contentEquals(value);
+    default String getEx(int questId, String key) {
+        return getQuest(questId).map(quest->quest.getEx(key)).orElse("");
     }
 
-    boolean setQuestEx(int questId, String key, String value);
+    default boolean containsEx(int questId, String key, String value) {
+        return getEx(questId, key).contentEquals(value);
+    }
+
+    Optional<QuestObject> getQuest(int questId);
+
+    default boolean setEx(int questId, String key, String value) {
+        return getQuest(questId).map(quest->quest.setEx(key, value)).orElse(false);
+    }
+
 }

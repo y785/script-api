@@ -34,10 +34,10 @@ import java.util.Optional;
 
 /**
  * This is a script proxy for user/character objects.
- * <T> should be your implementation of user/character.
- * @param <T>
+ * @param <T> Your implementation of user/character.
+ * @param <Q> Your implementation of quest.
  */
-public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, QuestHolderObject<T> {
+public interface UserObject<T, Q> extends LifeObject<T>, InventoryHolderObject<T> {
 
     /**
      * The user's id, typically their database key or sn
@@ -54,6 +54,7 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
 
     Optional<GuildObject> getGuild();
     Optional<PartyObject> getParty();
+    QuestHolderObject<T> getQuestHolder();
 
     default boolean isInGuild() { return getGuild().isPresent(); }
     default boolean isInParty() { return getParty().isPresent(); }
