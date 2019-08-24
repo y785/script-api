@@ -142,8 +142,8 @@ public enum ScriptAPI {
         messengerFieldTremble = (userObject, type, delay) -> log.debug("fieldTremble-> type: {}, delay: {}", type, delay);
 
         // User Local Effects
-        messengerAvatarOriented = (userObject, path, durationInSeconds) -> log.debug("avatarOriented-> path: {}, duration: {}");
-        messengerPlayPortalSE = userObject -> log.debug("playPortalSE->");
+        messengerAvatarOriented = (userObject, path, durationInSeconds) -> log.debug("avatarOriented-> path: {}, duration: {}", path, durationInSeconds);
+        messengerPlayPortalSE = userObject -> log.debug("playPortalSE->()");
         messengerReservedEffect = (userObject, path) -> log.debug("reservedEffect-> path: {}", path);
     }
 
