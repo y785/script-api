@@ -43,7 +43,7 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
      * The user's id, typically their database key or sn
      * @return user id
      */
-    long getId();
+    int getId();
 
     /**
      * @return the user's name, duh

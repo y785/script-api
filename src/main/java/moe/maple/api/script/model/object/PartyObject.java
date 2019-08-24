@@ -30,10 +30,10 @@ public interface PartyObject<Party> extends ScriptObject<Party> {
 
     long getId();
 
-    boolean isBoss(long userId);
+    boolean isBoss(int userId);
     default boolean isBoss(UserObject userObject) { return isBoss(userObject.getId()); }
 
-    boolean isMember(long userId);
+    boolean isMember(int userId);
     default boolean isMember(UserObject userObject) { return isMember(userObject.getId()); }
 
     // Collection<UserObject> getUsers();
