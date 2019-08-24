@@ -22,19 +22,25 @@
 
 package moe.maple.api.script.model.object;
 
+import moe.maple.api.script.model.object.user.PartyMemberObject;
 import moe.maple.api.script.model.object.user.UserObject;
 
 import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public interface PartyObject<Party> extends ScriptObject<Party> {
 
-    long getId();
+    int getId();
 
     boolean isBoss(int userId);
     default boolean isBoss(UserObject userObject) { return isBoss(userObject.getId()); }
+    default boolean isBoss(PartyMemberObject memberObject) { return isBoss(memberObject.getId()); }
 
     boolean isMember(int userId);
     default boolean isMember(UserObject userObject) { return isMember(userObject.getId()); }
+    default boolean isMember(PartyMemberObject memberObject) { return isMember(memberObject.getId()); }
 
-    // Collection<UserObject> getUsers();
+    Stream<PartyMemberObject> streamMembers();
+    Collection<PartyMemberObject> getMembers();
 }
