@@ -37,7 +37,7 @@ import java.util.Optional;
  * @param <T> Your implementation of user/character.
  * @param <Q> Your implementation of quest.
  */
-public interface UserObject<T, Q> extends LifeObject<T>, InventoryHolderObject<T> {
+public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
 
     /**
      * The user's id, typically their database key or sn
