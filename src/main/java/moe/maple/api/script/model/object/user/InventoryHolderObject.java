@@ -214,7 +214,6 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
     // =================================================================================================================
 
     /**
-     * Get the
      * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
      * @return the inventory's item collection
      */
