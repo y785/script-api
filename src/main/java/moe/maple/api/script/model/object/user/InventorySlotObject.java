@@ -24,10 +24,10 @@ package moe.maple.api.script.model.object.user;
 
 import moe.maple.api.script.model.object.ScriptObject;
 
-public interface InventoryItemObject<T> extends ItemObject<T> {
+public interface InventorySlotObject<T> extends ItemObject<T> {
 
     /**
      * This item's position in the inventory.
      */
-    int getSlotId();
+    short getPosition();
 }

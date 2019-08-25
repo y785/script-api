@@ -26,20 +26,19 @@ import moe.maple.api.script.model.object.ScriptObject;
 
 /**
  * This is a script proxy for quest objects.
- * <T> should be your implementation of quest.
- * @param <T>
+ * @param <T> your implementation of quest.
  */
 public interface QuestObject<T> extends ScriptObject<T> {
-    T getQuest();
+
+    T get();
 
     int getId();
 
     /**
      * This should return 0-2 depending on a quests current status
      * 0 - NotStarted
-     * 1 - Started
-     * 2 - Completed
-     * These are officially from QR_STATE_ enum in BMS
+     * 1 - In Progress (AKA 'Perform' in Nexon language)
+     * 2 - Complete
      * @return int representing quest status
      */
     int getState();
@@ -50,19 +49,11 @@ public interface QuestObject<T> extends ScriptObject<T> {
      */
     boolean setState(int state);
 
-    default boolean isStarted() { return getState() == 1; }
-    default boolean isCompleted() { return getState() == 2; }
+    default boolean isInProgress() { return getState() == 1; }
+    default boolean isComplete() { return getState() == 2; }
 
     default boolean start() { return setState(1); }
     default boolean complete() { return setState(2); }
-
-    /**
-     * Forfeits the quest.
-     * @param key a questId
-     * @param force if TRUE, it will remove it from the quest record no matter what.
-     * @return true if successful.
-     */
-    boolean remove(short key, boolean force);
 
     /**
      * @return an empty string if the quest doesn't have the key

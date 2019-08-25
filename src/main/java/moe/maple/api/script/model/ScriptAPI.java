@@ -118,14 +118,15 @@ public enum ScriptAPI {
                 -> log.debug("askQuiz-> speakerType: {}, speakerTemplate: {}, param: {}, min: {}, max: {}, remain: {}, title: \"{}\", problem: \"{}\", hint: \"{}\"", speakerType, speakerTemplateId, param, min, max, remainInitialQuiz, title, problemText, hintText);
         messengerAskSlideMenu = (userObject, speakerType, speakerTemplateId, slideDlgEX, index, message)
                 -> log.debug("askSlideMenu-> speakerType: {}, speakerTemplate: {}, slideDlgEX: {}, index: {}, message: \"{}\"", speakerType, speakerTemplateId, slideDlgEX, index, message);
-        messengerAskSpeedQuiz = (userObject, speakerType, speakerTemplateId, param, type, answer, correct, remaining, remainInitialQuiz, title, problemText, hintText, min, max, remainInitialQuiz1) -> log.debug("askSpeedQuiz-> speakerType: {}, speakerTemplate: {}, param: {}, type: {}, answer: {}, correct: {}, remaining: {}, remain: {}, title: \"{}\", problem: \"{}\", hint: \"{}\", min: {}, max: {}, remain1: {}", speakerType, speakerTemplateId, param, type, answer, correct, remaining, remainInitialQuiz, title, problemText, hintText, min, max, remainInitialQuiz1);
+        messengerAskSpeedQuiz = (userObject, speakerType, speakerTemplateId, param, type, answer, correct, remaining, remainInitialQuiz, title, problemText, hintText, min, max)
+                -> log.debug("askSpeedQuiz-> speakerType: {}, speakerTemplate: {}, param: {}, type: {}, answer: {}, correct: {}, remaining: {}, remain: {}, title: \"{}\", problem: \"{}\", hint: \"{}\", min: {}, max: {}",  speakerType, speakerTemplateId, param, type, answer, correct, remaining, remainInitialQuiz, title, problemText, hintText, min, max);
         messengerAskText = (userObject, speakerType, speakerTemplateId, param, message, defaultText, min, max)
                 -> log.debug("askText-> speakerType: {}, speakerTemplate: {}, param: {}, min: {}, max: {}, default: \"{}\", message: \"{}\"", speakerType, speakerTemplateId, param, min, max, defaultText, message);
         messengerAskYesNo = (userObject, speakerType, speakerTemplateId, param, message)
                 -> log.debug("askYesNo-> speakerType: {}, speakerTemplate: {}, param: {}, message: \"{}\"", speakerType, speakerTemplateId, param, message);
         messengerSayImage = (userObject, speakerType, speakerTemplateId, param, imagePath)
                 -> log.debug("sayImage-> speakerType: {}, speakerTemplate: {}, param: {}, path: {}", speakerType, speakerTemplateId, param, imagePath);
-        messengerSay = (userObject, speakerType, speakerTemplateId, param, message, previous, next)
+        messengerSay = (userObject, speakerType, speakerTemplateId, replaceTemplateId,  param, message, previous, next)
                 -> log.debug("say-> speakerType: {}, speakerTemplate: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerType, speakerTemplateId, param, message, previous, next);
 
         // Misc Packets
@@ -141,8 +142,8 @@ public enum ScriptAPI {
         messengerFieldTremble = (userObject, type, delay) -> log.debug("fieldTremble-> type: {}, delay: {}", type, delay);
 
         // User Local Effects
-        messengerAvatarOriented = (userObject, path, durationInSeconds) -> log.debug("avatarOriented-> path: {}, duration: {}");
-        messengerPlayPortalSE = userObject -> log.debug("playPortalSE->");
+        messengerAvatarOriented = (userObject, path, durationInSeconds) -> log.debug("avatarOriented-> path: {}, duration: {}", path, durationInSeconds);
+        messengerPlayPortalSE = userObject -> log.debug("playPortalSE->()");
         messengerReservedEffect = (userObject, path) -> log.debug("reservedEffect-> path: {}", path);
     }
 
@@ -365,7 +366,12 @@ public enum ScriptAPI {
                             var speakerTemplateId = speakers[idx-1];
                             script.setScriptResponse(res);
 
-                            script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speakerTemplateId, param, message, back, true),
+                            int replaceTemplateId = speakerTemplateId;//Need to discuss
+                            //if ((param & NPC_REPLACED_BY_NPC) > 0)
+                            //    packet.encode4(replacedId);
+                            // ^ Usage in Say
+
+                            script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speakerTemplateId, replaceTemplateId, param, message, back, true),
                                     () -> log.debug("User object isn't set, workflow is messy."));
                         } else {
                             log.warn("Tried to go back while on the first message? No! :(");
@@ -379,8 +385,11 @@ public enum ScriptAPI {
                             var message = paramAndMessage[idx+1].right();
                             var param = paramAndMessage[idx+1].left();
                             var speakerTemplateId = speakers[idx+1];
+
+                            int replaceTemplateId = speakerTemplateId;//Need to discuss
+
                             script.setScriptResponse(res);
-                            script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj,speakerTemplateId, param,  message, true, forward),
+                            script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj,speakerTemplateId, replaceTemplateId, param,  message, true, forward),
                                     () -> log.debug("User object isn't set, workflow is messy."));
                         } else {
                             script.setScriptResponse(null);
@@ -414,7 +423,12 @@ public enum ScriptAPI {
         var param = paramAndMessages[0].left();
         var message = paramAndMessages[0].right();
 
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speaker, param, message,false, paramAndMessages.length > 1),
+        int replaceTemplateId = speaker;//Need to discuss
+        //if ((param & NPC_REPLACED_BY_NPC) > 0)
+        //    packet.encode4(replacedId);
+        // ^ Usage in Say
+
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speaker, replaceTemplateId, param, message,false, paramAndMessages.length > 1),
                 () -> log.debug("User object isn't set, workflow is messy."));
 
         return script::setScriptAction;
