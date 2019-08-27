@@ -98,8 +98,12 @@ public enum ScriptAPI {
     private PlayPortalSEMessenger messengerPlayPortalSE;
     private ReservedEffectMessenger messengerReservedEffect;
 
+    private final ScriptPreferences preferences;
 
-    ScriptAPI() { }
+
+    ScriptAPI() {
+        this.preferences = ScriptPreferences.DEFAULT;
+    }
 
     public void setDefaultMessengers() {
         // Basic script messages
@@ -741,4 +745,7 @@ public enum ScriptAPI {
         return askNumber(script, script.getSpeakerTemplateId(), 0, message, 0, 0, Integer.MAX_VALUE);
     }
 
+    public ScriptPreferences getPreferences() {
+        return preferences;
+    }
 }
