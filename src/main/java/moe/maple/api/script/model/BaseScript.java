@@ -32,9 +32,12 @@ import moe.maple.api.script.model.object.field.PortalObject;
 import moe.maple.api.script.model.object.field.ReactorObject;
 import moe.maple.api.script.model.object.user.QuestObject;
 import moe.maple.api.script.model.object.user.UserObject;
+import moe.maple.api.script.model.response.SayResponse;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.event.ScriptEvent;
 import moe.maple.api.script.model.type.ScriptMessageType;
+import moe.maple.api.script.util.CursorIterator;
+import moe.maple.api.script.util.ListCursorIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +63,8 @@ public abstract class BaseScript implements MoeScript {
     protected UserObject user;
 
     private boolean done;
+
+    private final CursorIterator<SayResponse> sayChain = new ListCursorIterator<>(new LinkedList<>());
 
     public BaseScript() {
         this.startScriptEvents = new LinkedList<>();
@@ -161,6 +166,7 @@ public abstract class BaseScript implements MoeScript {
 
     @Override
     public void setScriptAction(ScriptAction action) {
+        if(action == null) getSayChain().clear();
         this.nextAction = action;
     }
 
@@ -260,5 +266,10 @@ public abstract class BaseScript implements MoeScript {
     @Override
     public Optional<UserObject> getUserObject() {
         return Optional.ofNullable(user);
+    }
+
+    @Override
+    public CursorIterator<SayResponse> getSayChain() {
+        return sayChain;
     }
 }

@@ -29,9 +29,12 @@ import moe.maple.api.script.model.object.field.PortalObject;
 import moe.maple.api.script.model.object.field.ReactorObject;
 import moe.maple.api.script.model.object.user.QuestObject;
 import moe.maple.api.script.model.object.user.UserObject;
+import moe.maple.api.script.model.response.SayResponse;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.event.ScriptEvent;
 import moe.maple.api.script.model.type.ScriptMessageType;
+import moe.maple.api.script.util.CursorIterator;
+import moe.maple.api.script.util.ListCursorIterator;
 
 import java.util.Optional;
 
@@ -58,6 +61,7 @@ public interface MoeScript {
     // =================================================================================================================
 
     void setScriptAction(ScriptAction action);
+
     void setScriptResponse(ScriptResponse response);
 
     void addStartEvent(ScriptEvent event);
@@ -91,4 +95,5 @@ public interface MoeScript {
      */
     default int getSpeakerTemplateId() { return getNpcObject().map(NpcObject::getTemplateId).orElse(2007); }
 
+    CursorIterator<SayResponse> getSayChain();
 }
