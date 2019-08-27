@@ -235,6 +235,6 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
     default Collection<InventorySlotObject> getItemsEtc() { return getItems(4); }
     default Collection<InventorySlotObject> getItemsCash() { return getItems(5); }
 
-    default Stream<InventorySlotObject> streamItemsEquipped() { return streamItems(1).filter(i -> i.getSlotId() < 0); }
+    default Stream<InventorySlotObject> streamItemsEquipped() { return streamItems(1).filter(i -> i.getPosition() < 0); }
     default Collection<InventorySlotObject> getItemsEquipped() { return streamItemsEquipped().collect(Collectors.toList()); }
 }
