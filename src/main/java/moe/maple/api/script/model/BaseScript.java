@@ -111,9 +111,11 @@ public abstract class BaseScript implements MoeScript {
 
     @Override
     public void end() {
-        log.debug("Script has ended: {}", name());
-        if (done)
+        if (done) {
+            log.debug("Script is already done: {}", name());
             return;
+        }
+        log.debug("Script has ended: {}", name());
         this.nextResponse = null;
         this.nextAction = null;
         this.endScriptEvents.forEach(event -> event.act(this));
