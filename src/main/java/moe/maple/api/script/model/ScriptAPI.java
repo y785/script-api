@@ -38,8 +38,10 @@ import moe.maple.api.script.model.messenger.effect.uel.ReservedEffectMessenger;
 import moe.maple.api.script.model.messenger.misc.StatChangedMessenger;
 import moe.maple.api.script.model.messenger.say.SayImageMessenger;
 import moe.maple.api.script.model.messenger.say.SayMessenger;
+import moe.maple.api.script.model.response.SayResponse;
 import moe.maple.api.script.model.response.ScriptResponse;
 import moe.maple.api.script.model.type.ScriptMessageType;
+import moe.maple.api.script.util.ListCursorIterator;
 import moe.maple.api.script.util.builder.ScriptFormatter;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
 import moe.maple.api.script.util.tuple.Tuple;
@@ -48,7 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public enum ScriptAPI {
@@ -348,6 +349,7 @@ public enum ScriptAPI {
 
     // =================================================================================================================
 
+    @Deprecated
     private static ScriptResponse sayResponse(MoeScript script, List<ScriptResponse> chain, Integer[] speakers, Tuple<Integer, String>[] paramAndMessage, Integer idx, Integer ts) {
         return (t, a, o) -> {
             if (t != ScriptMessageType.SAY) { // Wrong type, b-baka.
@@ -406,31 +408,20 @@ public enum ScriptAPI {
     }
 
     @SafeVarargs
-    public static BasicActionChain say(MoeScript script, Integer[] speakers, Tuple<Integer, String>... paramAndMessages) {
+    public static SayAction say(MoeScript script, Integer[] speakers, Tuple<Integer, String>... paramAndMessages) {
         script.setScriptAction(null);
         script.setScriptResponse(null);
-
         With.index(speakers, (i, idx) -> {
             if (i == 0)
                 speakers[idx] = script.getSpeakerTemplateId();
         });
-
-        var chain = new LinkedList<ScriptResponse>();
-        With.indexAndCount(paramAndMessages, (msg, idx, ts) -> chain.add(sayResponse(script, chain, speakers, paramAndMessages, idx, ts)));
-        script.setScriptResponse(chain.getFirst());
-
-        var speaker = speakers[0];
-        var param = paramAndMessages[0].left();
-        var message = paramAndMessages[0].right();
-
-        int replaceTemplateId = speaker;//Need to discuss
-        //if ((param & NPC_REPLACED_BY_NPC) > 0)
-        //    packet.encode4(replacedId);
-        // ^ Usage in Say
-
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speaker, replaceTemplateId, param, message,false, paramAndMessages.length > 1),
-                () -> log.debug("User object isn't set, workflow is messy."));
-
+        var chain = script.getSayChain();
+        With.index(paramAndMessages, (msg, idx) -> chain.add(new SayResponse(ScriptAPI.INSTANCE.messengerSay, script, speakers[idx], paramAndMessages[idx].left(), paramAndMessages[idx].right())));//sayResponse(script, chain, speakers, paramAndMessages, idx, 0)
+        if(chain.hasNext()) {
+            var response = chain.next();
+            script.getUserObject().ifPresentOrElse(response::send, () -> log.debug("User object isn't set, workflow is messy."));
+            script.setScriptResponse(response);
+        }
         return script::setScriptAction;
     }
 
