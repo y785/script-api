@@ -167,11 +167,18 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
 
 
     /**
-     *  Retrieves the # of non-empty slots in an inventory.
-     *  @param inventoryType @see {@link #increaseSlotCount(int, int)}
+     * Retrieves the # of non-empty slots in an inventory.
+     * @param inventoryType @see {@link #increaseSlotCount(int, int)}
      * @return # of filled slots
      */
     int getHoldCount(int inventoryType);
+
+    /**
+     * Retrieves the # of accessible slots in an inventory. (Default is typically 24)
+     * @param inventoryType @see {@link #increaseSlotCount(int, int)}
+     * @return # of filled slots
+     */
+    int getSlotCount(int inventoryType);
 
 
     /**
@@ -214,21 +221,20 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
     // =================================================================================================================
 
     /**
-     * Get the
      * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
      * @return the inventory's item collection
      */
-    Collection<InventoryItemObject> getItems(int inventoryType);
+    Collection<InventorySlotObject> getItems(int inventoryType);
 
-    default Stream<InventoryItemObject> streamItems(int inventoryType) { return getItems(inventoryType).stream(); }
-    default Stream<InventoryItemObject> streamItems(int inventoryType, Predicate<InventoryItemObject> filter) { return streamItems(inventoryType).filter(filter); }
+    default Stream<InventorySlotObject> streamItems(int inventoryType) { return getItems(inventoryType).stream(); }
+    default Stream<InventorySlotObject> streamItems(int inventoryType, Predicate<InventorySlotObject> filter) { return streamItems(inventoryType).filter(filter); }
 
-    default Collection<InventoryItemObject> getItemsEquip() { return getItems(1); }
-    default Collection<InventoryItemObject> getItemsConsume() { return getItems(2); }
-    default Collection<InventoryItemObject> getItemsInstall() { return getItems(3); }
-    default Collection<InventoryItemObject> getItemsEtc() { return getItems(4); }
-    default Collection<InventoryItemObject> getItemsCash() { return getItems(5); }
+    default Collection<InventorySlotObject> getItemsEquip() { return getItems(1); }
+    default Collection<InventorySlotObject> getItemsConsume() { return getItems(2); }
+    default Collection<InventorySlotObject> getItemsInstall() { return getItems(3); }
+    default Collection<InventorySlotObject> getItemsEtc() { return getItems(4); }
+    default Collection<InventorySlotObject> getItemsCash() { return getItems(5); }
 
-    default Stream<InventoryItemObject> streamItemsEquipped() { return streamItems(1).filter(i -> i.getSlotId() < 0); }
-    default Collection<InventoryItemObject> getItemsEquipped() { return streamItemsEquipped().collect(Collectors.toList()); }
+    default Stream<InventorySlotObject> streamItemsEquipped() { return streamItems(1).filter(i -> i.getSlotId() < 0); }
+    default Collection<InventorySlotObject> getItemsEquipped() { return streamItemsEquipped().collect(Collectors.toList()); }
 }

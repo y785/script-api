@@ -22,6 +22,7 @@
 
 package moe.maple.api.script.model.object.user;
 
+import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.model.object.GuildObject;
 import moe.maple.api.script.model.object.PartyObject;
 import moe.maple.api.script.model.object.field.FieldedObject;
@@ -33,16 +34,16 @@ import java.util.Optional;
 
 /**
  * This is a script proxy for user/character objects.
- * <T> should be your implementation of user/character.
- * @param <T>
+ * @param <T> Your implementation of user/character.
+ * @param <Q> Your implementation of quest.
  */
-public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, QuestHolderObject<T> {
+public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
 
     /**
      * The user's id, typically their database key or sn
      * @return user id
      */
-    long getId();
+    int getId();
 
     /**
      * @return the user's name, duh
@@ -53,6 +54,7 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
 
     Optional<GuildObject> getGuild();
     Optional<PartyObject> getParty();
+    QuestHolderObject<T> getQuestHolder();
 
     default boolean isInGuild() { return getGuild().isPresent(); }
     default boolean isInParty() { return getParty().isPresent(); }
@@ -105,6 +107,8 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
     void talkTo(String scriptName);
 
     /**
+     * Talks to an NPC in the Field by template ID.
+     * @see {@link #talkTo(String)}
      * @param npcId - The NPC used to grab the script name.
      */
     void talkTo(int npcId);
@@ -179,6 +183,11 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
     boolean hireTutor();
     boolean fireTutor();
 
+    /**
+     * @return is a tutor active on the user's client?
+     */
+    boolean hasTutor();
+
     void tutorMessage(int value, int duration);
     default void tutorMessage(int value) { tutorMessage(value, 7000); }
 
@@ -215,6 +224,7 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
     default boolean isMale() {
         return getGender() == 0;
     }
+
     /**
      * Always false, trust me. Not the return value.
      * @return true if the User's gender is set to Female.
@@ -301,7 +311,9 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
      * @return if money was increased successfully
      */
     boolean increaseMoney(int amount);
-    boolean decreaseMoney(int amount);
+    default boolean decreaseMoney(int amount) {
+        return increaseMoney(-amount);
+    }
 
     /**
      * @return user's current level
@@ -340,13 +352,15 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
      * @param amount - The amount to increase by
      * @return true if able to decrease
      */
-    boolean decreaseAbilityPoints(int amount);
+    default boolean decreaseAbilityPoints(int amount) {
+        return increaseAbilityPoints(-amount);
+    }
 
     /**
      * Returns the user's skill points based on tier.
      * If your version doesn't have skill point tiers, just return
      * the current skill point amount.
-     * @param tier
+     * @param tier AKA 'JobLevel', the different skill tabs for Evans and other ExtendSP jobs.
      */
     int getSkillPoints(int tier);
     int getSkillPoints();
@@ -475,5 +489,4 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T>, 
      * @return The user's current channelId.
      */
     int getChannelId();
-
 }
