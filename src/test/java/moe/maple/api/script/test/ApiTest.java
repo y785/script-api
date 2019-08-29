@@ -86,7 +86,7 @@ public class ApiTest {
 
         ScriptAPI.INSTANCE.setMessengerSay((userObject, speakerType, speakerTemplateId, param, message, previous, next) -> {
             var idx = atomicIndex.getAndIncrement();
-            log.debug("{}: idx {} / p {} / n {}", idx, message, previous, next);
+            log.debug("{}: m {} / p {} / n {}", idx, message, previous, next);
 
             var ableToGoBack = back.get()  == 1;
             var ableToGoForward = forward.get() == 1;
