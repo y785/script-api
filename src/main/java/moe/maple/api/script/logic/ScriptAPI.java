@@ -20,12 +20,13 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model;
+package moe.maple.api.script.logic;
 
-import moe.maple.api.script.model.action.*;
-import moe.maple.api.script.model.chain.BasicActionChain;
-import moe.maple.api.script.model.chain.IntegerActionChain;
-import moe.maple.api.script.model.chain.StringActionChain;
+import moe.maple.api.script.model.MoeScript;
+import moe.maple.api.script.logic.action.*;
+import moe.maple.api.script.logic.chain.BasicActionChain;
+import moe.maple.api.script.logic.chain.IntegerActionChain;
+import moe.maple.api.script.logic.chain.StringActionChain;
 import moe.maple.api.script.model.messenger.*;
 import moe.maple.api.script.model.messenger.ask.*;
 import moe.maple.api.script.model.messenger.effect.field.FieldObjectMessenger;
@@ -38,7 +39,7 @@ import moe.maple.api.script.model.messenger.effect.uel.ReservedEffectMessenger;
 import moe.maple.api.script.model.messenger.misc.StatChangedMessenger;
 import moe.maple.api.script.model.messenger.say.SayImageMessenger;
 import moe.maple.api.script.model.messenger.say.SayMessenger;
-import moe.maple.api.script.model.response.ScriptResponse;
+import moe.maple.api.script.logic.response.ScriptResponse;
 import moe.maple.api.script.model.type.ScriptMessageType;
 import moe.maple.api.script.util.builder.ScriptFormatter;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
@@ -350,7 +351,7 @@ public enum ScriptAPI {
 
     private static ScriptResponse sayResponse(MoeScript script, List<ScriptResponse> chain, Integer[] speakers, Tuple<Integer, String>[] paramAndMessage, Integer idx, Integer ts) {
         return (t, a, o) -> {
-            if (t != ScriptMessageType.SAY) { // Wrong type, b-baka.
+            if (t.intValue() != ScriptMessageType.SAY) { // Wrong type, b-baka.
                 script.end();
             } else {
                 switch (a.intValue()) {
@@ -484,7 +485,7 @@ public enum ScriptAPI {
     public static void askYesNo(MoeScript script, String message, BasicScriptAction onYes, BasicScriptAction onNo) {
         script.setScriptAction(null);
         script.setScriptResponse((t, a, o) -> {
-            if (t != ScriptMessageType.ASKYESNO) {
+            if (t.intValue() != ScriptMessageType.ASKYESNO) {
                 script.end();
             } else {
                 var an = a.intValue();
@@ -513,7 +514,7 @@ public enum ScriptAPI {
     public static void askAccept(MoeScript script, String message, BasicScriptAction onYes, BasicScriptAction onNo) {
         script.setScriptAction(null);
         script.setScriptResponse((t, a, o) -> {
-            if (t != ScriptMessageType.ASKACCEPT) {
+            if (t.intValue() != ScriptMessageType.ASKACCEPT) {
                 script.end();
             } else {
                 var an = a.intValue();
@@ -543,7 +544,7 @@ public enum ScriptAPI {
         return (t, a, o) -> {
             var min = 0;
 
-            if (t != ScriptMessageType.ASKMENU || a.intValue() != 1) {
+            if (t.intValue() != ScriptMessageType.ASKMENU || a.intValue() != 1) {
                 script.end();
             } else {
                 var sel = ((Integer)o);
@@ -600,7 +601,7 @@ public enum ScriptAPI {
             var sel = ((Integer)o);
             var bad = sel == null || sel < min || sel > max;
 
-            if (t != ScriptMessageType.ASKMENU || bad || a.intValue() != 1) {
+            if (t.intValue() != ScriptMessageType.ASKMENU || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
                 script.end();
@@ -626,7 +627,7 @@ public enum ScriptAPI {
             var sel = ((Integer)o);
             var bad = sel == null || sel < min || sel > max;
 
-            if (t != ScriptMessageType.ASKAVATAR || bad || a.intValue() != 1) {
+            if (t.intValue() != ScriptMessageType.ASKAVATAR || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
                 script.end();
@@ -662,7 +663,7 @@ public enum ScriptAPI {
             var sel = ((String)o);
             var bad = sel == null || sel.length() < min || sel.length() > max;
 
-            if (t != ScriptMessageType.ASKTEXT || bad || a.intValue() != 1) {
+            if (t.intValue() != ScriptMessageType.ASKTEXT || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
                 script.end();
@@ -709,7 +710,7 @@ public enum ScriptAPI {
             var sel = ((Integer)o);
             var bad = sel == null || sel < min || sel > max;
 
-            if (t != ScriptMessageType.ASKNUMBER || bad || a.intValue() != 1) {
+            if (t.intValue() != ScriptMessageType.ASKNUMBER || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
                 script.end();

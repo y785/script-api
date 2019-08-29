@@ -22,15 +22,15 @@
 
 package moe.maple.api.script.model;
 
-import moe.maple.api.script.model.action.ScriptAction;
+import moe.maple.api.script.logic.action.ScriptAction;
 import moe.maple.api.script.model.object.*;
 import moe.maple.api.script.model.object.field.NpcObject;
 import moe.maple.api.script.model.object.field.PortalObject;
 import moe.maple.api.script.model.object.field.ReactorObject;
 import moe.maple.api.script.model.object.user.QuestObject;
 import moe.maple.api.script.model.object.user.UserObject;
-import moe.maple.api.script.model.response.ScriptResponse;
-import moe.maple.api.script.model.event.ScriptEvent;
+import moe.maple.api.script.logic.response.ScriptResponse;
+import moe.maple.api.script.logic.event.ScriptEvent;
 import moe.maple.api.script.model.type.ScriptMessageType;
 
 import java.util.Optional;
@@ -53,7 +53,7 @@ public interface MoeScript {
     void reset();
     default void resetAndStart() { reset(); start(); }
 
-    void resume(ScriptMessageType type, Number action, Object response);
+    void resume(Number type, Number action, Object response);
 
     // =================================================================================================================
 

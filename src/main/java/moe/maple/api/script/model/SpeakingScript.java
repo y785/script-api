@@ -22,10 +22,11 @@
 
 package moe.maple.api.script.model;
 
-import moe.maple.api.script.model.action.BasicScriptAction;
-import moe.maple.api.script.model.chain.BasicActionChain;
-import moe.maple.api.script.model.chain.IntegerActionChain;
-import moe.maple.api.script.model.chain.StringActionChain;
+import moe.maple.api.script.logic.ScriptAPI;
+import moe.maple.api.script.logic.action.BasicScriptAction;
+import moe.maple.api.script.logic.chain.BasicActionChain;
+import moe.maple.api.script.logic.chain.IntegerActionChain;
+import moe.maple.api.script.logic.chain.StringActionChain;
 import moe.maple.api.script.util.tuple.Tuple;
 
 /**

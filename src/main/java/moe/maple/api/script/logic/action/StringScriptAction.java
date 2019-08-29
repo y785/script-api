@@ -20,11 +20,9 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.chain;
-
-import moe.maple.api.script.model.action.IntegerScriptAction;
+package moe.maple.api.script.logic.action;
 
 @FunctionalInterface
-public interface IntegerActionChain {
-    void andThen(IntegerScriptAction next);
+public interface StringScriptAction extends ScriptAction {
+    void act(String object);
 }

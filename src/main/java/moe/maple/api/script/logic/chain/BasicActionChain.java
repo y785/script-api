@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.response;
+package moe.maple.api.script.logic.chain;
 
-import moe.maple.api.script.model.type.ScriptMessageType;
+import moe.maple.api.script.logic.action.BasicScriptAction;
 
 @FunctionalInterface
-public interface ScriptResponse {
-    void response(ScriptMessageType type, Number action, Object response);
+public interface BasicActionChain {
+    void andThen(BasicScriptAction next);
 }

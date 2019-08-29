@@ -20,8 +20,9 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.model.action;
+package moe.maple.api.script.logic.action;
 
-public interface ScriptAction {
-    //void act();
+@FunctionalInterface
+public interface BasicScriptAction extends ScriptAction {
+    void act();
 }

@@ -25,16 +25,18 @@ package moe.maple.api.script.test;
 import moe.maple.api.script.model.object.FieldObject;
 import moe.maple.api.script.model.object.GuildObject;
 import moe.maple.api.script.model.object.PartyObject;
-import moe.maple.api.script.model.object.user.InventoryItemObject;
+import moe.maple.api.script.model.object.user.InventorySlotObject;
+import moe.maple.api.script.model.object.user.QuestHolderObject;
 import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.util.tuple.Tuple;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class TestUserObject implements UserObject<Integer> {
     @Override
-    public long getId() {
+    public int getId() {
         return 0;
     }
 
@@ -51,6 +53,11 @@ public class TestUserObject implements UserObject<Integer> {
     @Override
     public Optional<PartyObject> getParty() {
         return Optional.empty();
+    }
+
+    @Override
+    public QuestHolderObject<Integer> getQuestHolder() {
+        return null;
     }
 
     @Override
@@ -149,6 +156,11 @@ public class TestUserObject implements UserObject<Integer> {
     }
 
     @Override
+    public boolean hasTutor() {
+        return false;
+    }
+
+    @Override
     public void tutorMessage(int value, int duration) {
 
     }
@@ -234,11 +246,6 @@ public class TestUserObject implements UserObject<Integer> {
     }
 
     @Override
-    public boolean decreaseMoney(int amount) {
-        return false;
-    }
-
-    @Override
     public int getLevel() {
         return 0;
     }
@@ -260,11 +267,6 @@ public class TestUserObject implements UserObject<Integer> {
 
     @Override
     public boolean increaseAbilityPoints(int amount) {
-        return false;
-    }
-
-    @Override
-    public boolean decreaseAbilityPoints(int amount) {
         return false;
     }
 
@@ -449,33 +451,23 @@ public class TestUserObject implements UserObject<Integer> {
     }
 
     @Override
+    public int getSlotCount(int inventoryType) {
+        return 0;
+    }
+
+    @Override
     public boolean increaseSlotCount(int inventoryType, int howMany) {
         return false;
     }
 
     @Override
-    public Collection<InventoryItemObject> getItems(int inventoryType) {
+    public Collection<InventorySlotObject> getItems(int inventoryType) {
         return null;
     }
 
     @Override
-    public int getQuestState(int questId) {
-        return 0;
-    }
-
-    @Override
-    public boolean setQuestState(int questId, int state) {
-        return false;
-    }
-
-    @Override
-    public String getQuestEx(int questId, String key) {
+    public Stream<InventorySlotObject> streamItemsEquipped() {
         return null;
-    }
-
-    @Override
-    public boolean setQuestEx(int questId, String key, String value) {
-        return false;
     }
 
     @Override

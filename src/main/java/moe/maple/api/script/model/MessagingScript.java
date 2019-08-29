@@ -22,8 +22,8 @@
 
 package moe.maple.api.script.model;
 
+import moe.maple.api.script.logic.ScriptAPI;
 import moe.maple.api.script.util.builder.ScriptFormatter;
-import org.slf4j.helpers.MessageFormatter;
 
 public interface MessagingScript extends LocalEffectScript {
     /*

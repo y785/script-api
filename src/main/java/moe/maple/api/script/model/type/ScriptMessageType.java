@@ -22,32 +22,22 @@
 
 package moe.maple.api.script.model.type;
 
-// Enums are bad.
-public enum ScriptMessageType {
-    SAY,
-    SAYIMAGE,
-    ASKYESNO,
-    ASKTEXT,
-    ASKNUMBER,
-    ASKMENU,
-    ASKQUIZ,
-    ASKSPEEDQUIZ,
-    ASKAVATAR,
-    ASKMEMBERSHOPAVATAR,
-    ASKPET,
-    ASKPETALL,
-    SCRIPT,
-    ASKACCEPT,
-    ASKBOXTEXT,
-    ASKSLIDEMENU,
-    ASKCENTER,
-    ;
-
-    public static ScriptMessageType getByValue(int value) {
-        for (ScriptMessageType type : values()) {
-            if (type.ordinal() == value)
-                return type;
-        }
-        throw new IllegalArgumentException("Cant find, wololol");
-    }
+public class ScriptMessageType {
+    public static int SAY                 = 0;
+    public static int SAYIMAGE            = 1;
+    public static int ASKYESNO            = 2;
+    public static int ASKTEXT             = 3;
+    public static int ASKNUMBER           = 4;
+    public static int ASKMENU             = 5;
+    public static int ASKQUIZ             = 6;
+    public static int ASKSPEEDQUIZ        = 7;
+    public static int ASKAVATAR           = 8;
+    public static int ASKMEMBERSHOPAVATAR = 9;
+    public static int ASKPET              = 10;
+    public static int ASKPETALL           = 11;
+    public static int SCRIPT              = 12;
+    public static int ASKACCEPT           = 13;
+    public static int ASKBOXTEXT          = 14;
+    public static int ASKSLIDEMENU        = 15;
+    public static int ASKCENTER           = 16;
 }
