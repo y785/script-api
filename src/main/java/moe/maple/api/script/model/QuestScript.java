@@ -22,35 +22,43 @@
 
 package moe.maple.api.script.model;
 
+import moe.maple.api.script.model.object.user.QuestObject;
+
 public abstract class QuestScript extends NpcScript {
 
-    private final int questId;
-    public QuestScript(int questId) {
+    protected QuestObject<?> self;
+
+    public QuestScript() {
         super();
-        this.questId = questId;
+    }
+
+    @Override
+    public void setQuestObject(QuestObject quest) {
+        this.self = quest;
+        super.setQuestObject(quest);
     }
 
     /**
-     * Attempts to start the quest notated by {@link #questId}
+     * Attempts to start the quest {@link #self}
      * @return true if the quest has been started successfully.
      */
     public boolean startQuest() {
-        return getUserObject().map(user->user.getQuestHolder().start(questId)).orElse(false);
+        return self.start();
     }
 
     /**
-     * Attempts to complete the quest notated by {@link #questId}
+     * Attempts to complete the quest {@link #self}
      * @return true if the quest has been completed successfully.
      */
     public boolean completeQuest() {
-        return getUserObject().map(user->user.getQuestHolder().complete(questId)).orElse(false);
+        return self.complete();
     }
 
     /**
      * @return the quest's WZ identifier
      */
     public int getQuestId() {
-        return questId;
+        return self.getId();
     }
 
 }
