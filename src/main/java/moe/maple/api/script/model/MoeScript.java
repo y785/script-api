@@ -42,6 +42,11 @@ public interface MoeScript {
     boolean isDone();
     boolean isPaused();
 
+    boolean isNextResponseSet();
+    boolean isNextActionSet();
+
+    // =================================================================================================================
+
     void work();
 
     void start();
@@ -62,6 +67,16 @@ public interface MoeScript {
 
     void addStartEvent(ScriptEvent event);
     void addEndEvent(ScriptEvent event);
+
+    /**
+     *  After run is called before {@link #work()} and {@link #resume(Number, Number, Object)}
+     */
+    void addAfterRunEvent(ScriptEvent event);
+
+    /**
+     *  see {@link #addAfterRunEvent(ScriptEvent)}
+     */
+    void addBeforeRunEvent(ScriptEvent event);
 
     // =================================================================================================================
 

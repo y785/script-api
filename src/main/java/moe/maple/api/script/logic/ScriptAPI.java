@@ -22,6 +22,7 @@
 
 package moe.maple.api.script.logic;
 
+import moe.maple.api.script.logic.event.PolledScriptEvent;
 import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.logic.action.*;
 import moe.maple.api.script.logic.chain.BasicActionChain;
@@ -98,9 +99,25 @@ public enum ScriptAPI {
     private PlayPortalSEMessenger messengerPlayPortalSE;
     private ReservedEffectMessenger messengerReservedEffect;
 
+    // =================================================================================================================
 
-    ScriptAPI() { }
+    private boolean catchExceptions;
 
+    ScriptAPI() {
+        this.catchExceptions = true;
+    }
+
+    /**
+     * If true, scripts will catch all exceptions thrown and issue {@link MoeScript#end()}.
+     * If false, scripts will throw exceptions and not call {@link MoeScript#end()}.
+     */
+    public void setCatchExceptions(boolean cat) {
+        this.catchExceptions = cat;
+    }
+
+    /**
+     * Sets default messengers to logging messengers.
+     */
     public void setDefaultMessengers() {
         // Basic script messages
         messengerAskAccept = (userObject, speakerType, speakerTemplateId, param, message)
@@ -255,6 +272,12 @@ public enum ScriptAPI {
 
     // =================================================================================================================
 
+    public boolean isCatchExceptions() {
+        return catchExceptions;
+    }
+
+    // =================================================================================================================
+
     /**
      * A message that is dropped into the chatbox. Or not. I don't know.
      * @param script
@@ -371,9 +394,10 @@ public enum ScriptAPI {
                             //if ((param & NPC_REPLACED_BY_NPC) > 0)
                             //    packet.encode4(replacedId);
                             // ^ Usage in Say
-
-                            script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speakerTemplateId, replaceTemplateId, param, message, back, true),
-                                    () -> log.debug("User object isn't set, workflow is messy."));
+                            script.addAfterRunEvent((PolledScriptEvent)(moe) -> {
+                                script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speakerTemplateId, replaceTemplateId, param, message, back, true),
+                                        () -> log.debug("User object isn't set, workflow is messy."));
+                            });
                         } else {
                             log.warn("Tried to go back while on the first message? No! :(");
                             script.end();
@@ -390,8 +414,10 @@ public enum ScriptAPI {
                             int replaceTemplateId = speakerTemplateId;//Need to discuss
 
                             script.setScriptResponse(res);
-                            script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj,speakerTemplateId, replaceTemplateId, param,  message, true, forward),
-                                    () -> log.debug("User object isn't set, workflow is messy."));
+                            script.addAfterRunEvent((PolledScriptEvent)(moe) -> {
+                                moe.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj,speakerTemplateId, replaceTemplateId, param,  message, true, forward || moe.isNextResponseSet()),
+                                        () -> log.debug("User object isn't set, workflow is messy."));
+                            });
                         } else {
                             script.setScriptResponse(null);
                             script.resume(t, a, o);
@@ -429,8 +455,10 @@ public enum ScriptAPI {
         //    packet.encode4(replacedId);
         // ^ Usage in Say
 
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speaker, replaceTemplateId, param, message,false, paramAndMessages.length > 1),
-                () -> log.debug("User object isn't set, workflow is messy."));
+        script.addAfterRunEvent((PolledScriptEvent)(moe) -> {
+            moe.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speaker, replaceTemplateId, param, message,false, paramAndMessages.length > 1 || moe.isNextResponseSet()),
+                    () -> log.debug("User object isn't set, workflow is messy."));
+        });
 
         return script::setScriptAction;
     }

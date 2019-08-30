@@ -22,6 +22,7 @@
 
 package moe.maple.api.script.model;
 
+import moe.maple.api.script.logic.ScriptAPI;
 import moe.maple.api.script.logic.action.BasicScriptAction;
 import moe.maple.api.script.logic.action.IntegerScriptAction;
 import moe.maple.api.script.logic.action.ScriptAction;
@@ -34,11 +35,12 @@ import moe.maple.api.script.model.object.user.QuestObject;
 import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.logic.response.ScriptResponse;
 import moe.maple.api.script.logic.event.ScriptEvent;
-import moe.maple.api.script.model.type.ScriptMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 public abstract class BaseScript implements MoeScript {
@@ -49,6 +51,8 @@ public abstract class BaseScript implements MoeScript {
     protected ScriptResponse nextResponse;
     protected LinkedList<ScriptEvent> startScriptEvents;
     protected LinkedList<ScriptEvent> endScriptEvents;
+    protected LinkedList<ScriptEvent> beforeRunEvents;
+    protected LinkedList<ScriptEvent> afterRunEvents;
 
     protected ServerObject server;
     protected FieldObject field;
@@ -64,6 +68,8 @@ public abstract class BaseScript implements MoeScript {
     public BaseScript() {
         this.startScriptEvents = new LinkedList<>();
         this.endScriptEvents = new LinkedList<>();
+        this.beforeRunEvents = new LinkedList<>();
+        this.afterRunEvents = new LinkedList<>();
     }
 
     @Override
@@ -89,18 +95,55 @@ public abstract class BaseScript implements MoeScript {
     }
 
     @Override
+    public boolean isNextActionSet() {
+        return nextAction != null;
+    }
+
+    @Override
+    public boolean isNextResponseSet() {
+        return nextResponse != null;
+    }
+
+    // =================================================================================================================
+
+    private void doEvents(List<ScriptEvent> events) {
+        var iter = events.iterator();
+        while (iter.hasNext()) {
+            var next = iter.next();
+            next.act(this);
+
+            if (next.isSingleUse())
+                iter.remove();
+        }
+    }
+
+    // =================================================================================================================
+
+    private void startMaybeException() {
+        doEvents(beforeRunEvents);
+        work();
+        doEvents(afterRunEvents);
+    }
+
+    @Override
     public void start() {
         log.debug("Script is starting: {}", name());
         this.done = false;
         this.nextResponse = null;
         this.nextAction = null;
-        this.startScriptEvents.forEach(event -> event.act(this));
-        try {
-            work();
-        } catch (Exception e) {
-            log.error("Oh no!", e);
+        doEvents(startScriptEvents);
+
+        if (ScriptAPI.INSTANCE.isCatchExceptions()) {
+            try {
+                startMaybeException();
+            } catch (Exception e) {
+                log.error("Oh no! A script({}) threw an exception during start.", name(), e);
+                this.end();
+            }
+        } else {
+            startMaybeException();
         }
-        if (nextResponse == null && nextAction == null)
+        if (!isNextResponseSet() && !isNextActionSet())
             end();
     }
 
@@ -109,9 +152,9 @@ public abstract class BaseScript implements MoeScript {
         log.debug("Script has ended: {}", name());
         if (done)
             return;
+        doEvents(endScriptEvents);
         this.nextResponse = null;
         this.nextAction = null;
-        this.endScriptEvents.forEach(event -> event.act(this));
         this.done = true;
     }
 
@@ -119,38 +162,56 @@ public abstract class BaseScript implements MoeScript {
     public void reset() {
         end();
 
+        beforeRunEvents.clear(); // should these be reset?
+        afterRunEvents.clear();
+
         this.done = false;
     }
 
+    /**
+     * Don't look at me! I'm ugly! :c
+     */
+    private void resumeMaybeException(Number type, Number action, Object response) {
+        var act = nextAction;
+        var resp = nextResponse;
+
+        if (resp != null) {
+            doEvents(beforeRunEvents);
+            resp.response(type, action, response);
+            doEvents(afterRunEvents);
+        } else {
+            doEvents(beforeRunEvents);
+            if (act instanceof BasicScriptAction) {
+                ((BasicScriptAction) act).act();
+            } else if (act instanceof IntegerScriptAction) {
+                ((IntegerScriptAction) act).act((Integer) response);
+            } else if (act instanceof StringScriptAction) {
+                ((StringScriptAction) act).act((String) response);
+            } else {
+                log.error("Couldn't process action: {}", act.getClass().getSimpleName());
+                this.nextResponse = null;
+            }
+            doEvents(afterRunEvents); // Should we still run if action is missing?
+
+            if (nextResponse == null)
+                this.end();
+        }
+    }
+
     @Override
-    public void resume(ScriptMessageType type, Number action, Object response) {
+    public void resume(Number type, Number action, Object response) {
         var act = nextAction;
         var resp = nextResponse;
         if (act != null || resp != null) {
-            try {
-                if (resp != null) {
-                    resp.response(type, action, response);
-                } else {
-                    if (act instanceof BasicScriptAction) {
-                        ((BasicScriptAction) act).act();
-                        if (nextResponse == null)
-                            this.end();
-                    } else if (act instanceof IntegerScriptAction) {
-                        ((IntegerScriptAction) act).act((Integer) response);
-                        if (nextResponse == null)
-                            this.end();
-                    } else if (act instanceof StringScriptAction) {
-                        ((StringScriptAction) act).act((String) response);
-                        if (nextResponse == null)
-                            this.end();
-                    } else {
-                        log.error("Couldn't process action: {}", act.getClass().getSimpleName());
-                        this.end();
-                    }
+            if (ScriptAPI.INSTANCE.isCatchExceptions()) {
+                try {
+                    resumeMaybeException(type, action, response);
+                } catch (Exception e) {
+                    log.error("Oh no! A script({}) threw an exception during resume.", name(), e);
+                    this.end();
                 }
-            } catch (Exception e) {
-                log.error(":(", e);
-                end();
+            } else {
+                resumeMaybeException(type, action, response);
             }
         } else {
             end();
@@ -177,6 +238,16 @@ public abstract class BaseScript implements MoeScript {
     @Override
     public void addEndEvent(ScriptEvent event) {
         this.endScriptEvents.add(event);
+    }
+
+    @Override
+    public void addAfterRunEvent(ScriptEvent event) {
+        this.afterRunEvents.add(event);
+    }
+
+    @Override
+    public void addBeforeRunEvent(ScriptEvent event) {
+        this.beforeRunEvents.add(event);
     }
 
     // =================================================================================================================

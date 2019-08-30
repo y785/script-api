@@ -22,14 +22,11 @@
 
 package moe.maple.api.script.logic.event;
 
-import moe.maple.api.script.model.MoeScript;
-
 @FunctionalInterface
-public interface ScriptEvent {
-    void act(MoeScript script);
+public interface PolledScriptEvent extends ScriptEvent {
 
     /**
-     * @return if this event should be removed after firing
+     * @return {@link ScriptEvent#isSingleUse()} }
      */
-    default boolean isSingleUse() { return false; }
+    default boolean isSingleUse() { return true; }
 }
