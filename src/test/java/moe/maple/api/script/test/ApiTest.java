@@ -60,7 +60,7 @@ public class ApiTest {
         @Script(name = SCRIPT_NAME)
         class NpcScriptTest extends NpcScript {
             @Override
-            public void work() {
+            protected void work() {
                 say("0", "1", "2").andThen(() -> {
                     log.debug("Beginning sub test 2: Back <-> Forward");
                     say(Tuple.of(0, "3"), Tuple.of(0, "4"), Tuple.of(0, "5")).andThen(() -> {
@@ -90,20 +90,20 @@ public class ApiTest {
         var test = new NpcScriptTest();
         test.setUserObject(new TestUserObject());
         assertEquals(test.name(), SCRIPT_NAME);
-        test.work();
+        test.start();
 
         assertTrue(!test.isDone());
         assertTrue(test.isPaused());
 
         back.set(1);
-        test.resume(ScriptMessageType.SAY, 1, null); forward.set(0); back.set(1);
+        test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(1);
         test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(0);
 
         test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(1);
         test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(0);
         test.resume(ScriptMessageType.SAY, 0, null); forward.set(1); back.set(1);
-        test.resume(ScriptMessageType.SAY, 1, null); forward.set(0); back.set(1);
-        test.resume(ScriptMessageType.SAY, 1, null); forward.set(0); back.set(0);
+        test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(1);
+        test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(0);
         test.resume(ScriptMessageType.SAY, 1, null);
         test.resume(ScriptMessageType.SAY, 1, null);
 
@@ -118,9 +118,9 @@ public class ApiTest {
 
     @Test
     public void apiAskMenuLogic() {
+        @Script(name = "ApiAskMenu")
         class ApiAskMenuLogic extends BaseScript {
             @Override
-            @Script(name = "ApiAskMenu")
             public void work() {
                 ScriptAPI.askMenu(this, "Prompt", "Option 1", "Option 2", "Option 3").andThen(sel -> {
                     assertEquals(sel, 1);

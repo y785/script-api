@@ -79,8 +79,7 @@ public abstract class BaseScript implements MoeScript {
         return annotation.name();
     }
 
-    @Override
-    public abstract void work();
+    protected abstract void work();
 
     // =================================================================================================================
 
