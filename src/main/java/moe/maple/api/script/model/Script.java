@@ -31,7 +31,7 @@ import java.util.function.Function;
 @java.lang.annotation.Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Script {
-    String name();
+    String[] name() default "";
     String author() default "";
     String description() default "";
 }
