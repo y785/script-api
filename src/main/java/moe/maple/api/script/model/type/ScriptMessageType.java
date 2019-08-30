@@ -23,21 +23,21 @@
 package moe.maple.api.script.model.type;
 
 public class ScriptMessageType {
-    public static int SAY                 = 0;
-    public static int SAYIMAGE            = 1;
-    public static int ASKYESNO            = 2;
-    public static int ASKTEXT             = 3;
-    public static int ASKNUMBER           = 4;
-    public static int ASKMENU             = 5;
-    public static int ASKQUIZ             = 6;
-    public static int ASKSPEEDQUIZ        = 7;
-    public static int ASKAVATAR           = 8;
-    public static int ASKMEMBERSHOPAVATAR = 9;
-    public static int ASKPET              = 10;
-    public static int ASKPETALL           = 11;
-    public static int SCRIPT              = 12;
-    public static int ASKACCEPT           = 13;
-    public static int ASKBOXTEXT          = 14;
-    public static int ASKSLIDEMENU        = 15;
-    public static int ASKCENTER           = 16;
+    public static final int SAY                 = 0;
+    public static final int SAYIMAGE            = 1;
+    public static final int ASKYESNO            = 2;
+    public static final int ASKTEXT             = 3;
+    public static final int ASKNUMBER           = 4;
+    public static final int ASKMENU             = 5;
+    public static final int ASKQUIZ             = 6;
+    public static final int ASKSPEEDQUIZ        = 7;
+    public static final int ASKAVATAR           = 8;
+    public static final int ASKMEMBERSHOPAVATAR = 9;
+    public static final int ASKPET              = 10;
+    public static final int ASKPETALL           = 11;
+    public static final int SCRIPT              = 12;
+    public static final int ASKACCEPT           = 13;
+    public static final int ASKBOXTEXT          = 14;
+    public static final int ASKSLIDEMENU        = 15;
+    public static final int ASKCENTER           = 16;
 }
