@@ -22,11 +22,13 @@
 
 package moe.maple.api.script.model;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@java.lang.annotation.Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Script {
     String name();
