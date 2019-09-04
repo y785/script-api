@@ -22,12 +22,11 @@
 
 package moe.maple.api.script.logic;
 
-import moe.maple.api.script.logic.event.PolledScriptEvent;
-import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.logic.action.*;
 import moe.maple.api.script.logic.chain.BasicActionChain;
 import moe.maple.api.script.logic.chain.IntegerActionChain;
 import moe.maple.api.script.logic.chain.StringActionChain;
+import moe.maple.api.script.logic.response.SayResponse;
 import moe.maple.api.script.model.messenger.*;
 import moe.maple.api.script.model.messenger.ask.*;
 import moe.maple.api.script.model.messenger.effect.field.FieldObjectMessenger;
@@ -39,8 +38,11 @@ import moe.maple.api.script.model.messenger.effect.uel.PlayPortalSEMessenger;
 import moe.maple.api.script.model.messenger.effect.uel.ReservedEffectMessenger;
 import moe.maple.api.script.model.messenger.misc.StatChangedMessenger;
 import moe.maple.api.script.model.messenger.say.SayImageMessenger;
+import moe.maple.api.script.model.messenger.say.SayMessage;
 import moe.maple.api.script.model.messenger.say.SayMessenger;
 import moe.maple.api.script.logic.response.ScriptResponse;
+import moe.maple.api.script.model.object.user.UserObject;
+import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.model.type.ScriptMessageType;
 import moe.maple.api.script.util.builder.ScriptFormatter;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
@@ -50,8 +52,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public enum ScriptAPI {
     INSTANCE;
@@ -100,19 +104,10 @@ public enum ScriptAPI {
     private ReservedEffectMessenger messengerReservedEffect;
 
     // =================================================================================================================
-
-    private boolean catchExceptions;
+    private final ScriptPreferences preferences;
 
     ScriptAPI() {
-        this.catchExceptions = true;
-    }
-
-    /**
-     * If true, scripts will catch all exceptions thrown and issue {@link MoeScript#end()}.
-     * If false, scripts will throw exceptions and not call {@link MoeScript#end()}.
-     */
-    public void setCatchExceptions(boolean cat) {
-        this.catchExceptions = cat;
+        this.preferences = ScriptPreferences.DEFAULT;
     }
 
     /**
@@ -270,13 +265,11 @@ public enum ScriptAPI {
         this.messengerReservedEffect = messengerReservedEffect;
     }
 
-    // =================================================================================================================
-
-    public boolean isCatchExceptions() {
-        return catchExceptions;
+    private static void onScriptMessage(MoeScript script, Consumer<UserObject> sendMessage) {
+        script.setScriptResponse(null);
+        script.setScriptAction(null);
+        script.getUserObject().ifPresentOrElse(sendMessage, () -> log.debug("User object isn't set, workflow is messy."));
     }
-
-    // =================================================================================================================
 
     /**
      * A message that is dropped into the chatbox. Or not. I don't know.
@@ -285,10 +278,7 @@ public enum ScriptAPI {
      * @param message
      */
     public static void message(MoeScript script, int type, String message) {
-        script.setScriptResponse(null);
-        script.setScriptAction(null);
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerMessage.send(obj, type, message),
-                () -> log.debug("User object isn't set, workflow is messy."));
+        onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerMessage.send(user, type, message));
     }
 
     /**
@@ -299,10 +289,7 @@ public enum ScriptAPI {
      * @param message
      */
     public static void balloon(MoeScript script, int width, int timeoutInSeconds, String message) {
-        script.setScriptResponse(null);
-        script.setScriptAction(null);
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerBalloon.send(obj, message, width, timeoutInSeconds),
-                () -> log.debug("User object isn't set, workflow is messy."));
+        onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerBalloon.send(user, message, width, timeoutInSeconds));
     }
 
     /**
@@ -311,155 +298,59 @@ public enum ScriptAPI {
      * @param message
      */
     public static void progress(MoeScript script, String message) {
-        script.setScriptResponse(null);
-        script.setScriptAction(null);
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerProgress.send(obj, message),
-                () -> log.debug("User object isn't set, workflow is messy."));
+        onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerProgress.send(user, message));
     }
 
     public static void statChanged(MoeScript script, boolean exclRequest) {
-        script.setScriptResponse(null);
-        script.setScriptAction(null);
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerStatChanged.send(obj, exclRequest),
-                () -> log.debug("User object isn't set, workflow is messy."));
+        onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerStatChanged.send(user, exclRequest));
     }
 
     // =================================================================================================================
 
     public static void fieldEffectScreen(MoeScript script, String path) {
-        script.setScriptResponse(null);
-        script.setScriptAction(null);
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerFieldScreen.send(obj, path),
-                () -> log.debug("User object isn't set, workflow is messy."));
+        onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerFieldScreen.send(user, path));
     }
 
     public static void fieldEffectSound(MoeScript script, String path) {
-        script.setScriptResponse(null);
-        script.setScriptAction(null);
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerFieldSound.send(obj, path),
-                () -> log.debug("User object isn't set, workflow is messy."));
+        onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerFieldScreen.send(user, path));
     }
 
     public static void fieldEffectTremble(MoeScript script, int type, int delay) {
-        script.setScriptResponse(null);
-        script.setScriptAction(null);
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerFieldTremble.send(obj, type, delay),
-                () -> log.debug("User object isn't set, workflow is messy."));
+        onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerFieldTremble.send(user, type, delay));
     }
 
     // =================================================================================================================
 
     public static void userAvatarOriented(MoeScript script, String path, int durationInSeconds) {
-        script.setScriptResponse(null);
-        script.setScriptAction(null);
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAvatarOriented.send(obj, path, durationInSeconds),
-                () -> log.debug("User object isn't set, workflow is messy."));
+        onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerAvatarOriented.send(user, path, durationInSeconds));
     }
 
     public static void userPlayPortalSE(MoeScript script) {
-        script.setScriptResponse(null);
-        script.setScriptAction(null);
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerPlayPortalSE.send(obj),
-                () -> log.debug("User object isn't set, workflow is messy."));
+        onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerPlayPortalSE.send(user));
     }
 
     public static void userReservedEffect(MoeScript script, String path) {
-        script.setScriptResponse(null);
-        script.setScriptAction(null);
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerReservedEffect.send(obj, path),
-                () -> log.debug("User object isn't set, workflow is messy."));
+        onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerReservedEffect.send(user, path));
     }
 
-    // =================================================================================================================
-
-    private static ScriptResponse sayResponse(MoeScript script, List<ScriptResponse> chain, Integer[] speakers, Tuple<Integer, String>[] paramAndMessage, Integer idx, Integer ts) {
-        return (t, a, o) -> {
-            if (t.intValue() != ScriptMessageType.SAY) { // Wrong type, b-baka.
-                script.end();
-            } else {
-                switch (a.intValue()) {
-                    case -1: // Escape
-                        script.end();
-                        break;
-                    case 0: // Back.
-                        if (idx != 0) {
-                            var back = idx-1 != 0;
-                            var res = chain.get(idx - 1);
-                            var message = paramAndMessage[idx-1].right();
-                            var param = paramAndMessage[idx-1].left();
-                            var speakerTemplateId = speakers[idx-1];
-                            script.setScriptResponse(res);
-
-                            int replaceTemplateId = speakerTemplateId;//Need to discuss
-                            //if ((param & NPC_REPLACED_BY_NPC) > 0)
-                            //    packet.encode4(replacedId);
-                            // ^ Usage in Say
-                            script.addAfterRunEvent((PolledScriptEvent)(moe) -> {
-                                script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speakerTemplateId, replaceTemplateId, param, message, back, true),
-                                        () -> log.debug("User object isn't set, workflow is messy."));
-                            });
-                        } else {
-                            log.warn("Tried to go back while on the first message? No! :(");
-                            script.end();
-                        }
-                        break;
-                    case 1: // Next.
-                        if (ts - 1 >= idx + 1) {
-                            var forward = ts - 1 > idx + 1;
-                            var res = chain.get(idx + 1);
-                            var message = paramAndMessage[idx+1].right();
-                            var param = paramAndMessage[idx+1].left();
-                            var speakerTemplateId = speakers[idx+1];
-
-                            int replaceTemplateId = speakerTemplateId;//Need to discuss
-
-                            script.setScriptResponse(res);
-                            script.addAfterRunEvent((PolledScriptEvent)(moe) -> {
-                                moe.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj,speakerTemplateId, replaceTemplateId, param,  message, true, forward || moe.isNextResponseSet()),
-                                        () -> log.debug("User object isn't set, workflow is messy."));
-                            });
-                        } else {
-                            script.setScriptResponse(null);
-                            script.resume(t, a, o);
-                        }
-                        break;
-                    default:
-                        log.warn("Unhandled action({}) for {}", t, a);
-                        script.end();
-                        break;
-                }
-            }
-        };
+    public static BasicActionChain say(MoeScript script, Collection<SayMessage> saying) {
+        script.setScriptAction(null);
+        script.setScriptResponse(null);
+        LinkedList<SayResponse> chain = new LinkedList<>();
+        With.index(saying, (msg, idx) -> chain.add(new SayResponse(chain, ScriptAPI.INSTANCE.messengerSay, script, idx, msg)));
+        var first = chain.getFirst();
+        first.onResponse(first);
+        return script::setScriptAction;
     }
 
     @SafeVarargs
     public static BasicActionChain say(MoeScript script, Integer[] speakers, Tuple<Integer, String>... paramAndMessages) {
         script.setScriptAction(null);
         script.setScriptResponse(null);
-
-        With.index(speakers, (i, idx) -> {
-            if (i == 0)
-                speakers[idx] = script.getSpeakerTemplateId();
-        });
-
-        var chain = new LinkedList<ScriptResponse>();
-        With.indexAndCount(paramAndMessages, (msg, idx, ts) -> chain.add(sayResponse(script, chain, speakers, paramAndMessages, idx, ts)));
-        script.setScriptResponse(chain.getFirst());
-
-        var speaker = speakers[0];
-        var param = paramAndMessages[0].left();
-        var message = paramAndMessages[0].right();
-
-        int replaceTemplateId = speaker;//Need to discuss
-        //if ((param & NPC_REPLACED_BY_NPC) > 0)
-        //    packet.encode4(replacedId);
-        // ^ Usage in Say
-
-        script.addAfterRunEvent((PolledScriptEvent)(moe) -> {
-            moe.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerSay.send(obj, speaker, replaceTemplateId, param, message,false, paramAndMessages.length > 1 || moe.isNextResponseSet()),
-                    () -> log.debug("User object isn't set, workflow is messy."));
-        });
-
+        LinkedList<SayResponse> chain = new LinkedList<>();
+        With.indexAndCount(paramAndMessages, (msg, idx, ts) -> chain.add(new SayResponse(chain, ScriptAPI.INSTANCE.messengerSay, script, idx, new SayMessage(0, speakers[idx], 0, paramAndMessages[idx].left(), paramAndMessages[idx].right()))));
+        var first = chain.getFirst();
+        first.onResponse(first);
         return script::setScriptAction;
     }
 
@@ -478,7 +369,6 @@ public enum ScriptAPI {
             var par = params.length - 1 >= i ? params[i] : 0;
             tlps[i] = Tuple.of(par, m);
         });
-
         return say(script, speakers, tlps);
     }
 
@@ -777,6 +667,10 @@ public enum ScriptAPI {
 
     public static IntegerActionChain askNumber(MoeScript script, String message) {
         return askNumber(script, script.getSpeakerTemplateId(), 0, message, 0, 0, Integer.MAX_VALUE);
+    }
+
+    public ScriptPreferences getPreferences() {
+        return preferences;
     }
 
 }
