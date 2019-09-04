@@ -132,7 +132,7 @@ public abstract class BaseScript implements MoeScript {
         this.nextAction = null;
         doEvents(startScriptEvents);
 
-        if (ScriptAPI.INSTANCE.isCatchExceptions()) {
+        if (ScriptAPI.INSTANCE.getPreferences().shouldCatchExceptions()) {
             try {
                 startMaybeException();
             } catch (Exception e) {
@@ -148,6 +148,10 @@ public abstract class BaseScript implements MoeScript {
 
     @Override
     public void end() {
+        if (done) {
+            log.debug("Script is already done: {}", name());
+            return;
+        }
         log.debug("Script has ended: {}", name());
         if (done)
             return;

@@ -27,6 +27,7 @@ import moe.maple.api.script.logic.chain.BasicActionChain;
 import moe.maple.api.script.logic.chain.IntegerActionChain;
 import moe.maple.api.script.logic.chain.StringActionChain;
 import moe.maple.api.script.logic.response.SayResponse;
+import moe.maple.api.script.model.ScriptPreferences;
 import moe.maple.api.script.model.messenger.*;
 import moe.maple.api.script.model.messenger.ask.*;
 import moe.maple.api.script.model.messenger.effect.field.FieldObjectMessenger;
