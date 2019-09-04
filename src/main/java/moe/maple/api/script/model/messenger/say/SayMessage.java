@@ -1,5 +1,7 @@
 package moe.maple.api.script.model.messenger.say;
 
+import moe.maple.api.script.model.type.ScriptMessageParameters;
+
 /**
  * Created on 9/3/2019.
  */
@@ -38,5 +40,13 @@ public class SayMessage {
     @Override
     public String toString() {
         return message;
+    }
+    
+    public boolean allowsEsc() {
+        return (this.parameters & ScriptMessageParameters.NO_ESC) == 0;
+    }
+
+    public boolean isFlipped() {
+        return (this.parameters & ScriptMessageParameters.FLIP_IMAGE) != 0;
     }
 }
