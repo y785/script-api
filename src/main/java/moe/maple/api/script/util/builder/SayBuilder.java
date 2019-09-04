@@ -96,13 +96,13 @@ public class SayBuilder {
         return this;
     }
 
-    public boolean allowsEsc() {
-        return (this.parameters & ScriptMessageParameters.NO_ESC) == 0;
-    }
-
     public SayBuilder flipImage() {
         this.parameters ^= ScriptMessageParameters.FLIP_IMAGE;
         return this;
+    }
+
+    public boolean allowsEsc() {
+        return (this.parameters & ScriptMessageParameters.NO_ESC) == 0;
     }
 
     public boolean isFlipped() {
@@ -124,7 +124,7 @@ public class SayBuilder {
     }
 
     public SayBuilder asNpc() {
-        replaceTemplate(USER_TEMPLATE);
+        replaceTemplate(RESET_TEMPLATE);
         return this;
     }
 
