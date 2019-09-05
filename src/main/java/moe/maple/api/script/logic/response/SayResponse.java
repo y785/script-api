@@ -1,4 +1,7 @@
 package moe.maple.api.script.logic.response;
+import moe.maple.api.script.logic.action.BasicScriptAction;
+import moe.maple.api.script.logic.action.ObjectScriptAction;
+import moe.maple.api.script.logic.chain.IntegerActionChain;
 import moe.maple.api.script.logic.event.PolledScriptEvent;
 import moe.maple.api.script.logic.ScriptAPI;
 import moe.maple.api.script.model.messenger.say.SayMessenger;
@@ -17,16 +20,16 @@ import java.util.List;
 public class SayResponse implements ScriptResponse {
 
 
-    private static final int END_CHAT = -1, PREV = 0, NEXT = 1;
+    public static final int END_CHAT = -1, PREV = 0, NEXT = 1;
     private static final Logger log = LoggerFactory.getLogger(SayResponse.class);
 
     private final SayMessenger messenger;
     private final MoeScript script;
     private final int index;
     private final SayMessage msg;
-    private final List<SayResponse> chain;
+    private final SayResponse[] chain;
 
-    public SayResponse(List<SayResponse> chain, SayMessenger messenger, MoeScript script, int index, SayMessage ctx) {
+    public SayResponse(SayResponse[] chain, SayMessenger messenger, MoeScript script, int index, SayMessage ctx) {
         this.chain = chain;
         this.messenger = messenger;
         this.script = script;
@@ -43,7 +46,7 @@ public class SayResponse implements ScriptResponse {
                     break;
                 case PREV:
                     if (hasPrev()) {
-                        onResponse(chain.get(index-1));
+                        onResponse(chain[index-1]);
                     } else {
                         log.warn("Tried to go back while on the first message? No! :(");
                         script.end();
@@ -51,7 +54,7 @@ public class SayResponse implements ScriptResponse {
                     break;
                 case NEXT:
                     if (hasNext()) {
-                        onResponse(chain.get(index+1));
+                        onResponse(chain[index+1]);
                     } else {
                         script.setScriptResponse(null);
                         script.resume(type, action, response);
@@ -81,7 +84,7 @@ public class SayResponse implements ScriptResponse {
     }
 
     private boolean scriptContinues() {
-        return script.isNextResponseSet();// && !ScriptAPI.INSTANCE.getPreferences().shouldForceOkOnSay();
+        return !ScriptAPI.INSTANCE.getPreferences().shouldForceOkOnSay() && script.isNextActionSet();
     }
 
     private boolean hasPrev() {
@@ -93,7 +96,7 @@ public class SayResponse implements ScriptResponse {
     }
 
     private int size() {
-        return chain.size();
+        return chain.length;
     }
 
     @Override
