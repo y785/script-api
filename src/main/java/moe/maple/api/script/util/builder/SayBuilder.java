@@ -2,6 +2,8 @@ package moe.maple.api.script.util.builder;
 
 import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.model.messenger.say.SayMessage;
+import moe.maple.api.script.model.messenger.say.SayNextMessage;
+import moe.maple.api.script.model.messenger.say.SayOkMessage;
 import moe.maple.api.script.model.object.field.FieldedObject;
 import moe.maple.api.script.model.object.field.NpcObject;
 import moe.maple.api.script.model.object.user.UserObject;
@@ -37,6 +39,21 @@ public class SayBuilder {
         this.userObjectId = userObjectId;
         this.saying = new LinkedList<>();
         this.speakerType = ScriptSpeakerType.NONE;//Not sure if we'll support this yet.
+    }
+
+
+    public SayBuilder ok(String... messages) {
+        for(String msg : messages) {
+            this.saying.add(new SayOkMessage(speakerType, speakerTemplate, replaceTemplate, parameters, msg));
+        }
+        return this;
+    }
+
+    public SayBuilder next(String... messages) {
+        for(String msg : messages) {
+            this.saying.add(new SayNextMessage(speakerType, speakerTemplate, replaceTemplate, parameters, msg));
+        }
+        return this;
     }
 
     public SayBuilder say(String... messages) {

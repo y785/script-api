@@ -1,13 +1,17 @@
 package moe.maple.api.script.model.messenger.say;
 
+import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.model.type.ScriptMessageParameters;
 
 /**
  * Created on 9/3/2019.
  */
 public class SayMessage {
-    private final int speakerType, speakerTemplate, replaceTemplate, parameters;
-    private final String message;
+    private final int speakerType;
+    protected final int speakerTemplate;
+    protected final int replaceTemplate;
+    protected final int parameters;
+    protected final String message;
 
     public SayMessage(int speakerType, int speakerTemplate, int replaceTemplate, int parameters, String message) {
         this.speakerType = speakerType;
@@ -48,5 +52,9 @@ public class SayMessage {
 
     public boolean isFlipped() {
         return (this.parameters & ScriptMessageParameters.FLIP_IMAGE) != 0;
+    }
+
+    public void onMessage(SayMessenger messenger, UserObject userObject, boolean prev, boolean next) {
+        messenger.send(userObject, speakerTemplate, replaceTemplate, parameters,  message, prev, next);
     }
 }

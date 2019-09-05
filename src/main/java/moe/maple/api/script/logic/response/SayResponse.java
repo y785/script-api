@@ -80,7 +80,7 @@ public class SayResponse implements ScriptResponse {
     }
 
     public void sendTo(UserObject userObject) {
-        messenger.send(userObject, msg.getSpeakerTemplate(), msg.getReplaceTemplate(), msg.getParameters(),  msg.getMessage(), hasPrev(), hasNext() || scriptContinues());
+        msg.onMessage(messenger, userObject, hasPrev(), hasNext() || scriptContinues());
     }
 
     private boolean scriptContinues() {
