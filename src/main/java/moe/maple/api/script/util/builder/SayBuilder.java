@@ -128,6 +128,12 @@ public class SayBuilder {
         return this;
     }
 
+
+    public SayBuilder asNpc(int templateId) {
+        replaceTemplate(templateId);
+        return this;
+    }
+
     public SayBuilder asUser() {
         replaceTemplate(USER_TEMPLATE);
         return this;
