@@ -52,10 +52,7 @@ import moe.maple.api.script.util.With;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 public enum ScriptAPI {
@@ -337,10 +334,9 @@ public enum ScriptAPI {
     public static BasicActionChain say(MoeScript script, Collection<SayMessage> saying) {
         script.setScriptAction(null);
         script.setScriptResponse(null);
-        LinkedList<SayResponse> chain = new LinkedList<>();
-        With.index(saying, (msg, idx) -> chain.add(new SayResponse(chain, ScriptAPI.INSTANCE.messengerSay, script, idx, msg)));
-        var first = chain.getFirst();
-        first.onResponse(first);
+        var chain = new SayResponse[saying.size()];
+        With.index(saying, (msg, idx) -> chain[idx] = (new SayResponse(chain, ScriptAPI.INSTANCE.messengerSay, script, idx, msg)));
+        chain[0].onResponse(chain[0]);
         return script::setScriptAction;
     }
 
@@ -348,10 +344,9 @@ public enum ScriptAPI {
     public static BasicActionChain say(MoeScript script, Integer[] speakers, Tuple<Integer, String>... paramAndMessages) {
         script.setScriptAction(null);
         script.setScriptResponse(null);
-        LinkedList<SayResponse> chain = new LinkedList<>();
-        With.indexAndCount(paramAndMessages, (msg, idx, ts) -> chain.add(new SayResponse(chain, ScriptAPI.INSTANCE.messengerSay, script, idx, new SayMessage(0, speakers[idx], 0, paramAndMessages[idx].left(), paramAndMessages[idx].right()))));
-        var first = chain.getFirst();
-        first.onResponse(first);
+        var chain = new SayResponse[paramAndMessages.length];
+        With.indexAndCount(paramAndMessages, (msg, idx, ts) -> chain[idx] = (new SayResponse(chain, ScriptAPI.INSTANCE.messengerSay, script, idx, new SayMessage(0, speakers[idx], 0, paramAndMessages[idx].left(), paramAndMessages[idx].right()))));
+        chain[0].onResponse(chain[0]);
         return script::setScriptAction;
     }
 
