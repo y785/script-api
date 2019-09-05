@@ -22,8 +22,6 @@
 
 package moe.maple.api.script.logic.response;
 
-import moe.maple.api.script.model.type.ScriptMessageType;
-
 @FunctionalInterface
 public interface ScriptResponse {
     void response(Number type, Number action, Object response);
