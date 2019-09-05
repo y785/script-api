@@ -206,7 +206,7 @@ public abstract class BaseScript implements MoeScript {
         var act = nextAction;
         var resp = nextResponse;
         if (act != null || resp != null) {
-            if (ScriptAPI.INSTANCE.isCatchExceptions()) {
+            if (ScriptAPI.INSTANCE.getPreferences().shouldCatchExceptions()) {
                 try {
                     resumeMaybeException(type, action, response);
                 } catch (Exception e) {
