@@ -31,6 +31,7 @@ import moe.maple.api.script.model.object.*;
 import moe.maple.api.script.model.object.field.NpcObject;
 import moe.maple.api.script.model.object.field.PortalObject;
 import moe.maple.api.script.model.object.field.ReactorObject;
+import moe.maple.api.script.model.object.user.InventorySlotObject;
 import moe.maple.api.script.model.object.user.QuestObject;
 import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.logic.response.ScriptResponse;
@@ -61,6 +62,7 @@ public abstract class BaseScript implements MoeScript {
     protected PortalObject portal;
     protected QuestObject quest;
     protected ReactorObject reactor;
+    protected InventorySlotObject item;
     protected UserObject user;
 
     private boolean done;
@@ -287,6 +289,11 @@ public abstract class BaseScript implements MoeScript {
     }
 
     @Override
+    public void setInventorySlotObject(InventorySlotObject item) {
+        this.item = item;
+    }
+
+    @Override
     public void setReactorObject(ReactorObject reactor) {
         this.reactor = reactor;
     }
@@ -294,6 +301,11 @@ public abstract class BaseScript implements MoeScript {
     @Override
     public void setUserObject(UserObject user) {
         this.user = user;
+    }
+
+    @Override
+    public Optional<InventorySlotObject> getInventorySlotObject() {
+        return Optional.ofNullable(item);
     }
 
     @Override

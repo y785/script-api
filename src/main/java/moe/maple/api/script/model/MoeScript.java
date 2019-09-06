@@ -27,6 +27,7 @@ import moe.maple.api.script.model.object.*;
 import moe.maple.api.script.model.object.field.NpcObject;
 import moe.maple.api.script.model.object.field.PortalObject;
 import moe.maple.api.script.model.object.field.ReactorObject;
+import moe.maple.api.script.model.object.user.InventorySlotObject;
 import moe.maple.api.script.model.object.user.QuestObject;
 import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.logic.response.ScriptResponse;
@@ -80,6 +81,7 @@ public interface MoeScript {
 
     // =================================================================================================================
 
+    void setInventorySlotObject(InventorySlotObject itemSlot);
     void setServerObject(ServerObject object);
     void setFieldObject(FieldObject object);
     void setFieldSetObject(FieldSetObject object);
@@ -89,6 +91,7 @@ public interface MoeScript {
     void setReactorObject(ReactorObject object);
     void setUserObject(UserObject object);
 
+    Optional<InventorySlotObject> getInventorySlotObject();
     Optional<ServerObject> getServerObject();
     Optional<FieldObject> getFieldObect();
     Optional<FieldSetObject> getFieldSetObject();
