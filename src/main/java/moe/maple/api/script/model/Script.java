@@ -31,8 +31,26 @@ import java.util.function.Function;
 @java.lang.annotation.Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Script {
+    /**
+     * The name(s) of the script. These should match
+     * the .wz property of script names, like:
+     * Map.wz/Map/Map0/000010000.img/info/onUserEnter
+     */
     String[] name() default "";
+
+    /**
+     *  Your name. B-baka.
+     */
     String author() default "";
+
+    /**
+     *  A brief description of the script, what it does, where it's located, etc.
+     */
     String description() default "";
+
+    /**
+     * The Map IDs of where this script is located.
+     * Some scripts can be located in multiple maps/fields.
+     */
     int[] field() default 0;
 }
