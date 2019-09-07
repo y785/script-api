@@ -22,6 +22,7 @@
 
 package moe.maple.api.script.test;
 
+import moe.maple.api.script.logic.response.SayResponse;
 import moe.maple.api.script.model.BaseScript;
 import moe.maple.api.script.model.NpcScript;
 import moe.maple.api.script.model.Script;
@@ -64,7 +65,7 @@ public class ApiTest {
                 say("0", "1", "2").andThen(() -> {
                     log.debug("Beginning sub test 2: Back <-> Forward");
                     say(Tuple.of(0, "3"), Tuple.of(0, "4"), Tuple.of(0, "5")).andThen(() -> {
-                        say( "6");
+                        say( "6", "7");
                     });
                 });
             }
@@ -76,7 +77,6 @@ public class ApiTest {
 
         forward.set(1);
         back.set(0);
-
         ScriptAPI.INSTANCE.setMessengerSay((userObject, speakerType, speakerTemplateId, replaceTemplateId, param, message, previous, next) -> {
             var idx = atomicIndex.getAndIncrement();
             log.debug("{}: m {} / p {} / n {}", idx, message, previous, next);
@@ -94,18 +94,32 @@ public class ApiTest {
 
         assertTrue(!test.isDone());
         assertTrue(test.isPaused());
-
         back.set(1);
-        test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(1);
-        test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(0);
 
-        test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(1);
-        test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(0);
-        test.resume(ScriptMessageType.SAY, 0, null); forward.set(1); back.set(1);
-        test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(1);
-        test.resume(ScriptMessageType.SAY, 1, null); forward.set(1); back.set(0);
-        test.resume(ScriptMessageType.SAY, 1, null);
-        test.resume(ScriptMessageType.SAY, 1, null);
+        test.resume(ScriptMessageType.SAY, SayResponse.NEXT, null);
+        forward.set(1); back.set(1);
+
+        test.resume(ScriptMessageType.SAY, SayResponse.NEXT, null);
+        forward.set(1); back.set(0);
+
+        test.resume(ScriptMessageType.SAY, SayResponse.NEXT, null);
+        forward.set(1); back.set(1);
+
+        test.resume(ScriptMessageType.SAY, SayResponse.NEXT, null);
+        forward.set(1); back.set(0);
+
+        test.resume(ScriptMessageType.SAY, SayResponse.PREV, null);
+        forward.set(1); back.set(1);
+        test.resume(ScriptMessageType.SAY, SayResponse.NEXT, null);
+
+        forward.set(1); back.set(1);
+        test.resume(ScriptMessageType.SAY, SayResponse.NEXT, null);
+
+        forward.set(1); back.set(0);
+        test.resume(ScriptMessageType.SAY, SayResponse.NEXT, null);
+        forward.set(0); back.set(1);
+        test.resume(ScriptMessageType.SAY, SayResponse.NEXT, null);
+        test.resume(ScriptMessageType.SAY, SayResponse.NEXT, null);
 
         assertTrue(test.isDone());
         assertTrue(!test.isPaused());

@@ -20,9 +20,20 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.logic.response;
+package moe.maple.api.script.model;
 
-@FunctionalInterface
-public interface ScriptResponse {
-    void response(Number type, Number action, Object response);
+import moe.maple.api.script.model.object.field.NpcObject;
+import moe.maple.api.script.model.object.user.InventorySlotObject;
+import moe.maple.api.script.model.object.user.ItemObject;
+
+public abstract class ItemScript extends NpcScript {
+
+    protected ItemObject item;
+
+    public ItemScript() { super(); }
+
+    public void setItemObject(InventorySlotObject item) {
+        this.item = item;
+        super.setInventorySlotObject(item);
+    }
 }
