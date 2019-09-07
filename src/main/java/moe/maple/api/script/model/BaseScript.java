@@ -39,10 +39,7 @@ import moe.maple.api.script.logic.event.ScriptEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public abstract class BaseScript implements MoeScript {
 
@@ -50,10 +47,10 @@ public abstract class BaseScript implements MoeScript {
 
     protected ScriptAction nextAction;
     protected ScriptResponse nextResponse;
-    protected LinkedList<ScriptEvent> startScriptEvents;
-    protected LinkedList<ScriptEvent> endScriptEvents;
-    protected LinkedList<ScriptEvent> beforeRunEvents;
-    protected LinkedList<ScriptEvent> afterRunEvents;
+    protected List<ScriptEvent> startScriptEvents;
+    protected List<ScriptEvent> endScriptEvents;
+    protected List<ScriptEvent> beforeRunEvents;
+    protected List<ScriptEvent> afterRunEvents;
 
     protected ServerObject server;
     protected FieldObject field;
@@ -68,10 +65,10 @@ public abstract class BaseScript implements MoeScript {
     private boolean done;
 
     public BaseScript() {
-        this.startScriptEvents = new LinkedList<>();
-        this.endScriptEvents = new LinkedList<>();
-        this.beforeRunEvents = new LinkedList<>();
-        this.afterRunEvents = new LinkedList<>();
+        this.startScriptEvents = new ArrayList<>();
+        this.endScriptEvents = new ArrayList<>();
+        this.beforeRunEvents = new ArrayList<>();
+        this.afterRunEvents = new ArrayList<>();
     }
 
     @Override
