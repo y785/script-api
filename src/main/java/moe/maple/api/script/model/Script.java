@@ -34,4 +34,5 @@ public @interface Script {
     String[] name() default "";
     String author() default "";
     String description() default "";
+    int[] field() default 0;
 }
