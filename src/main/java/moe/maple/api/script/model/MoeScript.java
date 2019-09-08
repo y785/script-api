@@ -93,7 +93,7 @@ public interface MoeScript {
 
     Optional<InventorySlotObject> getInventorySlotObject();
     Optional<ServerObject> getServerObject();
-    Optional<FieldObject> getFieldObect();
+    Optional<FieldObject> getFieldObject();
     Optional<FieldSetObject> getFieldSetObject();
     Optional<NpcObject> getNpcObject();
     Optional<PortalObject> getPortalObject();

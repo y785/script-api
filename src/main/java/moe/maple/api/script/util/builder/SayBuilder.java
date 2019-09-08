@@ -31,7 +31,7 @@ public class SayBuilder {
     private final List<SayMessage> saying;
 
     public SayBuilder(MoeScript script) {
-        this(script.getNpcObject().map(FieldedObject::getObjectId).orElseThrow(), script.getUserObject().map(FieldedObject::getObjectId).orElseThrow());
+        this(script.getNpcObject().map(NpcObject::getTemplateId).orElse(2000),script.getUserObject().map(UserObject::getObjectId).orElse(-1));
     }
 
     public SayBuilder(int speakerTemplate, int userObjectId) {
@@ -77,7 +77,7 @@ public class SayBuilder {
     }
 
     public SayBuilder sayAsUser(String... messages) {
-        int tempParameters = parameters & ~ScriptMessageParameters.NPC_REPLACED_BY_NPC | ScriptMessageParameters.NPC_REPLACED_BY_USER;//remove NPC, add User
+        int tempParameters = (parameters & ~ScriptMessageParameters.NPC_REPLACED_BY_NPC) | ScriptMessageParameters.NPC_REPLACED_BY_USER;//remove NPC, add User
         for(String msg : messages) {
             this.saying.add(new SayMessage(ScriptSpeakerType.USER, speakerTemplate, 0, tempParameters, msg));//not sure about the speakerType here
         }

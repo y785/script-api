@@ -311,7 +311,7 @@ public abstract class BaseScript implements MoeScript {
     }
 
     @Override
-    public Optional<FieldObject> getFieldObect() {
+    public Optional<FieldObject> getFieldObject() {
         return Optional.ofNullable(field);
     }
 

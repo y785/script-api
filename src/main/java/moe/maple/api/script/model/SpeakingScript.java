@@ -27,7 +27,10 @@ import moe.maple.api.script.logic.action.BasicScriptAction;
 import moe.maple.api.script.logic.chain.BasicActionChain;
 import moe.maple.api.script.logic.chain.IntegerActionChain;
 import moe.maple.api.script.logic.chain.StringActionChain;
+import moe.maple.api.script.model.messenger.say.SayMessage;
 import moe.maple.api.script.util.tuple.Tuple;
+
+import java.util.Collection;
 
 /**
  * This should mainly be implemented by NPCs
@@ -39,6 +42,10 @@ public interface SpeakingScript extends MessagingScript {
      */
 
     default BasicActionChain say(String... messages) {
+        return ScriptAPI.say(this, messages);
+    }
+
+    default BasicActionChain say(Collection<SayMessage> messages) {
         return ScriptAPI.say(this, messages);
     }
 
