@@ -102,11 +102,34 @@ public enum ScriptAPI {
     private ReservedEffectMessenger messengerReservedEffect;
 
     // =================================================================================================================
+
     private final ScriptPreferences preferences;
+
+    private final Map<Integer, Integer> typeMap;
 
     ScriptAPI() {
         this.preferences = ScriptPreferences.DEFAULT;
+        this.typeMap = new HashMap<>();
     }
+
+    // =================================================================================================================
+
+    /**
+     * ScriptMessageType changes based on version.
+     * This can cause a lot of issues, so you need to set your values,
+     * based on what is provided.
+     * @param scriptMessageType - See {@link ScriptMessageType}
+     * @param value             - Your server's value.
+     */
+    public void setScriptMessageType(int scriptMessageType, int value) {
+        typeMap.put(scriptMessageType, value);
+    }
+
+    public int getScriptMessageType(int scriptMessageType) {
+        return typeMap.getOrDefault(scriptMessageType, scriptMessageType);
+    }
+
+    // =================================================================================================================
 
     /**
      * Sets default messengers to logging messengers.
@@ -399,7 +422,9 @@ public enum ScriptAPI {
     public static void askYesNo(MoeScript script, String message, BasicScriptAction onYes, BasicScriptAction onNo) {
         script.setScriptAction(null);
         script.setScriptResponse((t, a, o) -> {
-            if (t.intValue() != ScriptMessageType.ASKYESNO) {
+            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKYESNO);
+            if (t.intValue() != real) {
+                log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
                 script.end();
             } else {
                 var an = a.intValue();
@@ -409,6 +434,7 @@ public enum ScriptAPI {
                     script.setScriptAction(act);
                     script.resume(t, a, o);
                 } else {
+                    log.debug("Answer was invalid, ending: {}", an);
                     script.end();
                 }
             }
@@ -428,7 +454,9 @@ public enum ScriptAPI {
     public static void askAccept(MoeScript script, String message, BasicScriptAction onYes, BasicScriptAction onNo) {
         script.setScriptAction(null);
         script.setScriptResponse((t, a, o) -> {
-            if (t.intValue() != ScriptMessageType.ASKACCEPT) {
+            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKACCEPT);
+            if (t.intValue() != real) {
+                log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
                 script.end();
             } else {
                 var an = a.intValue();
@@ -438,6 +466,7 @@ public enum ScriptAPI {
                     script.setScriptAction(act);
                     script.resume(t, a, o);
                 } else {
+                    log.debug("Answer was invalid, ending: {}", an);
                     script.end();
                 }
             }
@@ -458,7 +487,12 @@ public enum ScriptAPI {
         return (t, a, o) -> {
             var min = 0;
 
-            if (t.intValue() != ScriptMessageType.ASKMENU || a.intValue() != 1) {
+            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKMENU);
+            if (t.intValue() != real || a.intValue() != 1) {
+                if (t.intValue() != real)
+                    log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
+                else
+                    log.warn("Answer wasn't valid, ending: {}", a.intValue());
                 script.end();
             } else {
                 var sel = ((Integer)o);
@@ -515,9 +549,14 @@ public enum ScriptAPI {
             var sel = ((Integer)o);
             var bad = sel == null || sel < min || sel > max;
 
-            if (t.intValue() != ScriptMessageType.ASKMENU || bad || a.intValue() != 1) {
+            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKMENU);
+            if (t.intValue() != real || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
+                else if (t.intValue() != real)
+                    log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
+                else
+                    log.debug("Answer is invalid: {}", a);
                 script.end();
             } else {
                 script.setScriptResponse(null);
@@ -540,10 +579,15 @@ public enum ScriptAPI {
             var max = options.length - 1;
             var sel = ((Integer)o);
             var bad = sel == null || sel < min || sel > max;
+            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKAVATAR);
 
-            if (t.intValue() != ScriptMessageType.ASKAVATAR || bad || a.intValue() != 1) {
+            if (t.intValue() != real || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
+                else if (t.intValue() != real)
+                    log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
+                else
+                    log.debug("Answer is invalid: {}", a);
                 script.end();
             } else {
                 script.setScriptResponse(null);
@@ -576,10 +620,15 @@ public enum ScriptAPI {
         return (t, a, o) -> {
             var sel = ((String)o);
             var bad = sel == null || sel.length() < min || sel.length() > max;
+            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKTEXT);
 
-            if (t.intValue() != ScriptMessageType.ASKTEXT || bad || a.intValue() != 1) {
+            if (t.intValue() != real || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
+                else if (t.intValue() != real)
+                    log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
+                else
+                    log.debug("Answer is invalid: {}", a);
                 script.end();
             } else {
                 script.setScriptResponse(null);
@@ -623,10 +672,15 @@ public enum ScriptAPI {
         return (t, a, o) -> {
             var sel = ((Integer)o);
             var bad = sel == null || sel < min || sel > max;
+            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKTEXT);
 
             if (t.intValue() != ScriptMessageType.ASKNUMBER || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
+                else if (t.intValue() != real)
+                    log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
+                else
+                    log.debug("Answer is invalid: {}", a.intValue());
                 script.end();
             } else {
                 script.setScriptResponse(null);

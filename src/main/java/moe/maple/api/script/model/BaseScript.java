@@ -138,7 +138,7 @@ public abstract class BaseScript implements MoeScript {
 
     @Override
     public void start() {
-        log.debug("Script is starting: {}", name());
+        log.debug("Script is starting: {} / {}", name(), expected);
         this.done = false;
         this.nextResponse = null;
         this.nextAction = null;
@@ -148,7 +148,7 @@ public abstract class BaseScript implements MoeScript {
             try {
                 startMaybeException();
             } catch (Exception e) {
-                log.error("Oh no! A script({}) threw an exception during start.", name(), e);
+                log.error("Oh no! A script({})({}) threw an exception during start.", name(), expected, e);
                 this.end();
             }
         } else {
@@ -156,15 +156,17 @@ public abstract class BaseScript implements MoeScript {
         }
         if (!isNextResponseSet() && !isNextActionSet())
             end();
+        else
+            log.debug("Next actions are set, waiting for response to resume: {} / {}", isNextResponseSet(), isNextActionSet());
     }
 
     @Override
     public void end() {
         if (done) {
-            log.debug("Script is already done: {}", name());
+            log.debug("Script is already done: {} / {}", name(), expected);
             return;
         }
-        log.debug("Script has ended: {}", name());
+        log.debug("Script has ended: {} / {}", name(), expected);
         if (done)
             return;
         doEvents(endScriptEvents);
@@ -215,6 +217,8 @@ public abstract class BaseScript implements MoeScript {
 
     @Override
     public void resume(Number type, Number action, Object response) {
+        log.debug("Resuming Script({})({}) with: {} / {} / {}", name(), expected, type, action, response);
+
         var act = nextAction;
         var resp = nextResponse;
         if (act != null || resp != null) {
@@ -222,7 +226,7 @@ public abstract class BaseScript implements MoeScript {
                 try {
                     resumeMaybeException(type, action, response);
                 } catch (Exception e) {
-                    log.error("Oh no! A script({}) threw an exception during resume.", name(), e);
+                    log.error("Oh no! A script({})({}) threw an exception during resume.", name(), expected, e);
                     this.end();
                 }
             } else {
