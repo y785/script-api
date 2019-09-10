@@ -40,6 +40,18 @@ public interface MoeScript {
 
     String name();
 
+    /**
+     *  Scripts can have multiple names and aliases,
+     *  since it is unsure which script you're aiming at,
+     *  you need to set the expected value here, for clarity.
+     */
+    void setExpected(String expected);
+
+    /**
+     * See {@link #setExpected(String)}
+     */
+    String getExpected();
+
     boolean isDone();
     boolean isPaused();
 

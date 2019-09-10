@@ -20,21 +20,28 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.helper;
+package moe.maple.api.script.model;
 
-import moe.maple.api.script.model.NpcScript;
-import moe.maple.api.script.model.object.field.NpcObject;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-/**
- * A helper script for when an NPC isn't found.
- * Meant to be overridden by the scripts package.
- */
-public abstract class MoeNotFound extends NpcScript {
+@java.lang.annotation.Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Command {
+    /**
+     * The delimiter for the script.
+     * The name and aliases are located in {@link Script}
+     */
+    String delimiter() default "@";
 
-    public MoeNotFound() { }
+    /**
+     * The minimum permission level for this script.
+     */
+    int min() default 0;
 
-    @Override
-    public int getSpeakerTemplateId() {
-        return getNpcObject().map(NpcObject::getTemplateId).orElse(9200000);
-    }
+    /**
+     * The maximum permission level for this script.
+     */
+    int max() default Integer.MAX_VALUE;
 }

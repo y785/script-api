@@ -45,6 +45,8 @@ public abstract class BaseScript implements MoeScript {
 
     private static final Logger log = LoggerFactory.getLogger( BaseScript.class );
 
+    protected String expected;
+
     protected ScriptAction nextAction;
     protected ScriptResponse nextResponse;
     protected List<ScriptEvent> startScriptEvents;
@@ -69,6 +71,7 @@ public abstract class BaseScript implements MoeScript {
         this.endScriptEvents = new ArrayList<>();
         this.beforeRunEvents = new ArrayList<>();
         this.afterRunEvents = new ArrayList<>();
+        this.expected = "";
     }
 
     @Override
@@ -76,6 +79,16 @@ public abstract class BaseScript implements MoeScript {
         var annotation = this.getClass().getAnnotation(Script.class);
         if (annotation == null) return "Unnamed Script: "+this.getClass().getName();
         return annotation.name()[0];
+    }
+
+    @Override
+    public void setExpected(String expected) {
+        this.expected = expected;
+    }
+
+    @Override
+    public String getExpected() {
+        return expected;
     }
 
     protected abstract void work();

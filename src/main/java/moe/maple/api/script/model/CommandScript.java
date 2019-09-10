@@ -20,21 +20,25 @@
  * SOFTWARE.
  */
 
-package moe.maple.api.script.helper;
-
-import moe.maple.api.script.model.NpcScript;
-import moe.maple.api.script.model.object.field.NpcObject;
+package moe.maple.api.script.model;
 
 /**
- * A helper script for when an NPC isn't found.
- * Meant to be overridden by the scripts package.
+ * Use for chat commands or whatever.
+ * See {@link Command}
  */
-public abstract class MoeNotFound extends NpcScript {
+public abstract class CommandScript extends BaseScript implements SpeakingScript {
 
-    public MoeNotFound() { }
+    protected String arguments;
 
-    @Override
-    public int getSpeakerTemplateId() {
-        return getNpcObject().map(NpcObject::getTemplateId).orElse(9200000);
+    public CommandScript() {
+        super();
+    }
+
+    public void setArguments(String arguments) {
+        this.arguments = arguments;
+    }
+
+    public String getArguments() {
+        return arguments;
     }
 }

@@ -28,6 +28,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Script annotation for classes.
+ *
+ */
 @java.lang.annotation.Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Script {
