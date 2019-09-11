@@ -45,6 +45,7 @@ import moe.maple.api.script.logic.response.ScriptResponse;
 import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.model.type.ScriptMessageType;
+import moe.maple.api.script.util.Moematter;
 import moe.maple.api.script.util.builder.ScriptFormatter;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
 import moe.maple.api.script.util.tuple.Tuple;
@@ -414,7 +415,7 @@ public enum ScriptAPI {
     }
 
     public static BasicActionChain say(MoeScript script, String message, Object... objects) {
-        return say(script, ScriptFormatter.format(message, objects));
+        return say(script, Moematter.format(message, objects));
     }
 
     // =================================================================================================================

@@ -23,7 +23,7 @@
 package moe.maple.api.script.model;
 
 import moe.maple.api.script.logic.ScriptAPI;
-import moe.maple.api.script.util.builder.ScriptFormatter;
+import moe.maple.api.script.util.Moematter;
 
 /**
  * Local User Effects, Field Effects, etc.
@@ -57,7 +57,7 @@ public interface LocalEffectScript extends MoeScript {
     }
 
     default void fieldScreen(String format, Object... objects) {
-        ScriptAPI.fieldEffectScreen(this, ScriptFormatter.format(format, objects));
+        ScriptAPI.fieldEffectScreen(this, Moematter.format(format, objects));
     }
 
     default void fieldSound(String path) {
@@ -65,7 +65,7 @@ public interface LocalEffectScript extends MoeScript {
     }
 
     default void fieldSound(String format, Object... objects) {
-        ScriptAPI.fieldEffectSound(this, ScriptFormatter.format(format, objects));
+        ScriptAPI.fieldEffectSound(this, Moematter.format(format, objects));
     }
 
     default void fieldTremble(int type, int delay) {

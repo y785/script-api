@@ -27,6 +27,7 @@ import moe.maple.api.script.model.object.GuildObject;
 import moe.maple.api.script.model.object.PartyObject;
 import moe.maple.api.script.model.object.field.FieldedObject;
 import moe.maple.api.script.model.object.field.LifeObject;
+import moe.maple.api.script.util.Moematter;
 import moe.maple.api.script.util.builder.ScriptFormatter;
 import org.slf4j.helpers.MessageFormatter;
 
@@ -35,7 +36,6 @@ import java.util.Optional;
 /**
  * This is a script proxy for user/character objects.
  * @param <T> Your implementation of user/character.
- * @param <Q> Your implementation of quest.
  */
 public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
 
@@ -95,7 +95,7 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
 
     boolean setScriptVariable(String key, String value);
     default boolean setScriptVariable(String key, Integer value) { return setScriptVariable(key, Integer.toString(value)); }
-    default boolean setScriptVariable(String key, String format, Object... objects) { return setScriptVariable(key, ScriptFormatter.format(format, objects)); }
+    default boolean setScriptVariable(String key, String format, Object... objects) { return setScriptVariable(key, Moematter.format(format, objects)); }
 
     // =================================================================================================================
 
