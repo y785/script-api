@@ -433,6 +433,8 @@ public enum ScriptAPI {
                     script.setScriptResponse(null);
                     script.setScriptAction(act);
                     script.resume(t, a, o);
+                } else if (an == -1) {
+                    script.escape();
                 } else {
                     log.debug("Answer was invalid, ending: {}", an);
                     script.end();
@@ -465,6 +467,8 @@ public enum ScriptAPI {
                     script.setScriptResponse(null);
                     script.setScriptAction(act);
                     script.resume(t, a, o);
+                } else if (an == -1) {
+                    script.escape();
                 } else {
                     log.debug("Answer was invalid, ending: {}", an);
                     script.end();
@@ -493,7 +497,10 @@ public enum ScriptAPI {
                     log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
                 else
                     log.warn("Answer wasn't valid, ending: {}", a.intValue());
-                script.end();
+                if (a.intValue() == -1)
+                    script.escape();
+                else
+                    script.end();
             } else {
                 var sel = ((Integer)o);
                 var bad = sel == null || sel < min || sel > max;
@@ -557,7 +564,10 @@ public enum ScriptAPI {
                     log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
                 else
                     log.debug("Answer is invalid: {}", a);
-                script.end();
+                if (a.intValue() == -1)
+                    script.escape();
+                else
+                    script.end();
             } else {
                 script.setScriptResponse(null);
                 script.setScriptAction(options[sel].right());
@@ -588,7 +598,10 @@ public enum ScriptAPI {
                     log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
                 else
                     log.debug("Answer is invalid: {}", a);
-                script.end();
+                if (a.intValue() == -1)
+                    script.escape();
+                else
+                    script.end();
             } else {
                 script.setScriptResponse(null);
                 script.resume(t, a, o);
@@ -629,7 +642,10 @@ public enum ScriptAPI {
                     log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
                 else
                     log.debug("Answer is invalid: {}", a);
-                script.end();
+                if (a.intValue() == -1)
+                    script.escape();
+                else
+                    script.end();
             } else {
                 script.setScriptResponse(null);
                 script.resume(t, a, o);
@@ -681,7 +697,10 @@ public enum ScriptAPI {
                     log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
                 else
                     log.debug("Answer is invalid: {}", a.intValue());
-                script.end();
+                if (a.intValue() == -1)
+                    script.escape();
+                else
+                    script.end();
             } else {
                 script.setScriptResponse(null);
                 script.resume(t, a, o);

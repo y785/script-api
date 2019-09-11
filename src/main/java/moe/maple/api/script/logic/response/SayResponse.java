@@ -65,7 +65,7 @@ public class SayResponse implements ScriptResponse {
         if (type.intValue() == real) {
             switch (action.intValue()) {
                 case END_CHAT:
-                    script.end();
+                    script.escape();
                     break;
                 case PREV:
                     if (hasPrev()) {

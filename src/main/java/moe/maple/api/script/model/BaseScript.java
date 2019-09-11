@@ -36,6 +36,7 @@ import moe.maple.api.script.model.object.user.QuestObject;
 import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.logic.response.ScriptResponse;
 import moe.maple.api.script.logic.event.ScriptEvent;
+import moe.maple.api.script.util.With;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +50,12 @@ public abstract class BaseScript implements MoeScript {
 
     protected ScriptAction nextAction;
     protected ScriptResponse nextResponse;
-    protected List<ScriptEvent> startScriptEvents;
-    protected List<ScriptEvent> endScriptEvents;
-    protected List<ScriptEvent> beforeRunEvents;
-    protected List<ScriptEvent> afterRunEvents;
+    private List<ScriptEvent> startScriptEvents;
+    private List<ScriptEvent> endScriptEvents;
+    private List<ScriptEvent> beforeRunEvents;
+    private List<ScriptEvent> afterRunEvents;
+    private List<ScriptEvent> npEvents;
+    private ScriptEvent escapeEvent;
 
     protected ServerObject server;
     protected FieldObject field;
@@ -67,10 +70,6 @@ public abstract class BaseScript implements MoeScript {
     private boolean done;
 
     public BaseScript() {
-        this.startScriptEvents = new ArrayList<>();
-        this.endScriptEvents = new ArrayList<>();
-        this.beforeRunEvents = new ArrayList<>();
-        this.afterRunEvents = new ArrayList<>();
         this.expected = "";
     }
 
@@ -118,6 +117,8 @@ public abstract class BaseScript implements MoeScript {
     // =================================================================================================================
 
     private void doEvents(List<ScriptEvent> events) {
+        if (events == null)
+            return;
         var iter = events.iterator();
         while (iter.hasNext()) {
             var next = iter.next();
@@ -140,6 +141,7 @@ public abstract class BaseScript implements MoeScript {
     public void start() {
         if (!hasPermission()) {
             log.debug("Script({}/{}) doesn't have permission to run, not starting.", name(), expected);
+            doEvents(npEvents);
             return;
         }
         log.debug("Script is starting: {} / {}", name(), expected);
@@ -149,15 +151,14 @@ public abstract class BaseScript implements MoeScript {
         doEvents(startScriptEvents);
 
         if (ScriptAPI.INSTANCE.getPreferences().shouldCatchExceptions()) {
-            try {
-                startMaybeException();
-            } catch (Exception e) {
+            With.silence(this::startMaybeException, (e) -> {
                 log.error("Oh no! A script({})({}) threw an exception during start.", name(), expected, e);
-                this.end();
-            }
+                end();
+            });
         } else {
             startMaybeException();
         }
+
         if (!isNextResponseSet() && !isNextActionSet())
             end();
         else
@@ -166,37 +167,53 @@ public abstract class BaseScript implements MoeScript {
 
     @Override
     public void end() {
-        if (done) {
+        if (isDone()) {
             log.debug("Script is already done: {} / {}", name(), expected);
             return;
         }
         log.debug("Script has ended: {} / {}", name(), expected);
-        if (done)
-            return;
         doEvents(endScriptEvents);
+        this.escapeEvent = null;
         this.nextResponse = null;
         this.nextAction = null;
         this.done = true;
     }
 
     @Override
+    public void escape() {
+        log.debug("Escape response being processed.");
+        if (escapeEvent != null) {
+            escapeEvent.act(this);
+            if (escapeEvent.isSingleUse())
+                escapeEvent = null;
+        } else {
+            this.end();
+        }
+    }
+
+    @Override
     public void reset() {
         end();
+        // Trust, but verify.
+        this.escapeEvent = null;
+        this.nextResponse = null;
+        this.nextAction = null;
+        this.done = true;
 
-        beforeRunEvents.clear(); // should these be reset?
-        afterRunEvents.clear();
-
-        this.done = false;
+        if (beforeRunEvents != null)
+            beforeRunEvents.clear();
+        if (afterRunEvents != null)
+            afterRunEvents.clear();
     }
 
     /**
-     * Don't look at me! I'm ugly! :c
+     * Most likely cause of an exception: user input.
      */
     private void resumeMaybeException(Number type, Number action, Object response) {
         var act = nextAction;
         var resp = nextResponse;
 
-        if (resp != null) {
+        if (isNextResponseSet()) {
             doEvents(beforeRunEvents);
             resp.response(type, action, response);
             doEvents(afterRunEvents);
@@ -223,21 +240,17 @@ public abstract class BaseScript implements MoeScript {
     public void resume(Number type, Number action, Object response) {
         log.debug("Resuming Script({})({}) with: {} / {} / {}", name(), expected, type, action, response);
 
-        var act = nextAction;
-        var resp = nextResponse;
-        if (act != null || resp != null) {
+        if (isPaused()) {
             if (ScriptAPI.INSTANCE.getPreferences().shouldCatchExceptions()) {
-                try {
-                    resumeMaybeException(type, action, response);
-                } catch (Exception e) {
+                With.silence(() -> resumeMaybeException(type, action, response), e -> {
                     log.error("Oh no! A script({})({}) threw an exception during resume.", name(), expected, e);
-                    this.end();
-                }
+                    end();
+                });
             } else {
                 resumeMaybeException(type, action, response);
             }
         } else {
-            log.debug("Script isn't capable of being resumed, ending.");
+            log.debug("Script isn't paused, ending.");
             end();
         }
     }
@@ -254,24 +267,46 @@ public abstract class BaseScript implements MoeScript {
         this.nextResponse = response;
     }
 
+    // =================================================================================================================
+
+    @Override
+    public void setEscapeEvent(ScriptEvent event) {
+        escapeEvent = event;
+    }
+
     @Override
     public void addStartEvent(ScriptEvent event) {
-        this.startScriptEvents.add(event);
+        if (startScriptEvents == null)
+            startScriptEvents = new ArrayList<>();
+        startScriptEvents.add(event);
     }
 
     @Override
     public void addEndEvent(ScriptEvent event) {
+        if (endScriptEvents == null)
+            endScriptEvents = new ArrayList<>();
         this.endScriptEvents.add(event);
     }
 
     @Override
     public void addAfterRunEvent(ScriptEvent event) {
-        this.afterRunEvents.add(event);
+        if (afterRunEvents == null)
+            afterRunEvents = new ArrayList<>();
+        afterRunEvents.add(event);
     }
 
     @Override
     public void addBeforeRunEvent(ScriptEvent event) {
-        this.beforeRunEvents.add(event);
+        if (beforeRunEvents == null)
+            beforeRunEvents = new ArrayList<>();
+        beforeRunEvents.add(event);
+    }
+
+    @Override
+    public void addNoPermissionEvent(ScriptEvent event) {
+        if (npEvents == null)
+            npEvents = new ArrayList<>();
+        npEvents.add(event);
     }
 
     // =================================================================================================================

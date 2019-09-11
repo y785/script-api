@@ -96,6 +96,13 @@ public interface MoeScript {
     void resume(Number type, Number action, Object response);
 
     /**
+     * Called if {@link #resume(Number, Number, Object)}'s <code>action</code>
+     * matches the escape event, typically -1.
+     * If escape event is null, then {@link #end()} is called.
+     */
+    void escape();
+
+    /**
      * Resets the script back to a default state.
      */
     void reset();
@@ -129,14 +136,14 @@ public interface MoeScript {
     void addBeforeRunEvent(ScriptEvent event);
 
     /**
-     * Called in {@link #resume(Number, Number, Object)} if a user issues an escape action
-     */
-    void addEscapeEvent(ScriptEvent event);
-
-    /**
      * Called in {@link #start()} if script fails {@link #hasPermission()}
      */
     void addNoPermissionEvent(ScriptEvent event);
+
+    /**
+     * Called in {@link #resume(Number, Number, Object)} if a user issues an escape action
+     */
+    void setEscapeEvent(ScriptEvent event);
 
     // =================================================================================================================
 

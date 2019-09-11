@@ -22,23 +22,53 @@
 
 package moe.maple.api.script.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public class With {
 
+    private static final Logger log = LoggerFactory.getLogger( With.class );
+
+    public static void silence(Consumers.Proxied proxy, Consumer<Exception> exceptionConsumer) {
+        try {
+            proxy.work();
+        } catch (Exception e) {
+            exceptionConsumer.accept(e);
+        }
+    }
+
+    public static void silence(Consumers.Proxied proxy) {
+        silence(proxy, (e) -> {
+            log.debug("Trapped exception.", e);
+        });
+    }
+
+    public static <T> void silentConsume(T object, Consumers.ContinueException<T> consumer, Consumer<Exception> exceptionConsumer) {
+        try {
+            consumer.accept(object);
+        } catch (Exception e) {
+            exceptionConsumer.accept(e);
+        }
+    }
+
+    public static <T> void silentConsume(T object, Consumers.ContinueException<T> consumer) {
+        silentConsume(object, consumer, (e) -> {
+            log.debug("Trapped exception.", e);
+        });
+    }
+
     public static <T> void continueException(Collection<T> collection, Consumers.ContinueException<T> consumer) {
         for (T object : collection) {
-            try {
-                consumer.accept(object);
-            } catch (Exception e) { }
+            silentConsume(object, consumer);
         }
     }
 
     public static <T> void continueException(T[] collection, Consumers.ContinueException<T> consumer) {
         for (T object : collection) {
-            try {
-                consumer.accept(object);
-            } catch (Exception e) { }
+            silentConsume(object, consumer);
         }
     }
 
@@ -71,6 +101,11 @@ public class With {
     }
 
     public static class Consumers {
+        @FunctionalInterface
+        public interface Proxied {
+            void work();
+        }
+
         @FunctionalInterface
         public interface IndexedConsumer<T> {
             void accept(T t, int index);
