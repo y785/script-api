@@ -102,7 +102,7 @@ public abstract class BaseScript implements MoeScript {
 
     @Override
     public boolean isPaused() {
-        return !isDone() && (nextResponse != null || nextAction != null);
+        return !isDone() && (isNextResponseSet() || isNextActionSet());
     }
 
     @Override

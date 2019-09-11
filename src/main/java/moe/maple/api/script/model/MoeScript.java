@@ -52,7 +52,14 @@ public interface MoeScript {
      */
     String getExpected();
 
+    /**
+     * Has the script used {@link #start()} and reached {@link #end()}
+     */
     boolean isDone();
+
+    /**
+     * Is the script waiting for a response for {@link #resume(Number, Number, Object)}
+     */
     boolean isPaused();
 
     boolean isNextResponseSet();
@@ -70,36 +77,66 @@ public interface MoeScript {
 
     // =================================================================================================================
 
-    // void work();
-
+    /**
+     * Start the script, calling all events attached.
+     */
     void start();
+
+    /**
+     * End the script, calling all events attached.
+     */
     void end();
 
     /**
-     * Resets the script back to its default state.
+     * Resumes the scripts
+     * @param type     - {@link ScriptMessageType}
+     * @param action   - The action for the <code>type</code>
+     * @param response - The object to respond with
+     */
+    void resume(Number type, Number action, Object response);
+
+    /**
+     * Resets the script back to a default state.
      */
     void reset();
     default void resetAndStart() { reset(); start(); }
-
-    void resume(Number type, Number action, Object response);
 
     // =================================================================================================================
 
     void setScriptAction(ScriptAction action);
     void setScriptResponse(ScriptResponse response);
 
+    // =================================================================================================================
+
+    /**
+     * Called in {@link #start()}
+     */
     void addStartEvent(ScriptEvent event);
+
+    /**
+     * Called in {@link #end()}
+     */
     void addEndEvent(ScriptEvent event);
 
     /**
-     *  After run is called before {@link #work()} and {@link #resume(Number, Number, Object)}
+     *  Called internally after the work method.
      */
     void addAfterRunEvent(ScriptEvent event);
 
     /**
-     *  see {@link #addAfterRunEvent(ScriptEvent)}
+     *  Called internally before the work method.
      */
     void addBeforeRunEvent(ScriptEvent event);
+
+    /**
+     * Called in {@link #resume(Number, Number, Object)} if a user issues an escape action
+     */
+    void addEscapeEvent(ScriptEvent event);
+
+    /**
+     * Called in {@link #start()} if script fails {@link #hasPermission()}
+     */
+    void addNoPermissionEvent(ScriptEvent event);
 
     // =================================================================================================================
 
