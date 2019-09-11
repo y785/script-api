@@ -138,6 +138,10 @@ public abstract class BaseScript implements MoeScript {
 
     @Override
     public void start() {
+        if (!hasPermission()) {
+            log.debug("Script({}/{}) doesn't have permission to run, not starting.", name(), expected);
+            return;
+        }
         log.debug("Script is starting: {} / {}", name(), expected);
         this.done = false;
         this.nextResponse = null;
@@ -233,6 +237,7 @@ public abstract class BaseScript implements MoeScript {
                 resumeMaybeException(type, action, response);
             }
         } else {
+            log.debug("Script isn't capable of being resumed, ending.");
             end();
         }
     }

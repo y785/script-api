@@ -60,6 +60,16 @@ public interface MoeScript {
 
     // =================================================================================================================
 
+    /**
+     * A check if this script has permission to run.
+     * This can be overridden to check if a user is valid for this script,
+     * or field, or whatever. This is called before {@link #start()}
+     * @return - true if script can run
+     */
+    default boolean hasPermission() { return true; }
+
+    // =================================================================================================================
+
     // void work();
 
     void start();
