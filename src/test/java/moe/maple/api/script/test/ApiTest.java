@@ -137,7 +137,7 @@ public class ApiTest {
         class ApiAskMenuLogic extends BaseScript {
             @Override
             public void work() {
-                ScriptAPI.askMenu(this, List.of("Prompt", "Option 1", "Option 2", "Option 3")).andThen(sel -> {
+                ScriptAPI.askMenu(this, "Prompt", List.of("Option 1", "Option 2", "Option 3")).andThen(sel -> {
                     assertEquals(sel, 1);
                     ScriptAPI.askMenu(this, "Prompt", List.of(Tuple.of("Option 4", null), Tuple.of("Option 5", () -> {
 
