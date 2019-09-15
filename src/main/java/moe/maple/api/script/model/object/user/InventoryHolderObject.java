@@ -140,7 +140,7 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
         return removeItemAll(Arrays.asList(itemTemplateIdAndCount));
     }
 
-    boolean removeItemAll(Collection<Tuple<Integer, Integer> itemTemplateIdAndCount);
+    boolean removeItemAll(Collection<Tuple<Integer, Integer>> itemTemplateIdAndCount);
 
     /**
      * Remove <strong>ALL ITEMS</strong> at the specified slot position.
