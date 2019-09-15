@@ -162,7 +162,7 @@ public enum ScriptAPI {
         messengerSayImage = (userObject, speakerType, speakerTemplateId, param, imagePath)
                 -> log.debug("sayImage-> speakerType: {}, speakerTemplate: {}, param: {}, path: {}", speakerType, speakerTemplateId, param, imagePath);
         messengerSay = (userObject, speakerType, speakerTemplateId, replaceTemplateId,  param, message, previous, next)
-                -> log.debug("say-> speakerType: {}, speakerTemplate: {}, param: {}, prev: {}, next: {}, message: \"{}\"", speakerType, speakerTemplateId, param, message, previous, next);
+                -> log.debug("say-> speakerType: {}, speakerTemplate: {}, param: {}, message: \"{}\", prev: {}, next: {}", speakerType, speakerTemplateId, param, message, previous, next);
 
         // Misc Packets
         messengerMessage = ((userObject, type, message) -> log.debug("message-> type: {}, message: \"{}\"", type, message));
