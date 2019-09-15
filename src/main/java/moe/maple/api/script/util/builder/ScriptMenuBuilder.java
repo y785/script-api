@@ -34,7 +34,7 @@ import java.util.function.Function;
  * A builder for AskMenu.
  */
 
-public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> implements CharacterSequenceBuilder<ScriptMenuBuilder>, AppendingBuilder<ScriptMenuBuilder>, ScriptFormatter<ScriptMenuBuilder> {
+public class ScriptMenuBuilder<Builder extends ScriptMenuBuilder<Builder>> extends StyleAndColorBuilder<Builder> implements CharacterSequenceBuilder<Builder>, AppendingBuilder<Builder>, ScriptFormatter<Builder> {
 
     private final StringBuilder textBuilder;
     private int runningMenuIndex;//Used with sequential array menus
@@ -49,32 +49,32 @@ public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> i
         this(new StringBuilder());
     }
 
-    public ScriptMenuBuilder get() {
-        return this;
+    public Builder get() {
+        return (Builder) this;
     }
 
     @Override
-    public ScriptMenuBuilder append(String str) {
+    public Builder append(String str) {
         textBuilder.append(str);
-        return this;
+        return get();
     }
 
     @Override
-    public ScriptMenuBuilder append(CharSequence text) {
+    public Builder append(CharSequence text) {
         textBuilder.append(text);
-        return this;
+        return get();
     }
 
     @Override
-    public ScriptMenuBuilder append(Object object) {
+    public Builder append(Object object) {
         textBuilder.append(object);
-        return this;
+        return get();
     }
 
     @Override
-    public ScriptMenuBuilder append(StringBuffer sb) {
+    public Builder append(StringBuffer sb) {
         textBuilder.append(sb);
-        return this;
+        return get();
     }
 
     private static boolean isValidOption(String option) {
@@ -82,37 +82,35 @@ public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> i
     }
 
 
-    public ScriptMenuBuilder appendMenu(String... options) {
+    public Builder appendMenu(String... options) {
         for(int i = 0; i < options.length; i++) {
             appendMenuItem(runningMenuIndex++, options[i]);
         }
-        return this;
+        return get();
     }
 
-    public ScriptMenuBuilder appendMenu(Collection<Tuple<Integer, String>> options) {
+    public Builder appendMenu(Collection<Tuple<Integer, String>> options) {
         for (Tuple<Integer, String> option : options) {
             appendMenuItem(option.left(), option.right());
         }
-        return this;
+        return get();
     }
 
-    public <T> ScriptMenuBuilder appendMenu(Function<T, String> formatter, T... options) {
+    public <T> Builder appendMenu(Function<T, String> formatter, T... options) {
         for (T obj : options) {
             appendMenuItem(runningMenuIndex++, formatter.apply(obj));
         }
-        return this;
+        return get();
     }
 
-    private ScriptMenuBuilder appendMenuItem(int index, String option) {
+    private Builder appendMenuItem(int index, String option) {
         if(isValidOption(option)) {
             textBuilder.append("#L").append(index).append("#").append(option).append("#l\r\n");
         }
-        return this;
+        return get();
     }
 
-
-
-    public ScriptMenuBuilder appendMenuWith(FontStyle menuStyle, FontColor menuColor, String... options) {
+    public Builder appendMenuWith(FontStyle menuStyle, FontColor menuColor, String... options) {
         boolean appendStyle = menuStyle != FontStyle.NONE && menuStyle != this.currentStyle;
         boolean appendColor = menuColor != FontColor.NONE && menuColor != this.currentColor;
         if(appendStyle) {
@@ -128,7 +126,7 @@ public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> i
         if(appendColor) {
             textBuilder.append(getColorSafe(FontColor.BLACK).prefix);
         }
-        return this;
+        return get();
     }
 
     public String build() {

@@ -517,7 +517,7 @@ public enum ScriptAPI {
     }
 
     public static IntegerActionChain askMenu(MoeScript script, int speakerTemplateId, int param, String prompt, String... menuItems) {
-        var builder = new ScriptMenuBuilder();
+        var builder = new ScriptMenuBuilder<>();
         builder.append(prompt).newLine().blue().appendMenu(menuItems);
 
         script.setScriptAction(null);
@@ -547,7 +547,7 @@ public enum ScriptAPI {
 
     @SafeVarargs
     public static void askMenu(MoeScript script, String prompt, Tuple<String, BasicScriptAction>... options) {
-        var builder = new ScriptMenuBuilder();
+        var builder = new ScriptMenuBuilder<>();
         builder.append(prompt).newLine().blue().appendMenu(Tuple::left, options);
 
         script.setScriptAction(null);
