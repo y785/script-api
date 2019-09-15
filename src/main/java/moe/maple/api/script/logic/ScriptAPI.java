@@ -46,8 +46,8 @@ import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.model.type.ScriptMessageType;
 import moe.maple.api.script.util.Moematter;
-import moe.maple.api.script.util.builder.ScriptFormatter;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
+import moe.maple.api.script.util.builder.ScriptStringBuilder;
 import moe.maple.api.script.util.tuple.Tuple;
 import moe.maple.api.script.util.With;
 import org.slf4j.Logger;
@@ -55,6 +55,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public enum ScriptAPI {
     INSTANCE;
@@ -364,58 +366,51 @@ public enum ScriptAPI {
         return script::setScriptAction;
     }
 
-    @SafeVarargs
-    public static BasicActionChain say(MoeScript script, Integer[] speakers, Tuple<Integer, String>... paramAndMessages) {
+    public static BasicActionChain say(MoeScript script, Integer[] speakers, List<Tuple<Integer, String>> paramAndMessages) {
         script.setScriptAction(null);
         script.setScriptResponse(null);
-        var chain = new SayResponse[paramAndMessages.length];
-        With.indexAndCount(paramAndMessages, (msg, idx, ts) -> chain[idx] = (new SayResponse(chain, ScriptAPI.INSTANCE.messengerSay, script, idx, new SayMessage(0, speakers[idx], 0, paramAndMessages[idx].left(), paramAndMessages[idx].right()))));
+        var chain = new SayResponse[paramAndMessages.size()];
+        With.indexAndCount(paramAndMessages, (msg, idx, ts) -> chain[idx] = (new SayResponse(chain, ScriptAPI.INSTANCE.messengerSay, script, idx, new SayMessage(0, speakers[idx], 0, paramAndMessages.get(idx).left(), paramAndMessages.get(idx).right()))));
         chain[0].onResponse(chain[0]);
         return script::setScriptAction;
     }
 
-    @SafeVarargs
-    public static BasicActionChain say(MoeScript script, Tuple<Integer, String>... paramAndMessages) {
+    public static BasicActionChain say(MoeScript script, List<Tuple<Integer, String>> paramAndMessages) {
         script.setScriptAction(null);
-
-        Integer[] speakers = new Integer[paramAndMessages.length];
+        Integer[] speakers = new Integer[paramAndMessages.size()];
         Arrays.fill(speakers, script.getSpeakerTemplateId());
         return say(script, speakers, paramAndMessages);
     }
 
-    public static BasicActionChain say(MoeScript script, Integer[] speakers, Integer[] params, String... messages) {
-        Tuple<Integer, String>[] tlps = new Tuple[messages.length];
+    public static BasicActionChain say(MoeScript script, Integer[] speakers, Integer[] params, List<String> messages) {
+        var tlps = new ArrayList<Tuple<Integer, String>>(messages.size());
         With.index(messages, (m, i) -> {
             var par = params.length - 1 >= i ? params[i] : 0;
-            tlps[i] = Tuple.of(par, m);
+            tlps.add(Tuple.of(par, m));
         });
         return say(script, speakers, tlps);
     }
 
-    public static BasicActionChain say(MoeScript script, Integer[] speakers, int param, String... messages) {
-        Integer[] params = new Integer[messages.length];
+    public static BasicActionChain say(MoeScript script, Integer[] speakers, int param, List<String> messages) {
+        Integer[] params = new Integer[messages.size()];
         Arrays.fill(params, param);
         return say(script, speakers, params, messages);
     }
 
-    public static BasicActionChain say(MoeScript script, int speakerTemplateId, int param, String... messages) {
-        Integer[] speakers = new Integer[messages.length];
-        Integer[] params = new Integer[messages.length];
+    public static BasicActionChain say(MoeScript script, int speakerTemplateId, int param, List<String> messages) {
+        Integer[] speakers = new Integer[messages.size()];
+        Integer[] params = new Integer[speakers.length];
         Arrays.fill(speakers, speakerTemplateId);
         Arrays.fill(params, param);
         return say(script, speakers, params, messages);
     }
 
-    public static BasicActionChain say(MoeScript script, int param, String... messages) {
+    public static BasicActionChain say(MoeScript script, int param, List<String> messages) {
         return say(script, script.getSpeakerTemplateId(), param, messages);
     }
 
-    public static BasicActionChain say(MoeScript script, String... messages) {
-        return say(script, 0, messages);
-    }
-
     public static BasicActionChain say(MoeScript script, String message, Object... objects) {
-        return say(script, Moematter.format(message, objects));
+        return say(script, 0, List.of(Moematter.format(message, objects)));
     }
 
     // =================================================================================================================
@@ -488,10 +483,8 @@ public enum ScriptAPI {
 
     // =================================================================================================================
 
-    private static ScriptResponse askMenuResponse(MoeScript script, int max) {
+    private static ScriptResponse askMenuResponse(MoeScript script, Set<Integer> options) {
         return (t, a, o) -> {
-            var min = 0;
-
             var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKMENU);
             if (t.intValue() != real || a.intValue() != 1) {
                 if (t.intValue() != real)
@@ -504,9 +497,9 @@ public enum ScriptAPI {
                     script.end();
             } else {
                 var sel = ((Integer)o);
-                var bad = sel == null || sel < min || sel > max;
+                var bad = sel == null || !options.contains(sel);
                 if (bad) {
-                    log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
+                    log.debug("Value mismatch: val {} options {}", sel, options);
                     script.end();
                 } else {
                     script.setScriptResponse(null);
@@ -516,12 +509,12 @@ public enum ScriptAPI {
         };
     }
 
-    public static IntegerActionChain askMenu(MoeScript script, int speakerTemplateId, int param, String prompt, String... menuItems) {
+    public static IntegerActionChain askMenu(MoeScript script, int speakerTemplateId, int param, String prompt, Collection<String> menuItems) {
         var builder = new ScriptMenuBuilder<>();
         builder.append(prompt).newLine().blue().appendMenu(menuItems);
-
         script.setScriptAction(null);
-        script.setScriptResponse(askMenuResponse(script, menuItems.length - 1));
+        var keys = IntStream.range(0, menuItems.size()).boxed().collect(Collectors.toSet());
+        script.setScriptResponse(askMenuResponse(script, keys));
 
         script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, speakerTemplateId, param, builder.toString()),
                 () -> log.debug("User object isn't set, workflow is messy."));
@@ -529,52 +522,50 @@ public enum ScriptAPI {
         return script::setScriptAction;
     }
 
-    public static IntegerActionChain askMenu(MoeScript script, int speakerTemplateId, String prompt, String... menuItems) {
+    public static IntegerActionChain askMenu(MoeScript script, int speakerTemplateId, String prompt, Collection<String> menuItems) {
         return askMenu(script, speakerTemplateId, 0, prompt, menuItems);
     }
 
-    public static IntegerActionChain askMenu(MoeScript script, String prompt, String... menuItems) {
+    public static IntegerActionChain askMenu(MoeScript script, String prompt, Collection<String> menuItems) {
         return askMenu(script, script.getSpeakerTemplateId(), prompt, menuItems);
     }
 
     public static IntegerActionChain askMenu(MoeScript script, String prompt) {
         script.setScriptAction(null);
-        script.setScriptResponse(askMenuResponse(script, prompt.length() - prompt.replace("#L", "").length() - 1));
+        var options = Arrays.stream(ScriptMenuBuilder.splitIndices(prompt)).map(ScriptMenuBuilder::stripIndex).collect(Collectors.toSet());
+        script.setScriptResponse(askMenuResponse(script, options));//prompt.length() - prompt.replace("#L", "").length() - 1
         script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, script.getSpeakerTemplateId(), 0, prompt),
                 () -> log.debug("User object isn't set, workflow is messy."));
         return script::setScriptAction;
     }
 
-    @SafeVarargs
-    public static void askMenu(MoeScript script, String prompt, Tuple<String, BasicScriptAction>... options) {
-        var builder = new ScriptMenuBuilder<>();
-        builder.append(prompt).newLine().blue().appendMenu(Tuple::left, options);
-
+    public static void askMenu(MoeScript script, String prompt, List<Tuple<String, BasicScriptAction>> options) {
         script.setScriptAction(null);
-        script.setScriptResponse((t, a, o) -> {
-            var min = 0;
-            var max = options.length - 1;
-            var sel = ((Integer)o);
-            var bad = sel == null || sel < min || sel > max;
-
-            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKMENU);
-            if (t.intValue() != real || bad || a.intValue() != 1) {
-                if (bad)
-                    log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
-                else if (t.intValue() != real)
-                    log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
-                else
-                    log.debug("Answer is invalid: {}", a);
-                if (a.intValue() == -1)
-                    script.escape();
-                else
-                    script.end();
-            } else {
-                script.setScriptResponse(null);
-                script.setScriptAction(options[sel].right());
-                script.resume(t, a, o);
-            }
-        });
+        var builder = new ScriptMenuBuilder<>().append(prompt).newLine().blue().appendMenu(Tuple::left, options);
+        var keys = IntStream.range(0, options.size()).boxed().collect(Collectors.toSet());
+        if(!keys.isEmpty()) {
+            script.setScriptResponse((t, a, o) -> {
+                var sel = ((Integer)o);
+                var bad = sel == null || !keys.contains(sel);
+                var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKMENU);
+                if (t.intValue() != real || bad || a.intValue() != 1) {
+                    if (bad)
+                        log.debug("Value mismatch: val {} keys {}", sel, keys);
+                    else if (t.intValue() != real)
+                        log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
+                    else
+                        log.debug("Answer is invalid: {}", a);
+                    if (a.intValue() == -1)
+                        script.escape();
+                    else
+                        script.end();
+                } else {
+                    script.setScriptResponse(null);
+                    script.setScriptAction(options.get(sel).right());
+                    script.resume(t, a, o);
+                }
+            });
+        }
 
         var speaker = script.getSpeakerTemplateId();
 
@@ -584,17 +575,15 @@ public enum ScriptAPI {
 
     // =================================================================================================================
 
-    private static ScriptResponse askAvatarResponse(MoeScript script, int... options) {
+    private static ScriptResponse askAvatarResponse(MoeScript script, Collection<Integer> options) {
         return (t, a, o) -> {
-            var min = 0;
-            var max = options.length - 1;
             var sel = ((Integer)o);
-            var bad = sel == null || sel < min || sel > max;
+            var bad = sel == null || !options.contains(sel);
             var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKAVATAR);
 
             if (t.intValue() != real || bad || a.intValue() != 1) {
                 if (bad)
-                    log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
+                    log.debug("Value mismatch: val {}, options {}", sel, options);
                 else if (t.intValue() != real)
                     log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
                 else
@@ -610,21 +599,21 @@ public enum ScriptAPI {
         };
     }
 
-    public static IntegerActionChain askAvatar(MoeScript script, int speakerTemplateId, int param, String prompt, int... options) {
+    public static IntegerActionChain askAvatar(MoeScript script, int speakerTemplateId, int param, String prompt, Collection<Integer> options) {
         script.setScriptAction(null);
         script.setScriptResponse(askAvatarResponse(script, options));
-
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskAvatar.send(obj, speakerTemplateId, param, prompt,  options),
+        int[] optionArray = options.stream().mapToInt(Integer::intValue).toArray();//:|
+        script.getUserObject().ifPresentOrElse(obj ->ScriptAPI.INSTANCE.messengerAskAvatar.send(obj, speakerTemplateId, param, prompt, optionArray),
                 () -> log.debug("User object isn't set, workflow is messy."));
 
         return script::setScriptAction;
     }
 
-    public static IntegerActionChain askAvatar(MoeScript script, int speakerTemplateId, String prompt, int... options) {
+    public static IntegerActionChain askAvatar(MoeScript script, int speakerTemplateId, String prompt, Collection<Integer> options) {
         return askAvatar(script, speakerTemplateId, 0, prompt, options);
     }
 
-    public static IntegerActionChain askAvatar(MoeScript script, String prompt, int... options) {
+    public static IntegerActionChain askAvatar(MoeScript script, String prompt, Collection<Integer> options) {
         return askAvatar(script, script.getSpeakerTemplateId(), prompt, options);
     }
 

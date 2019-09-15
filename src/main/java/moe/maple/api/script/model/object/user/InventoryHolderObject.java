@@ -25,7 +25,9 @@ package moe.maple.api.script.model.object.user;
 import moe.maple.api.script.model.object.ScriptObject;
 import moe.maple.api.script.util.tuple.Tuple;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -55,7 +57,11 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
      *                                    should be the amount to add or remove.
      * @return true if all actions were completed
      */
-    boolean exchange(int money, Tuple<Integer, Integer>... itemTemplateIdAndCount);
+    default boolean exchange(int money, Tuple<Integer, Integer>... itemTemplateIdAndCount) {
+        return exchange(money, List.of(itemTemplateIdAndCount));
+    }
+
+    boolean exchange(int money, Collection<Tuple<Integer, Integer>> itemTemplateIdAndCount);
 
     // =================================================================================================================
 
@@ -90,7 +96,10 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
      *                                 should be the amount to add.
      * @return true if ALL ITEMS were added
      */
-    boolean addItemAll(Tuple<Integer, Integer>... itemTemplateIdAndCount);
+    default boolean addItemAll(Tuple<Integer, Integer>... itemTemplateIdAndCount) {
+        return addItemAll(Arrays.asList(itemTemplateIdAndCount));
+    }
+    boolean addItemAll(Collection<Tuple<Integer, Integer>> itemTemplateIdAndCount);
 
     // =================================================================================================================
 
@@ -127,7 +136,11 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
      *                                 should be the amount to add.
      * @return true if <strong>ALL WERE REMOVED</strong>
      */
-    boolean removeItemAll(Tuple<Integer, Integer>... itemTemplateIdAndCount);
+    default boolean removeItemAll(Tuple<Integer, Integer>... itemTemplateIdAndCount) {
+        return removeItemAll(Arrays.asList(itemTemplateIdAndCount));
+    }
+
+    boolean removeItemAll(Collection<Tuple<Integer, Integer> itemTemplateIdAndCount);
 
     /**
      * Remove <strong>ALL ITEMS</strong> at the specified slot position.

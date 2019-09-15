@@ -23,8 +23,6 @@
 package moe.maple.api.script.util.builder;
 
 import moe.maple.api.script.util.tuple.Tuple;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -89,6 +87,13 @@ public class ScriptMenuBuilder<Builder extends ScriptMenuBuilder<Builder>> exten
         return get();
     }
 
+    public Builder appendMenu(Iterable<String> options) {
+        for(String option : options) {
+            appendMenuItem(runningMenuIndex++, option);
+        }
+        return get();
+    }
+
     public Builder appendMenu(Collection<Tuple<Integer, String>> options) {
         for (Tuple<Integer, String> option : options) {
             appendMenuItem(option.left(), option.right());
@@ -97,6 +102,13 @@ public class ScriptMenuBuilder<Builder extends ScriptMenuBuilder<Builder>> exten
     }
 
     public <T> Builder appendMenu(Function<T, String> formatter, T... options) {
+        for (T obj : options) {
+            appendMenuItem(runningMenuIndex++, formatter.apply(obj));
+        }
+        return get();
+    }
+
+    public <T> Builder appendMenu(Function<T, String> formatter, Iterable<T> options) {
         for (T obj : options) {
             appendMenuItem(runningMenuIndex++, formatter.apply(obj));
         }
@@ -134,6 +146,33 @@ public class ScriptMenuBuilder<Builder extends ScriptMenuBuilder<Builder>> exten
             return "Invalid input.";
         }
         return textBuilder.toString();
+    }
+
+    public static int stripIndex(String menuLine) throws NumberFormatException {
+        int before = menuLine.indexOf("#L");
+        int after = menuLine.indexOf("#", before);
+        if(before < 0 || after < 0) throw new IllegalArgumentException("String must contain #L{number}#");
+        return Integer.parseInt(menuLine.substring(before, after));
+    }
+
+    /**
+     * Simple regex pattern to grab everything between #L and #l.
+     * @param fullMenuString Ex. "#L100# test #l\r\n#L101# test2 #l"
+     * @return The client's expected menu index texts as an array
+     */
+    public static String[] splitIndices(String fullMenuString) {
+        return fullMenuString.split("#L[^\"]+?#l");
+    }
+
+
+    public static boolean containsMenuIndex(String menuLine) {
+        int before = menuLine.indexOf("#L");
+        if(before < 0) return false;
+        int mid = menuLine.indexOf("#", before);
+        if(mid < 0) return false;
+        int after = menuLine.indexOf("#l", mid);
+        if(after < 0) return false;
+        return after - mid - before > 0;
     }
 
     @Override

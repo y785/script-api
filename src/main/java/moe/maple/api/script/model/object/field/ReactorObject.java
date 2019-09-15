@@ -26,6 +26,8 @@ import moe.maple.api.script.model.object.field.FieldedObject;
 import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.util.tuple.Tuple;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -59,5 +61,15 @@ public interface ReactorObject<T> extends FieldedObject<T> {
      *                     - Right is the count
      * @return true if items were dropped
      */
-    boolean dropItems(Tuple<Integer, Integer>... itemAndCount);
+    default boolean dropItems(Tuple<Integer, Integer>... itemAndCount) {
+        return dropItems(Arrays.asList(itemAndCount));
+    }
+    /**
+     * Drops items from the reactor's position
+     * @param itemAndCount - Left is the item's .wz id
+     *                     - Right is the count
+     * @return true if items were dropped
+     */
+    boolean dropItems(Collection<Tuple<Integer, Integer>> itemAndCount);
+
 }
