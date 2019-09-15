@@ -61,4 +61,8 @@ public interface QuestObject<T> extends ScriptObject<T> {
     String getEx(String key);
 
     boolean setEx(String key, String value);
+
+    boolean setValue(String value);
+
+    String getValue();
 }

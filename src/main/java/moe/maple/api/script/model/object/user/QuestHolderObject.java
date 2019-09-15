@@ -87,4 +87,23 @@ public interface QuestHolderObject<T> extends ScriptObject<T> {
         return getQuest(questId).map(quest->quest.setEx(key, value)).orElse(false);
     }
 
+    /**
+     * Elements in the quest record may have a String value. Many quests rely on this value.
+     * @param questId A quest id key.
+     * @return A string quest progress value
+     */
+    default String getValue(int questId) {
+        return getQuest(questId).map(QuestObject::getValue).orElse("");
+    }
+
+    /**
+     * Sets a quest record's String value.
+     * @param questId A quest id key.
+     * @param value A quest progress value.
+     * @return true if the value was set successfully
+     */
+    default boolean setValue(int questId, String value) {
+        return getQuest(questId).map(quest->quest.setValue(value)).orElse(false);
+    }
+
 }
