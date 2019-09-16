@@ -22,7 +22,7 @@
 
 package moe.maple.api.script.util.builder;
 
-public class ScriptStringBuilder extends ScriptMenuBuilder {
+public class ScriptStringBuilder extends ScriptMenuBuilder<ScriptStringBuilder> {
 
     private final StringBuilder textBuilder;
 

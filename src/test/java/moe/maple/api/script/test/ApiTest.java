@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -136,11 +137,11 @@ public class ApiTest {
         class ApiAskMenuLogic extends BaseScript {
             @Override
             public void work() {
-                ScriptAPI.askMenu(this, "Prompt", "Option 1", "Option 2", "Option 3").andThen(sel -> {
+                ScriptAPI.askMenu(this, "Prompt", List.of("Option 1", "Option 2", "Option 3")).andThen(sel -> {
                     assertEquals(sel, 1);
-                    ScriptAPI.askMenu(this, "Prompt", Tuple.of("Option 4", null), Tuple.of("Option 5", () -> {
+                    ScriptAPI.askMenu(this, "Prompt", List.of(Tuple.of("Option 4", null), Tuple.of("Option 5", () -> {
 
-                    }));
+                    })));
                 });
             }
         }

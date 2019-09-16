@@ -401,6 +401,11 @@ public class TestUserObject implements UserObject<Integer> {
     }
 
     @Override
+    public boolean exchange(int money, Collection<Tuple<Integer, Integer>> itemTemplateIdAndCount) {
+        return false;
+    }
+
+    @Override
     public boolean addItem(int itemTemplateId, int count) {
         return false;
     }
@@ -412,6 +417,11 @@ public class TestUserObject implements UserObject<Integer> {
 
     @Override
     public boolean addItemAll(Tuple<Integer, Integer>... itemTemplateIdAndCount) {
+        return false;
+    }
+
+    @Override
+    public boolean addItemAll(Collection<Tuple<Integer, Integer>> itemTemplateIdAndCount) {
         return false;
     }
 
@@ -432,6 +442,11 @@ public class TestUserObject implements UserObject<Integer> {
 
     @Override
     public boolean removeItemAll(Tuple<Integer, Integer>... itemTemplateIdAndCount) {
+        return false;
+    }
+
+    @Override
+    public boolean removeItemAll(Collection<Tuple<Integer, Integer>> itemTemplateIdAndCount) {
         return false;
     }
 

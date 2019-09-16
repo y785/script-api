@@ -23,18 +23,20 @@
 package moe.maple.api.script.util.builder;
 
 import moe.maple.api.script.util.tuple.Tuple;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author umbreon22
  * A builder for AskMenu.
  */
 
-public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> implements CharacterSequenceBuilder<ScriptMenuBuilder>, AppendingBuilder<ScriptMenuBuilder>, ScriptFormatter<ScriptMenuBuilder> {
+public class ScriptMenuBuilder<Builder extends ScriptMenuBuilder<Builder>> extends StyleAndColorBuilder<Builder> implements CharacterSequenceBuilder<Builder>, AppendingBuilder<Builder>, ScriptFormatter<Builder> {
 
     private final StringBuilder textBuilder;
     private int runningMenuIndex;//Used with sequential array menus
@@ -49,32 +51,32 @@ public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> i
         this(new StringBuilder());
     }
 
-    public ScriptMenuBuilder get() {
-        return this;
+    public Builder get() {
+        return (Builder) this;
     }
 
     @Override
-    public ScriptMenuBuilder append(String str) {
+    public Builder append(String str) {
         textBuilder.append(str);
-        return this;
+        return get();
     }
 
     @Override
-    public ScriptMenuBuilder append(CharSequence text) {
+    public Builder append(CharSequence text) {
         textBuilder.append(text);
-        return this;
+        return get();
     }
 
     @Override
-    public ScriptMenuBuilder append(Object object) {
+    public Builder append(Object object) {
         textBuilder.append(object);
-        return this;
+        return get();
     }
 
     @Override
-    public ScriptMenuBuilder append(StringBuffer sb) {
+    public Builder append(StringBuffer sb) {
         textBuilder.append(sb);
-        return this;
+        return get();
     }
 
     private static boolean isValidOption(String option) {
@@ -82,37 +84,49 @@ public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> i
     }
 
 
-    public ScriptMenuBuilder appendMenu(String... options) {
+    public Builder appendMenu(String... options) {
         for(int i = 0; i < options.length; i++) {
             appendMenuItem(runningMenuIndex++, options[i]);
         }
-        return this;
+        return get();
     }
 
-    public ScriptMenuBuilder appendMenu(Collection<Tuple<Integer, String>> options) {
+    public Builder appendMenu(Iterable<String> options) {
+        for(String option : options) {
+            appendMenuItem(runningMenuIndex++, option);
+        }
+        return get();
+    }
+
+    public Builder appendMenu(Collection<Tuple<Integer, String>> options) {
         for (Tuple<Integer, String> option : options) {
             appendMenuItem(option.left(), option.right());
         }
-        return this;
+        return get();
     }
 
-    public <T> ScriptMenuBuilder appendMenu(Function<T, String> formatter, T... options) {
+    public <T> Builder appendMenu(Function<T, String> formatter, T... options) {
         for (T obj : options) {
             appendMenuItem(runningMenuIndex++, formatter.apply(obj));
         }
-        return this;
+        return get();
     }
 
-    private ScriptMenuBuilder appendMenuItem(int index, String option) {
+    public <T> Builder appendMenu(Function<T, String> formatter, Iterable<T> options) {
+        for (T obj : options) {
+            appendMenuItem(runningMenuIndex++, formatter.apply(obj));
+        }
+        return get();
+    }
+
+    private Builder appendMenuItem(int index, String option) {
         if(isValidOption(option)) {
             textBuilder.append("#L").append(index).append("#").append(option).append("#l\r\n");
         }
-        return this;
+        return get();
     }
 
-
-
-    public ScriptMenuBuilder appendMenuWith(FontStyle menuStyle, FontColor menuColor, String... options) {
+    public Builder appendMenuWith(FontStyle menuStyle, FontColor menuColor, String... options) {
         boolean appendStyle = menuStyle != FontStyle.NONE && menuStyle != this.currentStyle;
         boolean appendColor = menuColor != FontColor.NONE && menuColor != this.currentColor;
         if(appendStyle) {
@@ -128,7 +142,7 @@ public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> i
         if(appendColor) {
             textBuilder.append(getColorSafe(FontColor.BLACK).prefix);
         }
-        return this;
+        return get();
     }
 
     public String build() {
@@ -136,6 +150,47 @@ public class ScriptMenuBuilder extends StyleAndColorBuilder<ScriptMenuBuilder> i
             return "Invalid input.";
         }
         return textBuilder.toString();
+    }
+
+    public static int parseMenuIndex(String menuLine) throws IllegalArgumentException {
+        if(menuLine == null || menuLine.isEmpty()) throw new IllegalArgumentException("Cannot parse empty strings");
+        int before = menuLine.indexOf("#L");
+        if(before < 0) throw new IllegalArgumentException("Missing starting #L");
+        else before+=2;//Skipping #L in substring
+
+        int mid = menuLine.indexOf("#", before);
+        if(mid < before) throw new IllegalArgumentException("Missing middle #");
+
+        int after = menuLine.indexOf("#l", mid);
+        if(after < mid) throw new IllegalArgumentException("Missing closing #l");
+
+        return Integer.parseInt(menuLine.substring(before, mid));
+    }
+
+    /**
+     * Simple regex pattern to grab everything between #L and #l.
+     * @param fullMenuString Ex. "#L100# test #l\r\n#L101# test2 #l"
+     * @return The client's expected menu index texts as an array
+     */
+    private static Pattern menuIndexPattern = Pattern.compile("#L+\\d[^\"]+?#l", Pattern.MULTILINE);
+    public static List<String> matchIndices(String fullMenuString) {
+        var matcher = menuIndexPattern.matcher(fullMenuString);
+        var list = new LinkedList<String>();
+        while(matcher.find()) {
+            list.add(matcher.group());
+        }
+        return list;
+    }
+
+
+    public static boolean containsMenuIndex(String menuLine) {
+        int before = menuLine.indexOf("#L");
+        if(before < 0) return false;
+        int mid = menuLine.indexOf("#", before);
+        if(mid < 0) return false;
+        int after = menuLine.indexOf("#l", mid);
+        if(after < 0) return false;
+        return after - mid - before > 0;
     }
 
     @Override

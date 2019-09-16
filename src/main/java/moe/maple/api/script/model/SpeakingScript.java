@@ -30,7 +30,10 @@ import moe.maple.api.script.logic.chain.StringActionChain;
 import moe.maple.api.script.model.messenger.say.SayMessage;
 import moe.maple.api.script.util.tuple.Tuple;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This should mainly be implemented by NPCs
@@ -42,7 +45,7 @@ public interface SpeakingScript extends MessagingScript {
      */
 
     default BasicActionChain say(String... messages) {
-        return ScriptAPI.say(this, messages);
+        return ScriptAPI.say(this, 0, List.of(messages));
     }
 
     default BasicActionChain say(Collection<SayMessage> messages) {
@@ -50,27 +53,35 @@ public interface SpeakingScript extends MessagingScript {
     }
 
     default BasicActionChain say(Integer[] speakers, Tuple<Integer, String>... paramAndMessages) {
+        return say(speakers, List.of(paramAndMessages));
+    }
+
+    default BasicActionChain say(Integer[] speakers, List<Tuple<Integer, String>> paramAndMessages) {
         return ScriptAPI.say(this, speakers, paramAndMessages);
     }
 
     default BasicActionChain say(Tuple<Integer, String>... paramAndMessages) {
+        return say(List.of(paramAndMessages));
+    }
+
+    default BasicActionChain say(List<Tuple<Integer, String>> paramAndMessages) {
         return ScriptAPI.say(this, paramAndMessages);
     }
 
     default BasicActionChain say(Integer[] speakers, Integer[] params, String... messages) {
-        return ScriptAPI.say(this, speakers, params, messages);
+        return ScriptAPI.say(this, speakers, params, List.of(messages));
     }
 
     default BasicActionChain say(Integer[] speakers, int param, String... messages) {
-        return ScriptAPI.say(this, speakers, param, messages);
+        return ScriptAPI.say(this, speakers, param, List.of(messages));
     }
 
     default BasicActionChain say(int speakerTemplateId, int param, String... messages) {
-        return ScriptAPI.say(this, speakerTemplateId, param, messages);
+        return ScriptAPI.say(this, speakerTemplateId, param, List.of(messages));
     }
 
     default BasicActionChain say(int param, String... messages) {
-        return ScriptAPI.say(this, param, messages);
+        return ScriptAPI.say(this, param, List.of(messages));
     }
 
     default BasicActionChain say(String message, Object... objects) {
@@ -100,14 +111,26 @@ public interface SpeakingScript extends MessagingScript {
     // =================================================================================================================
 
     default IntegerActionChain askMenu(int speakerTemplateId, int param, String prompt, String... menuItems) {
+        return askMenu( speakerTemplateId, param, prompt, List.of(menuItems));
+    }
+
+    default IntegerActionChain askMenu(int speakerTemplateId, int param, String prompt, Collection<String> menuItems) {
         return ScriptAPI.askMenu(this, speakerTemplateId, param, prompt, menuItems);
     }
 
     default IntegerActionChain askMenu(int speakerTemplateId, String prompt, String... menuItems) {
+        return askMenu(speakerTemplateId, prompt, List.of(menuItems));
+    }
+
+    default IntegerActionChain askMenu(int speakerTemplateId, String prompt, Collection<String> menuItems) {
         return ScriptAPI.askMenu(this, speakerTemplateId, prompt, menuItems);
     }
 
     default IntegerActionChain askMenu(String prompt, String... menuItems) {
+        return askMenu(prompt, List.of(menuItems));
+    }
+
+    default IntegerActionChain askMenu(String prompt, Collection<String> menuItems) {
         return ScriptAPI.askMenu(this, prompt, menuItems);
     }
 
@@ -116,20 +139,36 @@ public interface SpeakingScript extends MessagingScript {
     }
 
     default void askMenu(String prompt, Tuple<String, BasicScriptAction>... options) {
+        askMenu(prompt, List.of(options));
+    }
+
+    default void askMenu(String prompt, List<Tuple<String, BasicScriptAction>> options) {
         ScriptAPI.askMenu(this, prompt, options);
     }
 
     // =================================================================================================================
 
-    default IntegerActionChain askAvatar(int speakerTemplateId, int param, String prompt, int... options) {
+    default IntegerActionChain askAvatar(int speakerTemplateId, int param, String prompt, Integer... options) {
+        return askAvatar(speakerTemplateId, param, prompt, List.of(options));
+    }
+
+    default IntegerActionChain askAvatar(int speakerTemplateId, int param, String prompt, Collection<Integer> options) {
         return ScriptAPI.askAvatar(this, speakerTemplateId, param, prompt, options);
     }
 
-    default IntegerActionChain askAvatar(int speakerTemplateId, String prompt, int... options) {
+    default IntegerActionChain askAvatar(int speakerTemplateId, String prompt, Integer... options) {
+        return askAvatar(speakerTemplateId, prompt, List.of(options));
+    }
+
+    default IntegerActionChain askAvatar(int speakerTemplateId, String prompt, Collection<Integer> options) {
         return ScriptAPI.askAvatar(this, speakerTemplateId, prompt, options);
     }
 
-    default IntegerActionChain askAvatar(String prompt, int... options) {
+    default IntegerActionChain askAvatar(String prompt, Integer... options) {
+        return askAvatar(prompt, List.of(options));
+    }
+
+    default IntegerActionChain askAvatar(String prompt, Collection<Integer> options) {
         return ScriptAPI.askAvatar(this, prompt, options);
     }
 
