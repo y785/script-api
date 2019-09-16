@@ -198,12 +198,9 @@ public abstract class BaseScript implements MoeScript {
         this.escapeEvent = null;
         this.nextResponse = null;
         this.nextAction = null;
-        this.done = true;
-
-        if (beforeRunEvents != null)
-            beforeRunEvents.clear();
-        if (afterRunEvents != null)
-            afterRunEvents.clear();
+        this.beforeRunEvents = null;
+        this.afterRunEvents = null;
+        this.done = false;
     }
 
     /**
