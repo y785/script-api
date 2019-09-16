@@ -490,10 +490,7 @@ public enum ScriptAPI {
                     log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
                 else
                     log.warn("Answer wasn't valid, ending: {}", a.intValue());
-                if (a.intValue() == -1)
-                    script.escape();
-                else
-                    script.end();
+                script.escape(); // todo, ask menu is always an escape?
             } else {
                 var sel = ((Integer)o);
                 var bad = sel == null || !options.contains(sel);
