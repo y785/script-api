@@ -47,7 +47,6 @@ import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.model.type.ScriptMessageType;
 import moe.maple.api.script.util.Moematter;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
-import moe.maple.api.script.util.builder.ScriptStringBuilder;
 import moe.maple.api.script.util.tuple.Tuple;
 import moe.maple.api.script.util.With;
 import org.slf4j.Logger;
@@ -532,7 +531,7 @@ public enum ScriptAPI {
 
     public static IntegerActionChain askMenu(MoeScript script, String prompt) {
         script.setScriptAction(null);
-        var options = Arrays.stream(ScriptMenuBuilder.splitIndices(prompt)).map(ScriptMenuBuilder::stripIndex).collect(Collectors.toSet());
+        var options = ScriptMenuBuilder.matchIndices(prompt).stream().map(ScriptMenuBuilder::parseMenuIndex).collect(Collectors.toSet());
         script.setScriptResponse(askMenuResponse(script, options));//prompt.length() - prompt.replace("#L", "").length() - 1
         script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, script.getSpeakerTemplateId(), 0, prompt),
                 () -> log.debug("User object isn't set, workflow is messy."));

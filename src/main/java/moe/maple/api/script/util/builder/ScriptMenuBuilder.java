@@ -25,7 +25,11 @@ package moe.maple.api.script.util.builder;
 import moe.maple.api.script.util.tuple.Tuple;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author umbreon22
@@ -148,11 +152,19 @@ public class ScriptMenuBuilder<Builder extends ScriptMenuBuilder<Builder>> exten
         return textBuilder.toString();
     }
 
-    public static int stripIndex(String menuLine) throws NumberFormatException {
+    public static int parseMenuIndex(String menuLine) throws IllegalArgumentException {
+        if(menuLine == null || menuLine.isEmpty()) throw new IllegalArgumentException("Cannot parse empty strings");
         int before = menuLine.indexOf("#L");
-        int after = menuLine.indexOf("#", before);
-        if(before < 0 || after < 0) throw new IllegalArgumentException("String must contain #L{number}#");
-        return Integer.parseInt(menuLine.substring(before, after));
+        if(before < 0) throw new IllegalArgumentException("Missing starting #L");
+        else before+=2;//Skipping #L in substring
+
+        int mid = menuLine.indexOf("#", before);
+        if(mid < before) throw new IllegalArgumentException("Missing middle #");
+
+        int after = menuLine.indexOf("#l", mid);
+        if(after < mid) throw new IllegalArgumentException("Missing closing #l");
+
+        return Integer.parseInt(menuLine.substring(before, mid));
     }
 
     /**
@@ -160,8 +172,14 @@ public class ScriptMenuBuilder<Builder extends ScriptMenuBuilder<Builder>> exten
      * @param fullMenuString Ex. "#L100# test #l\r\n#L101# test2 #l"
      * @return The client's expected menu index texts as an array
      */
-    public static String[] splitIndices(String fullMenuString) {
-        return fullMenuString.split("#L[^\"]+?#l");
+    private static Pattern menuIndexPattern = Pattern.compile("#L+\\d[^\"]+?#l", Pattern.MULTILINE);
+    public static List<String> matchIndices(String fullMenuString) {
+        var matcher = menuIndexPattern.matcher(fullMenuString);
+        var list = new LinkedList<String>();
+        while(matcher.find()) {
+            list.add(matcher.group());
+        }
+        return list;
     }
 
 
