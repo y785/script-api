@@ -103,6 +103,14 @@ public interface SpeakingScript extends MessagingScript {
         ScriptAPI.askYesNo(this, message, onYes, onNo);
     }
 
+    default void askYesNo(String message, BasicScriptAction onYes, String... noMsg) {
+        ScriptAPI.askYesNo(this, message, onYes, ()->say(noMsg));
+    }
+
+    default void askYesNo(String message, BasicScriptAction onYes, Collection<SayMessage> noMsg) {
+        ScriptAPI.askYesNo(this, message, onYes, ()->say(noMsg));
+    }
+
     // =================================================================================================================
 
     default void askAccept(String message, BasicScriptAction onYes) {
