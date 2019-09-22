@@ -26,18 +26,18 @@ import moe.maple.api.script.util.Moematter;
 
 public interface ScriptFormatter<Builder extends CharacterSequenceBuilder<Builder>> extends CharacterSequenceBuilder<Builder>  {
 
-    default Builder appendFormat(String format, Object... objects) {
+    default Builder appendf(String format, Object... objects) {
         append(Moematter.format(format, objects));
         return get();
     }
 
-    default Builder appendFormat(String format, Object object) {
+    default Builder appendf(String format, Object object) {
         append(Moematter.format(format, object));
         return get();
     }
 
 
-    default Builder appendFormattedNumber(Number number) {
+    default Builder appendWithLocale(Number number) {
         append(Moematter.formatWithLocale(number));
         return get();
     }
