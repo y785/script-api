@@ -64,23 +64,23 @@ public class ScriptStringBuilder extends ScriptMenuBuilder<ScriptStringBuilder> 
     }
 
     public ScriptStringBuilder appendWithColor(FontColor color, String tempColoredText) {
-        if(currentColor == color) {
+        if (currentColor == color) {
             append(tempColoredText);
         } else {
             append(color.prefix);
             append(tempColoredText);
-            append(currentColor.prefix);
+            append(getColorSafe(FontColor.BLACK).prefix);
         }
         return this;
     }
 
     public ScriptStringBuilder appendWithStyle(FontStyle style, String tempStyledText) {
-        if(currentStyle == style) {
-            append(tempStyledText);
-        } else {
+        if (currentStyle != style) {
             append(style.prefix);
             append(tempStyledText);
-            append(currentStyle.prefix);
+            append(getStyleSafe(FontStyle.NORMAL).prefix);
+        } else {
+            append(tempStyledText);
         }
         return this;
     }
