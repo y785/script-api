@@ -22,6 +22,8 @@
 
 package moe.maple.api.script.util.builder;
 
+import moe.maple.api.script.util.Moematter;
+
 public class ScriptStringBuilder extends ScriptMenuBuilder<ScriptStringBuilder> {
 
     private final StringBuilder textBuilder;
@@ -89,10 +91,37 @@ public class ScriptStringBuilder extends ScriptMenuBuilder<ScriptStringBuilder> 
         if(style != FontStyle.NONE) textBuilder.append(style.prefix);
         if(color != FontColor.NONE) textBuilder.append(color.prefix);
         textBuilder.append(text);
-        if(this.currentStyle != style && this.currentStyle != FontStyle.NONE) {
-            textBuilder.append(this.currentStyle.prefix);
+        if(this.currentStyle != style) {
+            textBuilder.append(getStyleSafe(FontStyle.NORMAL).prefix);
+        }
+        if(this.currentColor != color) {
+            textBuilder.append(getColorSafe(FontColor.BLACK).prefix);
         }
         return this;
+    }
+
+    public ScriptStringBuilder appendNpcName(Number npcTemplateId) {
+        return append(Moematter.npc(npcTemplateId));
+    }
+
+    public ScriptStringBuilder appendFieldName(Number fieldTemplateId) {
+        return append(Moematter.field(fieldTemplateId));
+    }
+
+    public ScriptStringBuilder appendMobName(Number mobTemplateId) {
+        return append(Moematter.mob(mobTemplateId));
+    }
+
+    public ScriptStringBuilder appendSkillIcon(Number skillId) {
+        return append(Moematter.skill(skillId));
+    }
+
+    public ScriptStringBuilder appendSkillName(Number skillId) {
+        return append(Moematter.skillName(skillId));
+    }
+
+    public ScriptStringBuilder appendItemIcon(Number itemId) {
+        return append(Moematter.item(itemId));
     }
 
     /**
