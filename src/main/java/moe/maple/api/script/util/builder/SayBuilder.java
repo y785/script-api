@@ -9,6 +9,7 @@ import moe.maple.api.script.model.object.field.NpcObject;
 import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.model.type.ScriptMessageParameters;
 import moe.maple.api.script.model.type.ScriptSpeakerType;
+import moe.maple.api.script.util.Moematter;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -60,6 +61,11 @@ public class SayBuilder {
         for(String msg : messages) {
             this.saying.add(new SayMessage(speakerType, speakerTemplate, replaceTemplate, parameters, msg));
         }
+        return this;
+    }
+
+    public SayBuilder sayf(String message, Object... objects) {
+        this.saying.add(new SayMessage(speakerType, speakerTemplate, replaceTemplate, parameters, Moematter.format(message, objects)));
         return this;
     }
 
