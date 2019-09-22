@@ -61,6 +61,10 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
         return exchange(money, List.of(itemTemplateIdAndCount));
     }
 
+    default boolean exchange(int money, Integer... itemTemplateIdAndCount) {
+        return exchange(money, Tuple.listOf(itemTemplateIdAndCount));
+    }
+
     boolean exchange(int money, Collection<Tuple<Integer, Integer>> itemTemplateIdAndCount);
 
     // =================================================================================================================
