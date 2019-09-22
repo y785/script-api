@@ -22,11 +22,9 @@
 
 package moe.maple.api.script.util.tuple;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public interface Tuple<L, R> {
     L left();
@@ -48,6 +46,34 @@ public interface Tuple<L, R> {
             action.accept(tuple.left(), tuple.right());
         }
     }
+
+    static <T> void flatForEach(Iterable<Tuple<T, T>> tuples, Consumer<? super T> action) {
+        for(var tuple : tuples) {
+            action.accept(tuple.left());
+            action.accept(tuple.right());
+        }
+    }
+
+    @SafeVarargs
+    static <T> List<T> flatten(Tuple<T, T>... tuples) {
+        List<T> list = new ArrayList<>(tuples.length*2);
+        for (int i = 0, tuplesLength = tuples.length; i < tuplesLength; i++) {
+            Tuple<T, T> tuple = tuples[i];
+            list.add(tuple.left());
+            list.add(tuple.right());
+        }
+        return list;
+    }
+
+    static <T> List<T> flatten(Collection<Tuple<T, T>> tuples) {
+        List<T> list = new ArrayList<>(tuples.size()*2);
+        for (Tuple<T, T> tuple : tuples) {
+            list.add(tuple.left());
+            list.add(tuple.right());
+        }
+        return list;
+    }
+
 
     //========================================== Caution: memes below =================================================
 
@@ -73,6 +99,11 @@ public interface Tuple<L, R> {
             list.add(new ImmutableTuple<>(left, right));
         }
         return list;
+    }
+
+    @SafeVarargs
+    static <V> List<Tuple<V, V>> listOf(V... args) {
+        return unsafeListOf((Object[]) args);
     }
 
     static <L, R> List<Tuple<L, R>> listOf(L l1, R r1, L l2, R r2) {
