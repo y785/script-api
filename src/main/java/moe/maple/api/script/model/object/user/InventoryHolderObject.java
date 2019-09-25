@@ -247,6 +247,19 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
 
     /**
      * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
+    /**
+     * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
+     * @return an inventory's slot : item map
+     */
+    default Map<Short, InventorySlotObject> getItemsMap(int inventoryType) {
+        return streamItems(inventoryType).collect(Collectors.toMap(InventorySlotObject::getPosition, Function.identity()));
+    }
+
+    default Map<Short, InventorySlotObject> getItemsEquipMap() { return getItemsMap(1);}
+    default Map<Short, InventorySlotObject> getItemsConsumeMap() { return getItemsMap(2);}
+    default Map<Short, InventorySlotObject> getItemsInstallMap() { return getItemsMap(3);}
+    default Map<Short, InventorySlotObject> getItemsEtcMap() { return getItemsMap(4);}
+    default Map<Short, InventorySlotObject> getItemsCashMap() { return getItemsMap(5);}
 
     default Collection<InventorySlotObject> getItemsEquip() { return getItems(1); }
     default Collection<InventorySlotObject> getItemsConsume() { return getItems(2); }
