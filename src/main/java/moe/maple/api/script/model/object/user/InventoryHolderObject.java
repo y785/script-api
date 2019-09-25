@@ -241,10 +241,12 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
      * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
      * @return the inventory's item collection
      */
-    Collection<InventorySlotObject> getItems(int inventoryType);
+    default Collection<InventorySlotObject> getItems(int inventoryType) {
+        return streamItems(inventoryType).collect(Collectors.toSet());
+    }
 
-    default Stream<InventorySlotObject> streamItems(int inventoryType) { return getItems(inventoryType).stream(); }
-    default Stream<InventorySlotObject> streamItems(int inventoryType, Predicate<InventorySlotObject> filter) { return streamItems(inventoryType).filter(filter); }
+    /**
+     * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
 
     default Collection<InventorySlotObject> getItemsEquip() { return getItems(1); }
     default Collection<InventorySlotObject> getItemsConsume() { return getItems(2); }
@@ -252,6 +254,12 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
     default Collection<InventorySlotObject> getItemsEtc() { return getItems(4); }
     default Collection<InventorySlotObject> getItemsCash() { return getItems(5); }
 
-    default Stream<InventorySlotObject> streamItemsEquipped() { return getItemsEquipped().stream().filter(i -> i.getPosition() <= 0); }
+    /**
+     * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
+     * @return A stream of {@link InventorySlotObject}
+     */
+    Stream<InventorySlotObject> streamItems(int inventoryType);
+    default Stream<InventorySlotObject> streamItems(int inventoryType, Predicate<InventorySlotObject> filter) { return streamItems(inventoryType).filter(filter); }
+    default Stream<InventorySlotObject> streamItemsEquipped() { return streamItems(1).filter(i -> i.getPosition() <= 0); }
     default Collection<InventorySlotObject> getItemsEquipped() { return streamItemsEquipped().collect(Collectors.toList()); }
 }
