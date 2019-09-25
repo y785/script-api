@@ -86,44 +86,48 @@ public class ScriptMenuBuilder<Builder extends ScriptMenuBuilder<Builder>> exten
 
     public Builder appendMenu(String... options) {
         for(int i = 0; i < options.length; i++) {
-            appendMenuItem(runningMenuIndex++, options[i]);
+            appendMenuItemLine(runningMenuIndex++, options[i]);
         }
         return get();
     }
 
     public Builder appendMenu(Iterable<String> options) {
         for(String option : options) {
-            appendMenuItem(runningMenuIndex++, option);
+            appendMenuItemLine(runningMenuIndex++, option);
         }
         return get();
     }
 
     public Builder appendMenu(Collection<Tuple<Integer, String>> options) {
         for (Tuple<Integer, String> option : options) {
-            appendMenuItem(option.left(), option.right());
+            appendMenuItemLine(option.left(), option.right());
         }
         return get();
     }
 
     public <T> Builder appendMenu(Function<T, String> formatter, T... options) {
         for (T obj : options) {
-            appendMenuItem(runningMenuIndex++, formatter.apply(obj));
+            appendMenuItemLine(runningMenuIndex++, formatter.apply(obj));
         }
         return get();
     }
 
     public <T> Builder appendMenu(Function<T, String> formatter, Iterable<T> options) {
         for (T obj : options) {
-            appendMenuItem(runningMenuIndex++, formatter.apply(obj));
+            appendMenuItemLine(runningMenuIndex++, formatter.apply(obj));
         }
         return get();
     }
 
-    private Builder appendMenuItem(int index, String option) {
+    public Builder appendMenuItem(int index, String option) {
         if(isValidOption(option)) {
-            textBuilder.append("#L").append(index).append("#").append(option).append("#l\r\n");
+            textBuilder.append("#L").append(index).append("#").append(option).append("#l");
         }
         return get();
+    }
+
+    public Builder appendMenuItemLine(int index, String option) {
+        return appendMenuItem(index, option).append("\r\n");
     }
 
     public Builder appendMenuWith(FontStyle menuStyle, FontColor menuColor, String... options) {
