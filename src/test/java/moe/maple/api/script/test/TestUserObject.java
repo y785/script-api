@@ -31,6 +31,7 @@ import moe.maple.api.script.model.object.user.UserObject;
 import moe.maple.api.script.util.tuple.Tuple;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -477,12 +478,17 @@ public class TestUserObject implements UserObject<Integer> {
 
     @Override
     public Collection<InventorySlotObject> getItems(int inventoryType) {
-        return null;
+        return List.of();
     }
 
     @Override
-    public Stream<InventorySlotObject> streamItemsEquipped() {
-        return null;
+    public Optional<InventorySlotObject> getItem(int inventoryType, short slot) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Stream<InventorySlotObject> streamItems(int inventoryType) {
+        return Stream.of();
     }
 
     @Override
