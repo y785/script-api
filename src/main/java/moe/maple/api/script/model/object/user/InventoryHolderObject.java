@@ -238,10 +238,10 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
 
     /**
      * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
-     * @return the inventory's item collection
+     * @return An immutable inventory collection
      */
     default Collection<InventorySlotObject> getItems(int inventoryType) {
-        return streamItems(inventoryType).collect(Collectors.toSet());
+        return streamItems(inventoryType).collect(Collectors.toUnmodifiableSet());
     }
 
     /**
