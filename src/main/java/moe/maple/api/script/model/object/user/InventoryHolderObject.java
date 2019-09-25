@@ -25,9 +25,8 @@ package moe.maple.api.script.model.object.user;
 import moe.maple.api.script.model.object.ScriptObject;
 import moe.maple.api.script.util.tuple.Tuple;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -247,6 +246,16 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
 
     /**
      * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
+     * @param slot the inventory slot position
+     * @return an item at this slot, if it exists
+     */
+    Optional<InventorySlotObject> getItem(int inventoryType, short slot);
+    default Optional<InventorySlotObject> getItemEquip(short slot) { return getItem(1, slot);}
+    default Optional<InventorySlotObject> getItemConsume(byte slot) { return getItem(2, slot);}
+    default Optional<InventorySlotObject> getItemInstall(byte slot) { return getItem(3, slot);}
+    default Optional<InventorySlotObject> getItemEtc(byte slot) { return getItem(4, slot);}
+    default Optional<InventorySlotObject> getItemCash(byte slot) { return getItem(5, slot);}
+
     /**
      * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
      * @return an inventory's slot : item map
