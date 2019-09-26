@@ -54,7 +54,7 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
 
     Optional<GuildObject> getGuild();
     Optional<PartyObject> getParty();
-    QuestHolderObject<T> getQuestHolder();
+    QuestHolderObject getQuestHolder();
 
     default boolean isInGuild() { return getGuild().isPresent(); }
     default boolean isInParty() { return getParty().isPresent(); }

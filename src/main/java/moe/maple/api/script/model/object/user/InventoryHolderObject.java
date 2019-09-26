@@ -25,9 +25,8 @@ package moe.maple.api.script.model.object.user;
 import moe.maple.api.script.model.object.ScriptObject;
 import moe.maple.api.script.util.tuple.Tuple;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -59,6 +58,10 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
      */
     default boolean exchange(int money, Tuple<Integer, Integer>... itemTemplateIdAndCount) {
         return exchange(money, List.of(itemTemplateIdAndCount));
+    }
+
+    default boolean exchange(int money, Integer... itemTemplateIdAndCount) {
+        return exchange(money, Tuple.listOf(itemTemplateIdAndCount));
     }
 
     boolean exchange(int money, Collection<Tuple<Integer, Integer>> itemTemplateIdAndCount);
@@ -235,12 +238,37 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
 
     /**
      * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
-     * @return the inventory's item collection
+     * @return An immutable inventory collection
      */
-    Collection<InventorySlotObject> getItems(int inventoryType);
+    default Collection<InventorySlotObject> getItems(int inventoryType) {
+        return streamItems(inventoryType).collect(Collectors.toUnmodifiableSet());
+    }
 
-    default Stream<InventorySlotObject> streamItems(int inventoryType) { return getItems(inventoryType).stream(); }
-    default Stream<InventorySlotObject> streamItems(int inventoryType, Predicate<InventorySlotObject> filter) { return streamItems(inventoryType).filter(filter); }
+    /**
+     * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
+     * @param slot the inventory slot position
+     * @return an item at this slot, if it exists
+     */
+    Optional<InventorySlotObject> getItem(int inventoryType, short slot);
+    default Optional<InventorySlotObject> getItemEquip(short slot) { return getItem(1, slot);}
+    default Optional<InventorySlotObject> getItemConsume(byte slot) { return getItem(2, slot);}
+    default Optional<InventorySlotObject> getItemInstall(byte slot) { return getItem(3, slot);}
+    default Optional<InventorySlotObject> getItemEtc(byte slot) { return getItem(4, slot);}
+    default Optional<InventorySlotObject> getItemCash(byte slot) { return getItem(5, slot);}
+
+    /**
+     * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
+     * @return an inventory's slot : item map
+     */
+    default Map<Short, InventorySlotObject> getItemsMap(int inventoryType) {
+        return streamItems(inventoryType).collect(Collectors.toMap(InventorySlotObject::getPosition, Function.identity()));
+    }
+
+    default Map<Short, InventorySlotObject> getItemsEquipMap() { return getItemsMap(1);}
+    default Map<Short, InventorySlotObject> getItemsConsumeMap() { return getItemsMap(2);}
+    default Map<Short, InventorySlotObject> getItemsInstallMap() { return getItemsMap(3);}
+    default Map<Short, InventorySlotObject> getItemsEtcMap() { return getItemsMap(4);}
+    default Map<Short, InventorySlotObject> getItemsCashMap() { return getItemsMap(5);}
 
     default Collection<InventorySlotObject> getItemsEquip() { return getItems(1); }
     default Collection<InventorySlotObject> getItemsConsume() { return getItems(2); }
@@ -248,6 +276,12 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
     default Collection<InventorySlotObject> getItemsEtc() { return getItems(4); }
     default Collection<InventorySlotObject> getItemsCash() { return getItems(5); }
 
-    default Stream<InventorySlotObject> streamItemsEquipped() { return getItemsEquipped().stream().filter(i -> i.getPosition() <= 0); }
+    /**
+     * @param inventoryType Inventory Type as an integer, {@link #increaseSlotCount(int, int)}
+     * @return A stream of {@link InventorySlotObject}
+     */
+    Stream<InventorySlotObject> streamItems(int inventoryType);
+    default Stream<InventorySlotObject> streamItems(int inventoryType, Predicate<InventorySlotObject> filter) { return streamItems(inventoryType).filter(filter); }
+    default Stream<InventorySlotObject> streamItemsEquipped() { return streamItems(1).filter(i -> i.getPosition() <= 0); }
     default Collection<InventorySlotObject> getItemsEquipped() { return streamItemsEquipped().collect(Collectors.toList()); }
 }

@@ -147,25 +147,25 @@ public interface MoeScript {
 
     // =================================================================================================================
 
-    void setInventorySlotObject(InventorySlotObject itemSlot);
-    void setServerObject(ServerObject object);
-    void setFieldObject(FieldObject object);
-    void setFieldSetObject(FieldSetObject object);
-    void setNpcObject(NpcObject object);
-    void setPortalObject(PortalObject object);
-    void setQuestObject(QuestObject object);
-    void setReactorObject(ReactorObject object);
-    void setUserObject(UserObject object);
+    void setInventorySlotObject(InventorySlotObject<?> itemSlot);
+    void setServerObject(ServerObject<?> object);
+    void setFieldObject(FieldObject<?> object);
+    void setFieldSetObject(FieldSetObject<?> object);
+    void setNpcObject(NpcObject<?> object);
+    void setPortalObject(PortalObject<?> object);
+    void setQuestObject(QuestObject<?> object);
+    void setReactorObject(ReactorObject<?> object);
+    void setUserObject(UserObject<?> object);
 
-    Optional<InventorySlotObject> getInventorySlotObject();
-    Optional<ServerObject> getServerObject();
-    Optional<FieldObject> getFieldObject();
-    Optional<FieldSetObject> getFieldSetObject();
-    Optional<NpcObject> getNpcObject();
-    Optional<PortalObject> getPortalObject();
-    Optional<QuestObject> getQuestObject();
-    Optional<ReactorObject> getReactorObject();
-    Optional<UserObject> getUserObject();
+    Optional<InventorySlotObject<?>> getInventorySlotObject();
+    Optional<ServerObject<?>> getServerObject();
+    Optional<FieldObject<?>> getFieldObject();
+    Optional<FieldSetObject<?>> getFieldSetObject();
+    Optional<NpcObject<?>> getNpcObject();
+    Optional<PortalObject<?>> getPortalObject();
+    Optional<QuestObject<?>> getQuestObject();
+    Optional<ReactorObject<?>> getReactorObject();
+    Optional<UserObject<?>> getUserObject();
 
     /**
      * Mainly used for packets. Maybe scripts will use this in say prompts or messages.

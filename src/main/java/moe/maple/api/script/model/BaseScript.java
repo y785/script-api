@@ -57,15 +57,15 @@ public abstract class BaseScript implements MoeScript {
     private List<ScriptEvent> npEvents;
     private ScriptEvent escapeEvent;
 
-    protected ServerObject server;
-    protected FieldObject field;
-    protected FieldSetObject fieldset;
-    protected NpcObject npc;
-    protected PortalObject portal;
-    protected QuestObject quest;
-    protected ReactorObject reactor;
-    protected InventorySlotObject item;
-    protected UserObject user;
+    protected ServerObject<?> server;
+    protected FieldObject<?> field;
+    protected FieldSetObject<?> fieldset;
+    protected NpcObject<?> npc;
+    protected PortalObject<?> portal;
+    protected QuestObject<?> quest;
+    protected ReactorObject<?> reactor;
+    protected InventorySlotObject<?> item;
+    protected UserObject<?> user;
 
     private boolean done;
 
@@ -310,92 +310,92 @@ public abstract class BaseScript implements MoeScript {
 
 
     @Override
-    public void setServerObject(ServerObject object) {
+    public void setServerObject(ServerObject<?> object) {
         this.server = object;
     }
 
     @Override
-    public void setFieldObject(FieldObject field) {
+    public void setFieldObject(FieldObject<?> field) {
         this.field = field;
     }
 
     @Override
-    public void setFieldSetObject(FieldSetObject fieldset) {
+    public void setFieldSetObject(FieldSetObject<?> fieldset) {
         this.fieldset = fieldset;
     }
 
     @Override
-    public void setNpcObject(NpcObject npc) {
+    public void setNpcObject(NpcObject<?> npc) {
         this.npc = npc;
     }
 
     @Override
-    public void setPortalObject(PortalObject portal) {
+    public void setPortalObject(PortalObject<?> portal) {
         this.portal = portal;
     }
 
     @Override
-    public void setQuestObject(QuestObject quest) {
+    public void setQuestObject(QuestObject<?> quest) {
         this.quest = quest;
     }
 
     @Override
-    public void setInventorySlotObject(InventorySlotObject item) {
+    public void setInventorySlotObject(InventorySlotObject<?> item) {
         this.item = item;
     }
 
     @Override
-    public void setReactorObject(ReactorObject reactor) {
+    public void setReactorObject(ReactorObject<?> reactor) {
         this.reactor = reactor;
     }
 
     @Override
-    public void setUserObject(UserObject user) {
+    public void setUserObject(UserObject<?> user) {
         this.user = user;
     }
 
     @Override
-    public Optional<InventorySlotObject> getInventorySlotObject() {
+    public Optional<InventorySlotObject<?>> getInventorySlotObject() {
         return Optional.ofNullable(item);
     }
 
     @Override
-    public Optional<ServerObject> getServerObject() {
+    public Optional<ServerObject<?>> getServerObject() {
         return Optional.ofNullable(server);
     }
 
     @Override
-    public Optional<FieldObject> getFieldObject() {
+    public Optional<FieldObject<?>> getFieldObject() {
         return Optional.ofNullable(field);
     }
 
     @Override
-    public Optional<FieldSetObject> getFieldSetObject() {
+    public Optional<FieldSetObject<?>> getFieldSetObject() {
         return Optional.ofNullable(fieldset);
     }
 
     @Override
-    public Optional<NpcObject> getNpcObject() {
+    public Optional<NpcObject<?>> getNpcObject() {
         return Optional.ofNullable(npc);
     }
 
     @Override
-    public Optional<PortalObject> getPortalObject() {
+    public Optional<PortalObject<?>> getPortalObject() {
         return Optional.ofNullable(portal);
     }
 
     @Override
-    public Optional<QuestObject> getQuestObject() {
+    public Optional<QuestObject<?>> getQuestObject() {
         return Optional.ofNullable(quest);
     }
 
     @Override
-    public Optional<ReactorObject> getReactorObject() {
+    public Optional<ReactorObject<?>> getReactorObject() {
         return Optional.ofNullable(reactor);
     }
 
     @Override
-    public Optional<UserObject> getUserObject() {
+    public Optional<UserObject<?>> getUserObject() {
         return Optional.ofNullable(user);
     }
 }
