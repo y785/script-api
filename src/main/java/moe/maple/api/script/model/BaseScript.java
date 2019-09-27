@@ -69,6 +69,8 @@ public abstract class BaseScript implements MoeScript {
 
     private boolean done;
 
+    private boolean awaitingRespnse;
+
     public BaseScript() {
         this.expected = "";
     }
@@ -151,11 +153,13 @@ public abstract class BaseScript implements MoeScript {
         doEvents(startScriptEvents);
 
         if (ScriptAPI.INSTANCE.getPreferences().shouldCatchExceptions()) {
+            log.debug("Starting with exception handling...");
             With.silence(this::startMaybeException, (e) -> {
                 log.error("Oh no! A script({})({}) threw an exception during start.", name(), expected, e);
                 end();
             });
         } else {
+            log.debug("Starting without exception handling...");
             startMaybeException();
         }
 
@@ -210,6 +214,8 @@ public abstract class BaseScript implements MoeScript {
         var act = nextAction;
         var resp = nextResponse;
 
+        this.awaitingRespnse = false;
+
         if (isNextResponseSet()) {
             doEvents(beforeRunEvents);
             resp.response(type, action, response);
@@ -256,6 +262,9 @@ public abstract class BaseScript implements MoeScript {
 
     @Override
     public void setScriptAction(ScriptAction action) {
+        if (awaitingRespnse)
+            throw new IllegalArgumentException("Already waiting for a response...");
+        this.awaitingRespnse = true;
         this.nextAction = action;
     }
 

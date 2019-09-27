@@ -38,8 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApiTest {
 
@@ -171,5 +170,28 @@ public class ApiTest {
 
         assertTrue(test.isDone());
         assertTrue(!test.isPaused());
+    }
+
+    @Test
+    public void apiFlowTest() {
+        final String SCRIPT_NAME = "ApiLogic";
+
+        @Script(name = SCRIPT_NAME)
+        class NpcScriptTest extends NpcScript {
+            @Override
+            protected void work() {
+                say("1");
+                assertThrows(IllegalArgumentException.class, () -> {
+                    say("2");
+                });
+            }
+        }
+
+        var test = new NpcScriptTest();
+        test.setUserObject(new TestUserObject());
+        assertEquals(test.name(), SCRIPT_NAME);
+        test.start();
+
+
     }
 }

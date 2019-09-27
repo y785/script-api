@@ -510,11 +510,14 @@ public enum ScriptAPI {
     public static IntegerActionChain askMenu(MoeScript script, int speakerTemplateId, int param, String prompt, Collection<String> menuItems) {
         var builder = new ScriptMenuBuilder<>();
         builder.append(prompt).newLine().blue().appendMenu(menuItems);
-        script.setScriptAction(null);
-        var keys = IntStream.range(0, menuItems.size()).boxed().collect(Collectors.toSet());
-        script.setScriptResponse(askMenuResponse(script, keys));
+        var built = builder.toString();
 
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, speakerTemplateId, param, builder.toString()),
+        script.setScriptAction(null);
+
+        var options = ScriptMenuBuilder.matchIndices(built).stream().map(ScriptMenuBuilder::parseMenuIndex).collect(Collectors.toSet());
+        script.setScriptResponse(askMenuResponse(script, options));
+
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, speakerTemplateId, param, built),
                 () -> log.debug("User object isn't set, workflow is messy."));
 
         return script::setScriptAction;
