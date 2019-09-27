@@ -488,6 +488,8 @@ public enum ScriptAPI {
             if (t.intValue() != real || a.intValue() != 1) {
                 if (t.intValue() != real)
                     log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
+                else if (a.intValue() == 0)
+                    log.debug("Answer escaped, escaping: {}", a.intValue());
                 else
                     log.warn("Answer wasn't valid, ending: {}", a.intValue());
                 script.escape(); // todo, ask menu is always an escape?

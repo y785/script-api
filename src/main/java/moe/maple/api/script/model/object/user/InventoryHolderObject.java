@@ -187,7 +187,7 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
      * @param inventoryType @see {@link #increaseSlotCount(int, int)}
      * @return # of filled slots
      */
-    int getHoldCount(int inventoryType);
+    default int getHoldCount(int inventoryType) { return (int) (getSlotCount(inventoryType) - streamItems(inventoryType).count()); }
 
     /**
      * Retrieves the # of accessible slots in an inventory. (Default is typically 24)
