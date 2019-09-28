@@ -30,11 +30,11 @@ public class Exchange implements Iterable<Tuple<Integer, Integer>> {
 
     private final int money;
 
-    private final Set<Tuple<Integer, Integer>> items;
+    private final List<Tuple<Integer, Integer>> items;
 
     public Exchange(int money, Collection<Tuple<Integer, Integer>> itemTemplateIdAndCount) {
         this.money = money;
-        this.items = new HashSet<>(itemTemplateIdAndCount);
+        this.items = new ArrayList<>(itemTemplateIdAndCount);
     }
 
     @SafeVarargs
@@ -45,7 +45,7 @@ public class Exchange implements Iterable<Tuple<Integer, Integer>> {
     public Exchange(int money, Tuple<Integer, Integer> item) {
         this.money = money;
 
-        this.items = new HashSet<>(1);
+        this.items = new ArrayList<>(1);
         this.items.add(item);
     }
 
@@ -55,12 +55,12 @@ public class Exchange implements Iterable<Tuple<Integer, Integer>> {
 
     public Exchange(int money) {
         this.money = money;
-        this.items = Collections.emptySet();
+        this.items = Collections.emptyList();
     }
 
     public int getMoney() { return money; }
 
-    public Set<Tuple<Integer, Integer>> getItems() { return Collections.unmodifiableSet(items); }
+    public List<Tuple<Integer, Integer>> getItems() { return Collections.unmodifiableList(items); }
 
     @Override
     public Iterator<Tuple<Integer, Integer>> iterator() {
