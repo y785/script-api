@@ -46,6 +46,10 @@ public interface SpeakingScript extends MessagingScript {
         getUserObject().ifPresentOrElse(u -> u.exchange(onTrue, onFalse, money, itemId, itemCount), onFalse::act);
     }
 
+    default void exchange(BasicScriptAction onTrue, String onFalseMessage, int money, int itemId, int itemCount) {
+        exchange(onTrue, () -> say(onFalseMessage), money, itemId, itemCount);
+    }
+
     default void exchange(BasicScriptAction onFalse, int money, int itemId, int itemCount) {
         exchange(() -> {}, onFalse, money, itemId, itemCount);
     }
