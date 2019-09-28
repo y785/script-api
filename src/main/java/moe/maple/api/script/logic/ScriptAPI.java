@@ -28,6 +28,7 @@ import moe.maple.api.script.logic.chain.IntegerActionChain;
 import moe.maple.api.script.logic.chain.StringActionChain;
 import moe.maple.api.script.logic.response.SayResponse;
 import moe.maple.api.script.model.ScriptPreferences;
+import moe.maple.api.script.model.helper.MenuItem;
 import moe.maple.api.script.model.messenger.*;
 import moe.maple.api.script.model.messenger.ask.*;
 import moe.maple.api.script.model.messenger.effect.field.FieldObjectMessenger;
@@ -47,6 +48,7 @@ import moe.maple.api.script.model.MoeScript;
 import moe.maple.api.script.model.type.ScriptMessageType;
 import moe.maple.api.script.util.Moematter;
 import moe.maple.api.script.util.builder.ScriptMenuBuilder;
+import moe.maple.api.script.util.builder.ScriptStringBuilder;
 import moe.maple.api.script.util.tuple.Tuple;
 import moe.maple.api.script.util.With;
 import org.slf4j.Logger;
@@ -540,37 +542,41 @@ public enum ScriptAPI {
         return script::setScriptAction;
     }
 
-    public static void askMenu(MoeScript script, String prompt, List<Tuple<String, BasicScriptAction>> options) {
+    public static void askMenu(MoeScript script, String prompt, MenuItem... items) {
         script.setScriptAction(null);
-        var builder = new ScriptMenuBuilder<>().append(prompt).newLine().blue().appendMenu(Tuple::left, options);
-        var keys = IntStream.range(0, options.size()).boxed().collect(Collectors.toSet());
-        if(!keys.isEmpty()) {
-            script.setScriptResponse((t, a, o) -> {
-                var sel = ((Integer)o);
-                var bad = sel == null || !keys.contains(sel);
-                var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKMENU);
-                if (t.intValue() != real || bad || a.intValue() != 1) {
-                    if (bad)
-                        log.debug("Value mismatch: val {} keys {}", sel, keys);
-                    else if (t.intValue() != real)
-                        log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
-                    else
-                        log.debug("Answer is invalid: {}", a);
-                    if (a.intValue() == -1)
-                        script.escape();
-                    else
-                        script.end();
-                } else {
-                    script.setScriptResponse(null);
-                    script.setScriptAction(options.get(sel).right());
-                    script.resume(t, a, o);
-                }
-            });
+
+        var ssb = new ScriptStringBuilder().append(prompt).blue().newLine();
+        var actionMap = new HashMap<Integer, BasicScriptAction>();
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            actionMap.put(i, item.action());
+            ssb.appendMenuItemLine(i, item.message());
         }
+        var options = IntStream.range(0, items.length).boxed().collect(Collectors.toUnmodifiableSet());
+        script.setScriptResponse((t, a, o) -> {
+            var sel = ((Integer)o);
+            var bad = sel == null || !options.contains(sel);
+            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKMENU);
+            if (t.intValue() != real || bad || a.intValue() != 1) {
+                if (bad)
+                    log.debug("Value mismatch: val {} keys {}", sel, options);
+                else if (t.intValue() != real)
+                    log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
+                else
+                    log.debug("Answer is invalid: {}", a);
+                if (a.intValue() == -1)
+                    script.escape();
+                else
+                    script.end();
+            } else {
+                script.setScriptResponse(null);
+                script.setScriptAction(actionMap.get(sel));
+                script.resume(t, a, o);
+            }
+        });
 
         var speaker = script.getSpeakerTemplateId();
-
-        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, speaker, 0, builder.toString()),
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskMenu.send(obj, speaker, 0, ssb.toString()),
                 () -> log.debug("User object isn't set, workflow is messy."));
     }
 

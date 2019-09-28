@@ -28,6 +28,7 @@ import moe.maple.api.script.logic.chain.BasicActionChain;
 import moe.maple.api.script.logic.chain.IntegerActionChain;
 import moe.maple.api.script.logic.chain.StringActionChain;
 import moe.maple.api.script.model.helper.Exchange;
+import moe.maple.api.script.model.helper.MenuItem;
 import moe.maple.api.script.model.messenger.say.SayMessage;
 import moe.maple.api.script.util.Moematter;
 import moe.maple.api.script.util.tuple.Tuple;
@@ -198,11 +199,7 @@ public interface SpeakingScript extends MessagingScript {
         return ScriptAPI.askMenu(this, prompt);
     }
 
-    default void askMenu(String prompt, Tuple<String, BasicScriptAction>... options) {
-        askMenu(prompt, List.of(options));
-    }
-
-    default void askMenu(String prompt, List<Tuple<String, BasicScriptAction>> options) {
+    default void askMenu(String prompt, MenuItem... options) {
         ScriptAPI.askMenu(this, prompt, options);
     }
 
