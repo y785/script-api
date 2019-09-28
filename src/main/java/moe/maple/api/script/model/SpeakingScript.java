@@ -54,6 +54,10 @@ public interface SpeakingScript extends MessagingScript {
         exchange(() -> {}, onFalse, money, itemId, itemCount);
     }
 
+    default void exchange(String onTrueMessage, String onFalseMessage, int money, int itemId, int itemCount) {
+        exchange(() -> say(onTrueMessage), () -> say(onFalseMessage), money, itemId, itemCount);
+    }
+
     default void exchange(String onFalseMessage, int money, int itemId, int itemCount) {
         exchange(() -> {}, () -> say(onFalseMessage), money, itemId, itemCount);
     }

@@ -24,6 +24,8 @@ package moe.maple.api.script.model.object.user;
 
 import moe.maple.api.script.model.object.ScriptObject;
 
+import java.time.Instant;
+
 /**
  * This is a script proxy for quest objects.
  * @param <T> your implementation of quest.

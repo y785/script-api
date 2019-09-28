@@ -37,6 +37,8 @@ public interface FieldSetObject<T> extends ScriptObject<T> {
     String getVar(String name);
     void setVar(String name, String value);
 
+    int getUserCount();
+
     /**
      * Attempts to enter the FieldSet.
      * @param characterId
