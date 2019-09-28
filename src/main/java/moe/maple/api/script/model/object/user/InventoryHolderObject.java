@@ -22,6 +22,10 @@
 
 package moe.maple.api.script.model.object.user;
 
+import moe.maple.api.script.logic.ScriptAPI;
+import moe.maple.api.script.logic.action.BasicScriptAction;
+import moe.maple.api.script.logic.chain.BasicActionChain;
+import moe.maple.api.script.model.helper.Exchange;
 import moe.maple.api.script.model.object.ScriptObject;
 import moe.maple.api.script.util.tuple.Tuple;
 
@@ -47,6 +51,26 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
      */
     boolean exchange(int money, int itemId, int itemCount);
 
+    boolean exchange(Exchange exchange);
+
+    default void exchange(BasicScriptAction onTrue, BasicScriptAction onFalse, int money, int itemId, int itemCount) {
+        if (exchange(money, itemId, itemCount)) onTrue.act();
+        else onFalse.act();
+    }
+
+    default void exchange(BasicScriptAction onFalse, int money, int itemId, int itemCount) {
+        exchange(() -> { }, onFalse, money, itemId, itemCount);
+    }
+
+    default void exchange(BasicScriptAction onTrue, BasicScriptAction onFalse, Exchange exchange) {
+        if (exchange(exchange)) onTrue.act();
+        else onFalse.act();
+    }
+
+    default void exchange(BasicScriptAction onFalse, Exchange exchange) {
+        exchange(() -> { }, onFalse, exchange);
+    }
+
     /**
      * This is an inventory transaction that only applies changes <strong>if
      * all actions can be completed</strong>.
@@ -57,14 +81,12 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
      * @return true if all actions were completed
      */
     default boolean exchange(int money, Tuple<Integer, Integer>... itemTemplateIdAndCount) {
-        return exchange(money, List.of(itemTemplateIdAndCount));
+        return exchange(new Exchange(money, List.of(itemTemplateIdAndCount)));
     }
 
     default boolean exchange(int money, Integer... itemTemplateIdAndCount) {
-        return exchange(money, Tuple.listOf(itemTemplateIdAndCount));
+        return exchange(new Exchange(money, Tuple.listOf(itemTemplateIdAndCount)));
     }
-
-    boolean exchange(int money, Collection<Tuple<Integer, Integer>> itemTemplateIdAndCount);
 
     // =================================================================================================================
 

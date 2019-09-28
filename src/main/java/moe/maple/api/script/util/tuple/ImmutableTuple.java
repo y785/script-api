@@ -22,12 +22,16 @@
 
 package moe.maple.api.script.util.tuple;
 
+import java.util.Objects;
+
 public class ImmutableTuple<L, R> implements Tuple<L, R> {
 
     private final L left;
     private final R right;
 
     public ImmutableTuple(L left, R right) {
+        if (left == null || right == null)
+            throw new IllegalArgumentException("Unsupported... Left: "+(left == null)+", Right: "+(right == null));
         this.left = left;
         this.right = right;
     }
@@ -40,6 +44,20 @@ public class ImmutableTuple<L, R> implements Tuple<L, R> {
     @Override
     public R right() {
         return right;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        ImmutableTuple<?, ?> that = (ImmutableTuple<?, ?>) object;
+        return left.equals(that.left) &&
+                right.equals(that.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(left, right);
     }
 
     public static <L, R> ImmutableTuple<L, R> of(L left, R right) {

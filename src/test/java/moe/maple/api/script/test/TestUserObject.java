@@ -22,6 +22,7 @@
 
 package moe.maple.api.script.test;
 
+import moe.maple.api.script.model.helper.Exchange;
 import moe.maple.api.script.model.object.FieldObject;
 import moe.maple.api.script.model.object.GuildObject;
 import moe.maple.api.script.model.object.PartyObject;
@@ -39,6 +40,11 @@ public class TestUserObject implements UserObject<Integer> {
     @Override
     public int getId() {
         return 0;
+    }
+
+    @Override
+    public boolean exchange(Exchange exchange) {
+        return false;
     }
 
     @Override
@@ -401,10 +407,7 @@ public class TestUserObject implements UserObject<Integer> {
         return false;
     }
 
-    @Override
-    public boolean exchange(int money, Collection<Tuple<Integer, Integer>> itemTemplateIdAndCount) {
-        return false;
-    }
+
 
     @Override
     public boolean addItem(int itemTemplateId, int count) {

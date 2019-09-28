@@ -23,9 +23,13 @@
 package moe.maple.api.script.model;
 
 import moe.maple.api.script.logic.ScriptAPI;
+import moe.maple.api.script.logic.action.BasicScriptAction;
+import moe.maple.api.script.model.helper.Exchange;
 import moe.maple.api.script.util.Moematter;
+import moe.maple.api.script.util.tuple.Tuple;
 
 public interface MessagingScript extends LocalEffectScript {
+
     /*
      * Think balloons and messages
      */

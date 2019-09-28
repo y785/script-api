@@ -27,6 +27,7 @@ import moe.maple.api.script.logic.action.BasicScriptAction;
 import moe.maple.api.script.logic.chain.BasicActionChain;
 import moe.maple.api.script.logic.chain.IntegerActionChain;
 import moe.maple.api.script.logic.chain.StringActionChain;
+import moe.maple.api.script.model.helper.Exchange;
 import moe.maple.api.script.model.messenger.say.SayMessage;
 import moe.maple.api.script.util.Moematter;
 import moe.maple.api.script.util.tuple.Tuple;
@@ -40,6 +41,44 @@ import java.util.Set;
  * This should mainly be implemented by NPCs
  */
 public interface SpeakingScript extends MessagingScript {
+
+    default void exchange(BasicScriptAction onTrue, BasicScriptAction onFalse, int money, int itemId, int itemCount) {
+        getUserObject().ifPresentOrElse(u -> u.exchange(onTrue, onFalse, money, itemId, itemCount), onFalse::act);
+    }
+
+    default void exchange(BasicScriptAction onFalse, int money, int itemId, int itemCount) {
+        exchange(() -> {}, onFalse, money, itemId, itemCount);
+    }
+
+    default void exchange(String onFalseMessage, int money, int itemId, int itemCount) {
+        exchange(() -> {}, () -> say(onFalseMessage), money, itemId, itemCount);
+    }
+
+    default void exchange(BasicScriptAction onTrue, BasicScriptAction onFalse, Exchange exchange) {
+        getUserObject().ifPresentOrElse(u -> u.exchange(onTrue, onFalse, exchange), onFalse::act);
+    }
+
+    default void exchange(BasicScriptAction onFalse, Exchange exchange) {
+        exchange(() -> { }, onFalse,  exchange);
+    }
+
+    default void exchange(String onTrueMessage, String onFalseMessage, Exchange exchange) {
+        exchange(() -> say(onTrueMessage), () -> say(onFalseMessage), exchange);
+    }
+
+    default void exchange(String onFalseMessage, Exchange exchange) {
+        exchange(() -> say(onFalseMessage), exchange);
+    }
+
+    default void exchange(String onTrueMessage, BasicScriptAction onFalse, Exchange exchange) {
+        exchange(() -> say(onTrueMessage), onFalse, exchange);
+    }
+
+    default void exchange(BasicScriptAction onTrue, String onFalseMessage, Exchange exchange) {
+        exchange(onTrue, () -> say(onFalseMessage), exchange);
+    }
+
+    // =================================================================================================================
 
     /**
      * Beware, sugar below.
