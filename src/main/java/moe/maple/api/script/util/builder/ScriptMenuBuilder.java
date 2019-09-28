@@ -22,6 +22,7 @@
 
 package moe.maple.api.script.util.builder;
 
+import moe.maple.api.script.util.Moematter;
 import moe.maple.api.script.util.tuple.Tuple;
 
 import java.util.Collection;
@@ -122,6 +123,13 @@ public class ScriptMenuBuilder<Builder extends ScriptMenuBuilder<Builder>> exten
     public Builder appendMenuItem(int index, String option) {
         if(isValidOption(option)) {
             textBuilder.append("#L").append(index).append("#").append(option).append("#l");
+        }
+        return get();
+    }
+
+    public Builder appendMenuItemf(int index, String option, Object... format) {
+        if(isValidOption(option)) {
+            textBuilder.append("#L").append(index).append("#").append(Moematter.format(option, format)).append("#l");
         }
         return get();
     }
