@@ -542,17 +542,17 @@ public enum ScriptAPI {
         return script::setScriptAction;
     }
 
-    public static void askMenu(MoeScript script, String prompt, MenuItem... items) {
+    public static void askMenu(MoeScript script, String prompt, List<MenuItem> items) {
         script.setScriptAction(null);
 
         var ssb = new ScriptStringBuilder().append(prompt).blue().newLine();
         var actionMap = new HashMap<Integer, BasicScriptAction>();
-        for (var i = 0; i < items.length; i++) {
-            var item = items[i];
+        for (var i = 0; i < items.size(); i++) {
+            var item = items.get(i);
             actionMap.put(i, item.action());
             ssb.appendMenuItemLine(i, item.message());
         }
-        var options = IntStream.range(0, items.length).boxed().collect(Collectors.toUnmodifiableSet());
+        var options = IntStream.range(0, items.size()).boxed().collect(Collectors.toUnmodifiableSet());
         script.setScriptResponse((t, a, o) -> {
             var sel = ((Integer)o);
             var bad = sel == null || !options.contains(sel);

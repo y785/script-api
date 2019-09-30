@@ -200,6 +200,9 @@ public interface SpeakingScript extends MessagingScript {
     }
 
     default void askMenu(String prompt, MenuItem... options) {
+        ScriptAPI.askMenu(this, prompt, List.of(options));
+    }
+    default void askMenu(String prompt, List<MenuItem> options) {
         ScriptAPI.askMenu(this, prompt, options);
     }
 
