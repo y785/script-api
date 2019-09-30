@@ -37,6 +37,15 @@ public class Exchange implements Iterable<Tuple<Integer, Integer>> {
         this.items = new ArrayList<>(itemTemplateIdAndCount);
     }
 
+    public Exchange(int money, int... itemTemplateIdAndCount) {
+        this(money, Arrays.stream(itemTemplateIdAndCount).boxed().toArray(Integer[]::new));
+    }
+
+    public Exchange(int money, Integer... itemTemplateIdAndCount) {
+        this.money = money;
+        this.items = Tuple.listOf(itemTemplateIdAndCount);
+    }
+
     @SafeVarargs
     public Exchange(int money, Tuple<Integer, Integer>... itemTemplateIdAndCount) {
         this(money, List.of(itemTemplateIdAndCount));

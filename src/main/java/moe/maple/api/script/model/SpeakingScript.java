@@ -31,6 +31,7 @@ import moe.maple.api.script.model.helper.Exchange;
 import moe.maple.api.script.model.helper.MenuItem;
 import moe.maple.api.script.model.messenger.say.SayMessage;
 import moe.maple.api.script.util.Moematter;
+import moe.maple.api.script.util.builder.SayBuilder;
 import moe.maple.api.script.util.tuple.Tuple;
 
 import java.util.Arrays;
@@ -49,6 +50,10 @@ public interface SpeakingScript extends MessagingScript {
 
     default void exchange(BasicScriptAction onTrue, String onFalseMessage, int money, int itemId, int itemCount) {
         exchange(onTrue, () -> say(onFalseMessage), money, itemId, itemCount);
+    }
+
+    default void exchange(BasicScriptAction onTrue, String onFalseMessage, int money, int... itemIdAndCount) {
+        exchange(onTrue, ()-> say(onFalseMessage), money, itemIdAndCount);
     }
 
     default void exchange(BasicScriptAction onFalse, int money, int itemId, int itemCount) {
@@ -85,6 +90,24 @@ public interface SpeakingScript extends MessagingScript {
 
     default void exchange(BasicScriptAction onTrue, String onFalseMessage, Exchange exchange) {
         exchange(onTrue, () -> say(onFalseMessage), exchange);
+    }
+
+    // =================================================================================================================
+
+    default void exchange(String onTrueMessage, String onFalseMessage, int money, int... itemIdAndCount) {
+        exchange(()->say(onTrueMessage), ()->say(onFalseMessage), money, itemIdAndCount);
+    }
+
+    default void exchange(String onFalseMessage, int money, int... itemIdAndCount) {
+        exchange(()->say(onFalseMessage), money, itemIdAndCount);
+    }
+
+    default void exchange(BasicScriptAction onFalse, int money, int... itemIdAndCount) {
+        exchange(()->{}, onFalse, money, itemIdAndCount);
+    }
+
+    default void exchange(BasicScriptAction onTrue, BasicScriptAction onFalse, int money, int... itemIdAndCount) {
+        getUserObject().ifPresentOrElse(u -> u.exchange(onTrue, onFalse, money, itemIdAndCount), onFalse::act);
     }
 
     // =================================================================================================================
@@ -139,6 +162,22 @@ public interface SpeakingScript extends MessagingScript {
 
     default BasicActionChain sayf(String message, Object... objects) {
         return ScriptAPI.say(this, Moematter.format(message, objects));
+    }
+
+    default BasicActionChain sayOk(String... messages) {
+        return say(new SayBuilder(this).ok(messages).build());
+    }
+
+    default BasicActionChain okf(String message, Object... format) {
+        return sayOk(Moematter.format(message, format));
+    }
+
+    default BasicActionChain next(String... messages) {
+        return say(new SayBuilder(this).next(messages).build());
+    }
+
+    default BasicActionChain nextf(String message, Object... format) {
+        return next(Moematter.format(message, format));
     }
 
     // =================================================================================================================
@@ -200,6 +239,9 @@ public interface SpeakingScript extends MessagingScript {
     }
 
     default void askMenu(String prompt, MenuItem... options) {
+        ScriptAPI.askMenu(this, prompt, List.of(options));
+    }
+    default void askMenu(String prompt, List<MenuItem> options) {
         ScriptAPI.askMenu(this, prompt, options);
     }
 

@@ -27,6 +27,7 @@ import moe.maple.api.script.model.BaseScript;
 import moe.maple.api.script.model.NpcScript;
 import moe.maple.api.script.model.Script;
 import moe.maple.api.script.logic.ScriptAPI;
+import moe.maple.api.script.model.helper.MenuItem;
 import moe.maple.api.script.model.type.ScriptMessageType;
 import moe.maple.api.script.util.tuple.Tuple;
 import org.junit.jupiter.api.BeforeAll;
@@ -138,7 +139,7 @@ public class ApiTest {
             public void work() {
                 ScriptAPI.askMenu(this, "Prompt", List.of("Option 1", "Option 2", "Option 3")).andThen(sel -> {
                     assertEquals(sel, 1);
-                    ScriptAPI.askMenu(this, "Prompt", List.of(Tuple.of("Option 4", null), Tuple.of("Option 5", () -> {
+                    ScriptAPI.askMenu(this, "Prompt", List.of(MenuItem.of("Option 4", null), MenuItem.of("Option 5", () -> {
 
                     })));
                 });
