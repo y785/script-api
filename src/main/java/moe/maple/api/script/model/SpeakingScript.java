@@ -203,6 +203,10 @@ public interface SpeakingScript extends MessagingScript {
         ScriptAPI.askMenu(this, prompt, options);
     }
 
+    default void askMenu(String prompt, Collection<MenuItem> options) {
+        ScriptAPI.askMenu(this, prompt, options);
+    }
+
     // =================================================================================================================
 
     default IntegerActionChain askAvatar(int speakerTemplateId, int param, String prompt, Integer... options) {
