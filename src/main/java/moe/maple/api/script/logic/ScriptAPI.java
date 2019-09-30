@@ -743,16 +743,15 @@ public enum ScriptAPI {
 
         var ssb = new ScriptStringBuilder();
         var actionMap = new HashMap<Integer, BasicScriptAction>();
-        for (var i = 0; i < items.size(); i++) {
-            var item = items.get(i);
-            actionMap.put(i, item.action());
-            ssb.appendf("#{}#{}", item.index(), item.message());
+        for (var i : items) {
+            actionMap.put(i.index(), i.action());
+            ssb.appendf("#{}# {}", i.index(), i.message());
         }
         var options = items.stream().map(SlideItem::index).collect(Collectors.toUnmodifiableSet());
         script.setScriptResponse((t, a, o) -> {
             var sel = ((Integer)o);
             var bad = sel == null || !options.contains(sel);
-            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKMENU);
+            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKSLIDEMENU);
             if (t.intValue() != real || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: val {} keys {}", sel, options);
