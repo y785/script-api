@@ -41,6 +41,8 @@ import java.util.stream.Stream;
  */
 public interface InventoryHolderObject<T> extends ScriptObject<T> {
 
+    boolean exchange(Exchange exchange);
+
     /**
      * This is an inventory transaction that only applies changes <strong>if
      * all actions can be completed</strong>.
@@ -49,9 +51,9 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
      * @param itemCount - The +/- amount to increase/decrease by
      * @return true if all actions were completed
      */
-    boolean exchange(int money, int itemId, int itemCount);
-
-    boolean exchange(Exchange exchange);
+    default boolean exchange(int money, int itemId, int itemCount) {
+        return exchange(new Exchange(money, itemId, itemCount));
+    }
 
     default void exchange(BasicScriptAction onTrue, BasicScriptAction onFalse, int money, int itemId, int itemCount) {
         if (exchange(money, itemId, itemCount)) onTrue.act();
@@ -81,11 +83,26 @@ public interface InventoryHolderObject<T> extends ScriptObject<T> {
      * @return true if all actions were completed
      */
     default boolean exchange(int money, Tuple<Integer, Integer>... itemTemplateIdAndCount) {
-        return exchange(new Exchange(money, List.of(itemTemplateIdAndCount)));
+        return exchange(money, List.of(itemTemplateIdAndCount));
     }
 
-    default boolean exchange(int money, Integer... itemTemplateIdAndCount) {
-        return exchange(new Exchange(money, Tuple.listOf(itemTemplateIdAndCount)));
+    default boolean exchange(int money, List<Tuple<Integer, Integer>> itemTemplateIdAndCount) {
+        return exchange(new Exchange(money, itemTemplateIdAndCount));
+    }
+
+    // =================================================================================================================
+
+    default boolean exchange(int money, int... itemTemplateIdAndCount) {
+        return exchange(new Exchange(money, itemTemplateIdAndCount));
+    }
+
+    default void exchange(BasicScriptAction onTrue, BasicScriptAction onFalse, int money, int... itemIdAndCount) {
+        if (exchange(money, itemIdAndCount)) onTrue.act();
+        else onFalse.act();
+    }
+
+    default void exchange(BasicScriptAction onFalse, int money, int... itemIdAndCount) {
+        if (!exchange(money, itemIdAndCount)) onFalse.act();
     }
 
     // =================================================================================================================

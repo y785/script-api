@@ -51,6 +51,10 @@ public interface SpeakingScript extends MessagingScript {
         exchange(onTrue, () -> say(onFalseMessage), money, itemId, itemCount);
     }
 
+    default void exchange(BasicScriptAction onTrue, String onFalseMessage, int money, int... itemIdAndCount) {
+        exchange(onTrue, ()-> say(onFalseMessage), money, itemIdAndCount);
+    }
+
     default void exchange(BasicScriptAction onFalse, int money, int itemId, int itemCount) {
         exchange(() -> {}, onFalse, money, itemId, itemCount);
     }
@@ -85,6 +89,24 @@ public interface SpeakingScript extends MessagingScript {
 
     default void exchange(BasicScriptAction onTrue, String onFalseMessage, Exchange exchange) {
         exchange(onTrue, () -> say(onFalseMessage), exchange);
+    }
+
+    // =================================================================================================================
+
+    default void exchange(String onTrueMessage, String onFalseMessage, int money, int... itemIdAndCount) {
+        exchange(()->say(onTrueMessage), ()->say(onFalseMessage), money, itemIdAndCount);
+    }
+
+    default void exchange(String onFalseMessage, int money, int... itemIdAndCount) {
+        exchange(()->say(onFalseMessage), money, itemIdAndCount);
+    }
+
+    default void exchange(BasicScriptAction onFalse, int money, int... itemIdAndCount) {
+        exchange(()->{}, onFalse, money, itemIdAndCount);
+    }
+
+    default void exchange(BasicScriptAction onTrue, BasicScriptAction onFalse, int money, int... itemIdAndCount) {
+        getUserObject().ifPresentOrElse(u -> u.exchange(onTrue, onFalse, money, itemIdAndCount), onFalse::act);
     }
 
     // =================================================================================================================
