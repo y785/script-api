@@ -22,6 +22,8 @@
 
 package moe.maple.api.script.util.tuple;
 
+import moe.maple.api.script.util.ListOf;
+
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -74,7 +76,6 @@ public interface Tuple<L, R> {
         return list;
     }
 
-
     //========================================== Caution: memes below =================================================
 
     /**
@@ -87,18 +88,7 @@ public interface Tuple<L, R> {
      * @throws NullPointerException if either value is {@code null}
      */
     private static <L, R> List<Tuple<L, R>> unsafeListOf(Object... args) {
-        if ((args.length & 1) != 0) {
-            throw new InternalError("length is odd");
-        }
-        List<Tuple<L,R>> list = new ArrayList<>(args.length / 2);
-        for (int i = 0; i < args.length; i += 2) {
-            @SuppressWarnings("unchecked")
-            L left = Objects.requireNonNull((L)args[i]);
-            @SuppressWarnings("unchecked")
-            R right = Objects.requireNonNull((R)args[i+1]);
-            list.add(new ImmutableTuple<>(left, right));
-        }
-        return list;
+        return ListOf.tuples(ImmutableTuple<L,R>::new, args);
     }
 
     @SafeVarargs
