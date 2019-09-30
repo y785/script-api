@@ -31,6 +31,7 @@ import moe.maple.api.script.model.helper.Exchange;
 import moe.maple.api.script.model.helper.MenuItem;
 import moe.maple.api.script.model.messenger.say.SayMessage;
 import moe.maple.api.script.util.Moematter;
+import moe.maple.api.script.util.builder.SayBuilder;
 import moe.maple.api.script.util.tuple.Tuple;
 
 import java.util.Arrays;
@@ -161,6 +162,22 @@ public interface SpeakingScript extends MessagingScript {
 
     default BasicActionChain sayf(String message, Object... objects) {
         return ScriptAPI.say(this, Moematter.format(message, objects));
+    }
+
+    default BasicActionChain sayOk(String... messages) {
+        return say(new SayBuilder(this).ok(messages).build());
+    }
+
+    default BasicActionChain okf(String message, Object... format) {
+        return sayOk(Moematter.format(message, format));
+    }
+
+    default BasicActionChain next(String... messages) {
+        return say(new SayBuilder(this).next(messages).build());
+    }
+
+    default BasicActionChain nextf(String message, Object... format) {
+        return next(Moematter.format(message, format));
     }
 
     // =================================================================================================================
