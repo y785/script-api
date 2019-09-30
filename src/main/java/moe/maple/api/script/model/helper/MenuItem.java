@@ -24,27 +24,26 @@ package moe.maple.api.script.model.helper;
 
 import moe.maple.api.script.logic.action.BasicScriptAction;
 import moe.maple.api.script.util.ListOf;
+import moe.maple.api.script.util.tuple.ImmutableTuple;
+import moe.maple.api.script.util.tuple.Tuple;
 
 import java.util.List;
 
 /**
  * A lame data class.
  */
-public class MenuItem {
+public class MenuItem extends ImmutableTuple<String, BasicScriptAction> {
 
-    private final String message;
-    private final BasicScriptAction action;
-    public MenuItem(String message, BasicScriptAction action) {
-        this.message = message;
-        this.action = action;
+    public MenuItem(String left, BasicScriptAction right) {
+        super(left, right);
     }
 
     public String message() {
-        return message;
+        return left();
     }
 
     public BasicScriptAction action() {
-        return action;
+        return right();
     }
 
     public static MenuItem of(String message, BasicScriptAction action) {
@@ -54,7 +53,6 @@ public class MenuItem {
     public static MenuItem of(String message) {
         return new MenuItem(message, () -> {});
     }
-
 
     public static <L extends String, R extends BasicScriptAction> List<MenuItem> listOf(L l1, R r1, L l2, R r2) {
         return ListOf.tuples(MenuItem::new, l1, r1, l2, r2);

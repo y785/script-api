@@ -29,6 +29,7 @@ import moe.maple.api.script.logic.chain.StringActionChain;
 import moe.maple.api.script.logic.response.SayResponse;
 import moe.maple.api.script.model.ScriptPreferences;
 import moe.maple.api.script.model.helper.MenuItem;
+import moe.maple.api.script.model.helper.SlideItem;
 import moe.maple.api.script.model.messenger.*;
 import moe.maple.api.script.model.messenger.ask.*;
 import moe.maple.api.script.model.messenger.effect.field.FieldObjectMessenger;
@@ -733,6 +734,50 @@ public enum ScriptAPI {
 
     public static IntegerActionChain askNumber(MoeScript script, String message) {
         return askNumber(script, script.getSpeakerTemplateId(), 0, message, 0, 0, Integer.MAX_VALUE);
+    }
+
+    // =================================================================================================================
+
+    public static void askSlideMenu(MoeScript script, List<SlideItem> items) {
+        script.setScriptAction(null);
+
+        var ssb = new ScriptStringBuilder();
+        var actionMap = new HashMap<Integer, BasicScriptAction>();
+        for (var i = 0; i < items.size(); i++) {
+            var item = items.get(i);
+            actionMap.put(i, item.action());
+            ssb.appendf("#{}#{}", item.index(), item.message());
+        }
+        var options = items.stream().map(SlideItem::index).collect(Collectors.toUnmodifiableSet());
+        script.setScriptResponse((t, a, o) -> {
+            var sel = ((Integer)o);
+            var bad = sel == null || !options.contains(sel);
+            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKMENU);
+            if (t.intValue() != real || bad || a.intValue() != 1) {
+                if (bad)
+                    log.debug("Value mismatch: val {} keys {}", sel, options);
+                else if (t.intValue() != real)
+                    log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
+                else
+                    log.debug("Answer is invalid: {}", a);
+                if (a.intValue() == -1)
+                    script.escape();
+                else
+                    script.end();
+            } else {
+                script.setScriptResponse(null);
+                script.setScriptAction(actionMap.get(sel));
+                script.resume(t, a, o);
+            }
+        });
+
+        var speaker = script.getSpeakerTemplateId();
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskSlideMenu.send(obj, speaker, false, 0, ssb.toString()),
+                () -> log.debug("User object isn't set, workflow is messy."));
+    }
+
+    public static void askSlideMenu(MoeScript script, SlideItem... items) {
+        askSlideMenu(script, List.of(items));
     }
 
     public ScriptPreferences getPreferences() {

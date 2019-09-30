@@ -29,6 +29,7 @@ import moe.maple.api.script.logic.chain.IntegerActionChain;
 import moe.maple.api.script.logic.chain.StringActionChain;
 import moe.maple.api.script.model.helper.Exchange;
 import moe.maple.api.script.model.helper.MenuItem;
+import moe.maple.api.script.model.helper.SlideItem;
 import moe.maple.api.script.model.messenger.say.SayMessage;
 import moe.maple.api.script.util.Moematter;
 import moe.maple.api.script.util.builder.SayBuilder;
@@ -245,10 +246,6 @@ public interface SpeakingScript extends MessagingScript {
         ScriptAPI.askMenu(this, prompt, options);
     }
 
-    default void askMenu(String prompt, Collection<MenuItem> options) {
-        ScriptAPI.askMenu(this, prompt, options);
-    }
-
     // =================================================================================================================
 
     default IntegerActionChain askAvatar(int speakerTemplateId, int param, String prompt, Integer... options) {
@@ -325,5 +322,15 @@ public interface SpeakingScript extends MessagingScript {
 
     default IntegerActionChain askNumber(String message) {
         return ScriptAPI.askNumber(this, message);
+    }
+
+    // =================================================================================================================
+
+    default void askSlideMenu(List<SlideItem> items) {
+        ScriptAPI.askSlideMenu(this, items);
+    }
+
+    default void askSlideMenu(SlideItem... items) {
+        askSlideMenu(List.of(items));
     }
 }
