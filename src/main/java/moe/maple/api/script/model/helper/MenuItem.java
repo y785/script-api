@@ -23,21 +23,24 @@
 package moe.maple.api.script.model.helper;
 
 import moe.maple.api.script.logic.action.BasicScriptAction;
+import moe.maple.api.script.util.ListOf;
+
+import java.util.List;
 
 /**
  * A lame data class.
  */
 public class MenuItem {
+
     private final String message;
     private final BasicScriptAction action;
-
     public MenuItem(String message, BasicScriptAction action) {
         this.message = message;
         this.action = action;
     }
 
     public String message() {
-        return this.message;
+        return message;
     }
 
     public BasicScriptAction action() {
@@ -49,6 +52,44 @@ public class MenuItem {
     }
 
     public static MenuItem of(String message) {
-        return new MenuItem(message, () -> { });
+        return new MenuItem(message, () -> {});
     }
+
+
+    public static <L extends String, R extends BasicScriptAction> List<MenuItem> listOf(L l1, R r1, L l2, R r2) {
+        return ListOf.tuples(MenuItem::new, l1, r1, l2, r2);
+    }
+
+    public static <L extends String, R extends BasicScriptAction> List<MenuItem> listOf(L l1, R r1, L l2, R r2, L l3, R r3) {
+        return ListOf.tuples(MenuItem::new, l1, r1, l2, r2, l3, r3);
+    }
+
+    public static <L extends String, R extends BasicScriptAction> List<MenuItem> listOf(L l1, R r1, L l2, R r2, L l3, R r3, L l4, R r4) {
+        return ListOf.tuples(MenuItem::new, l1, r1, l2, r2, l3, r3, l4, r4);
+    }
+
+    public static <L extends String, R extends BasicScriptAction> List<MenuItem> listOf(L l1, R r1, L l2, R r2, L l3, R r3, L l4, R r4, L l5, R r5) {
+        return ListOf.tuples(MenuItem::new, l1, r1, l2, r2, l3, r3, l4, r4, l5, r5);
+    }
+
+    public static <L extends String, R extends BasicScriptAction> List<MenuItem> listOf(L l1, R r1, L l2, R r2, L l3, R r3, L l4, R r4, L l5, R r5, L l6, R r6) {
+        return ListOf.tuples(MenuItem::new, l1, r1, l2, r2, l3, r3, l4, r4, l5, r5, l6, r6);
+    }
+
+    public static <L extends String, R extends BasicScriptAction> List<MenuItem> listOf(L l1, R r1, L l2, R r2, L l3, R r3, L l4, R r4, L l5, R r5, L l6, R r6, L l7, R r7) {
+        return ListOf.tuples(MenuItem::new, l1, r1, l2, r2, l3, r3, l4, r4, l5, r5, l6, r6, l7, r7);
+    }
+
+    public static <L extends String, R extends BasicScriptAction> List<MenuItem> listOf(L l1, R r1, L l2, R r2, L l3, R r3, L l4, R r4, L l5, R r5, L l6, R r6, L l7, R r7, L l8, R r8) {
+        return ListOf.tuples(MenuItem::new, l1, r1, l2, r2, l3, r3, l4, r4, l5, r5, l6, r6, l7, r7, l8, r8);
+    }
+
+    public static <L extends String, R extends BasicScriptAction> List<MenuItem> listOf(L l1, R r1, L l2, R r2, L l3, R r3, L l4, R r4, L l5, R r5, L l6, R r6, L l7, R r7, L l8, R r8, L l9, R r9) {
+        return ListOf.tuples(MenuItem::new, l1, r1, l2, r2, l3, r3, l4, r4, l5, r5, l6, r6, l7, r7, l8, r8, l9, r9);
+    }
+
+    public static <L extends String, R extends BasicScriptAction> List<MenuItem> listOf(L l1, R r1, L l2, R r2, L l3, R r3, L l4, R r4, L l5, R r5, L l6, R r6, L l7, R r7, L l8, R r8, L l9, R r9, L l10, R r10) {
+        return ListOf.tuples(MenuItem::new, l1, r1, l2, r2, l3, r3, l4, r4, l5, r5, l6, r6, l7, r7, l8, r8, l9, r9, l10, r10);
+    }
+
 }
