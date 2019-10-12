@@ -686,9 +686,9 @@ public enum ScriptAPI {
         return (t, a, o) -> {
             var sel = ((Integer)o);
             var bad = sel == null || sel < min || sel > max;
-            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKNUMBER);
+            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKTEXT);
 
-            if (t.intValue() != real || bad || a.intValue() != 1) {
+            if (t.intValue() != ScriptMessageType.ASKNUMBER || bad || a.intValue() != 1) {
                 if (bad)
                     log.debug("Value mismatch: min {}, max {}, val {}", min, max, sel);
                 else if (t.intValue() != real)
