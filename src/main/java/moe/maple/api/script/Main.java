@@ -24,11 +24,6 @@ package moe.maple.api.script;
 
 public class Main {
     public static void main(String... args) {
-        // Goals:
-        // Non-blocking / Non-locking.
-        // Initialize as needed.
-        // Moe.
-        
         System.out.println("⠀⠀⠀⣠⣾⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣷⣄   ");
         System.out.println("⠀⠀⠀⣿⣿⡇⠀⠀⢸⣿⢰⣿⡆⠀⣾⣿⡆⠀⣾⣷⠀⣿⣿⡇⠀⠀⢸⣿⣿  ");
         System.out.println("⠀⠀⠀⣿⣿⡇⠀⠀⢸⣿⠘⣿⣿⣤⣿⣿⣿⣤⣿⡇⠀⢻⣿⡇⠀⠀⢸⣿⣿  ");
