@@ -184,10 +184,12 @@ public abstract class BaseScript implements MoeScript {
     @Override
     public void escape() {
         log.debug("Escape response being processed.");
-        if (escapeEvent != null) {
-            escapeEvent.act(this);
-            if (escapeEvent.isSingleUse())
-                escapeEvent = null;
+        if (this.escapeEvent != null) {
+            var event = this.escapeEvent;
+            if (this.escapeEvent.isSingleUse()) {
+                this.escapeEvent = null;
+            }
+            event.act(this);
         } else {
             this.end();
         }
