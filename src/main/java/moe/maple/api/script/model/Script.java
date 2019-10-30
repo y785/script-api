@@ -30,7 +30,6 @@ import java.util.function.Function;
 
 /**
  * Script annotation for classes.
- *
  */
 @java.lang.annotation.Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
