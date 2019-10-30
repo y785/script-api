@@ -28,7 +28,7 @@
 
     <groupId>moe.maple</groupId>
     <artifactId>script-api</artifactId>
-    <version>1.5.11-ALPHA</version>
+    <version>1.5.12-ALPHA</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

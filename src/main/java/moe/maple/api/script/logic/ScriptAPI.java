@@ -583,10 +583,10 @@ public enum ScriptAPI {
 
     // =================================================================================================================
 
-    private static ScriptResponse askAvatarResponse(MoeScript script, Collection<Integer> options) {
+    private static ScriptResponse askAvatarResponse(MoeScript script, int[] options) {
         return (t, a, o) -> {
-            var sel = ((Integer)o);
-            var bad = sel == null || !options.contains(sel);
+            var sel = ((Number)o); // Response is a byte for most versions
+            var bad = sel == null || (options.length <= sel.intValue() || 0 > sel.intValue());
             var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKAVATAR);
 
             if (t.intValue() != real || bad || a.intValue() != 1) {
@@ -609,8 +609,8 @@ public enum ScriptAPI {
 
     public static IntegerActionChain askAvatar(MoeScript script, int speakerTemplateId, int param, String prompt, Collection<Integer> options) {
         script.setScriptAction(null);
-        script.setScriptResponse(askAvatarResponse(script, options));
-        int[] optionArray = options.stream().mapToInt(Integer::intValue).toArray();//:|
+        int[] optionArray = options.stream().mapToInt(Integer::intValue).toArray(); // :|
+        script.setScriptResponse(askAvatarResponse(script, optionArray));
         script.getUserObject().ifPresentOrElse(obj ->ScriptAPI.INSTANCE.messengerAskAvatar.send(obj, speakerTemplateId, param, prompt, optionArray),
                 () -> log.debug("User object isn't set, workflow is messy."));
 

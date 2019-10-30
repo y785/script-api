@@ -221,7 +221,7 @@ public abstract class BaseScript implements MoeScript {
             if (act instanceof BasicScriptAction) {
                 ((BasicScriptAction) act).act();
             } else if (act instanceof IntegerScriptAction) {
-                ((IntegerScriptAction) act).act((Integer) response);
+                ((IntegerScriptAction) act).act(((Number)response).intValue());
             } else if (act instanceof StringScriptAction) {
                 ((StringScriptAction) act).act((String) response);
             } else {
