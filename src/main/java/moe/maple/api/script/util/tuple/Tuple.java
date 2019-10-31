@@ -36,6 +36,10 @@ public interface Tuple<L, R> {
         return new ImmutableTuple<>(left, right);
     }
 
+    static <L, R> Tuple<L, R> of(Tuple<L, R> original) {
+        return of(original.left(), original.right());
+    }
+
     /**
      * Utility method to perform an action for each Tuple
      * @param tuples An iterable Tuple collection
@@ -74,6 +78,20 @@ public interface Tuple<L, R> {
             list.add(tuple.right());
         }
         return list;
+    }
+
+    static <L, R> List<Tuple<L, R>> fill(Tuple<L, R> original, int size) {
+        var ret = new ArrayList<Tuple<L, R>>(size);
+        for (int i = 0; i < size; i++)
+            ret.add(Tuple.of(original));
+        return ret;
+    }
+
+    static <L, R> List<Tuple<L, R>> fill(L left, R right, int size) {
+        var ret = new ArrayList<Tuple<L, R>>(size);
+        for (int i = 0; i < size; i++)
+            ret.add(Tuple.of(left, right));
+        return ret;
     }
 
     //========================================== Caution: memes below =================================================
