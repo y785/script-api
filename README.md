@@ -7,11 +7,7 @@ The API itself is heavily modelled after nexon's own api, with some minor additi
     <img src="https://raw.githubusercontent.com/y785/script-api/master/example.png" tag="v83 example provided by bboki" width="200" height="200">
 </p>
 
-### Features
-- Non-blocking, Fast
-- 1 dependency (Logging)
-
 ### Examples
+For a more in depth explanation, see [**the wiki**](https://github.com/y785/script-api/wiki/Basic-Script-Examples). 
 All scripts extend their base script type, so a script for an Npc would extend the NpcScript, etc.
 Additionally, all logic is conducted in the ``Script::work()`` method. You shouldn't have to extend any underlying logic methods to have functioning scripts, for a more detailed explanation or outlook on scripts, see [my main script repo](https://github.com/y785/moe-scripts).
-For a more in depth explanation, see [**the wiki**](https://github.com/y785/script-api/wiki/Basic-Script-Examples)
