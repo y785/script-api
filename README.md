@@ -1,5 +1,5 @@
 # ❤ Moe Script API
-This is a java-based  script api for writing performant, low overhead, MapleStory scripts.
+This is a fluent script api for writing performant, low overhead, MapleStory scripts.
 We do this by constructing proxy objects that communicate between the api and the script files.
 The API itself is heavily modelled after nexon's own api, with some minor additions here and there, like text command scripts.
 [Credits to bboki/feras for the below image](https://github.com/Fukerfu)
