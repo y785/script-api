@@ -303,7 +303,7 @@ public interface SpeakingScript extends MessagingScript {
         return ScriptAPI.askSpeedQuiz(this, type, answer, correct, remaining, remainInitialQuiz);
     }
 
-    default StringActionChain endSpeedQuiz() {
+    default StringActionChain endSpeedQuiz() { //force the user's speedQuiz window to close
         return ScriptAPI.askSpeedQuiz(this);
     }
 
