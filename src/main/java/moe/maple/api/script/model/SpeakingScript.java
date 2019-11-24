@@ -35,10 +35,8 @@ import moe.maple.api.script.util.Moematter;
 import moe.maple.api.script.util.builder.SayBuilder;
 import moe.maple.api.script.util.tuple.Tuple;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This should mainly be implemented by NPCs
@@ -54,7 +52,7 @@ public interface SpeakingScript extends MessagingScript {
     }
 
     default void exchange(BasicScriptAction onTrue, String onFalseMessage, int money, int... itemIdAndCount) {
-        exchange(onTrue, ()-> say(onFalseMessage), money, itemIdAndCount);
+        exchange(onTrue, () -> say(onFalseMessage), money, itemIdAndCount);
     }
 
     default void exchange(BasicScriptAction onFalse, int money, int itemId, int itemCount) {
@@ -74,7 +72,7 @@ public interface SpeakingScript extends MessagingScript {
     }
 
     default void exchange(BasicScriptAction onFalse, Exchange exchange) {
-        exchange(() -> { }, onFalse,  exchange);
+        exchange(() -> {}, onFalse, exchange);
     }
 
     default void exchange(String onTrueMessage, String onFalseMessage, Exchange exchange) {
@@ -96,15 +94,15 @@ public interface SpeakingScript extends MessagingScript {
     // =================================================================================================================
 
     default void exchange(String onTrueMessage, String onFalseMessage, int money, int... itemIdAndCount) {
-        exchange(()->say(onTrueMessage), ()->say(onFalseMessage), money, itemIdAndCount);
+        exchange(() -> say(onTrueMessage), () -> say(onFalseMessage), money, itemIdAndCount);
     }
 
     default void exchange(String onFalseMessage, int money, int... itemIdAndCount) {
-        exchange(()->say(onFalseMessage), money, itemIdAndCount);
+        exchange(() -> say(onFalseMessage), money, itemIdAndCount);
     }
 
     default void exchange(BasicScriptAction onFalse, int money, int... itemIdAndCount) {
-        exchange(()->{}, onFalse, money, itemIdAndCount);
+        exchange(() -> {}, onFalse, money, itemIdAndCount);
     }
 
     default void exchange(BasicScriptAction onTrue, BasicScriptAction onFalse, int money, int... itemIdAndCount) {
@@ -192,11 +190,11 @@ public interface SpeakingScript extends MessagingScript {
     }
 
     default void askYesNo(String message, BasicScriptAction onYes, String... noMsg) {
-        ScriptAPI.askYesNo(this, message, onYes, ()->say(noMsg));
+        ScriptAPI.askYesNo(this, message, onYes, () -> say(noMsg));
     }
 
     default void askYesNo(String message, BasicScriptAction onYes, Collection<SayMessage> noMsg) {
-        ScriptAPI.askYesNo(this, message, onYes, ()->say(noMsg));
+        ScriptAPI.askYesNo(this, message, onYes, () -> say(noMsg));
     }
 
     // =================================================================================================================
@@ -212,7 +210,7 @@ public interface SpeakingScript extends MessagingScript {
     // =================================================================================================================
 
     default IntegerActionChain askMenu(int speakerTemplateId, int param, String prompt, String... menuItems) {
-        return askMenu( speakerTemplateId, param, prompt, List.of(menuItems));
+        return askMenu(speakerTemplateId, param, prompt, List.of(menuItems));
     }
 
     default IntegerActionChain askMenu(int speakerTemplateId, int param, String prompt, Collection<String> menuItems) {
@@ -242,6 +240,7 @@ public interface SpeakingScript extends MessagingScript {
     default void askMenu(String prompt, MenuItem... options) {
         ScriptAPI.askMenu(this, prompt, List.of(options));
     }
+
     default void askMenu(String prompt, List<MenuItem> options) {
         ScriptAPI.askMenu(this, prompt, options);
     }
@@ -296,6 +295,16 @@ public interface SpeakingScript extends MessagingScript {
 
     default StringActionChain askText(String message) {
         return ScriptAPI.askText(this, message);
+    }
+
+    // =================================================================================================================
+
+    default StringActionChain askSpeedQuiz(int type, int answer, int correct, int remaining, int remainInitialQuiz) {
+        return ScriptAPI.askSpeedQuiz(this, type, answer, correct, remaining, remainInitialQuiz);
+    }
+
+    default StringActionChain endSpeedQuiz() {
+        return ScriptAPI.askSpeedQuiz(this);
     }
 
     // =================================================================================================================
