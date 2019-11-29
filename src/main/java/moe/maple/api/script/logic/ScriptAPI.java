@@ -596,10 +596,7 @@ public enum ScriptAPI {
                     log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
                 else
                     log.debug("Answer is invalid: {}", a);
-                if (a.intValue() == -1)
-                    script.escape();
-                else
-                    script.end();
+                script.escape(); //askAvatar is always an escape
             } else {
                 script.setScriptResponse(null);
                 script.resume(t, a, o);
