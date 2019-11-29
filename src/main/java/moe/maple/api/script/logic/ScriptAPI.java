@@ -679,6 +679,42 @@ public enum ScriptAPI {
 
     // =================================================================================================================
 
+    public static StringActionChain askSpeedQuiz(MoeScript script, int type, int answer, int correct, int remaining, int remainInitialQuiz) {
+        return askSpeedQuiz(script, script.getSpeakerTemplateId(), 0, type, answer, correct, remaining, remainInitialQuiz, "", "", "", 0, 0);
+    }
+
+    public static StringActionChain askSpeedQuiz(MoeScript script) { //force the user's speedQuiz window to close
+        return askSpeedQuiz(script, script.getSpeakerTemplateId(), 1, 0, 0, 0,0, 0, "", "", "", 0, 0);
+    }
+
+    public static StringActionChain askSpeedQuiz(MoeScript script, int speakerTemplateId, int param, int type, int answer, int correct, int remaining, int remainInitialQuiz, String title, String problemText, String hintText, int min, int max) {
+        script.setScriptAction(null);
+        if (param == 0) script.setScriptResponse(askSpeedQuizResponse(script, answer)); //param 1 = force close the window
+        script.getUserObject().ifPresentOrElse(obj -> ScriptAPI.INSTANCE.messengerAskSpeedQuiz.send(obj, speakerTemplateId, param, type, answer, correct, remaining, remainInitialQuiz, title, problemText, hintText, (short)min, (short)max),
+                () -> log.debug("User object isn't set, workflow is messy."));
+        return script::setScriptAction;
+    }
+
+    private static ScriptResponse askSpeedQuizResponse(MoeScript script, int answer) {
+        return (t, a, o) -> {
+            var response = (String)o; //client sends strings instead of actions. GIVE UP button -> "__GIVEUP__", NEXT button -> "", OK button (or enter) -> answer
+            var bad = response == null; //your askSpeedQuiz packet handler should only decode type and object (string). action is not used at all in speedQuiz
+            var real = ScriptAPI.INSTANCE.getScriptMessageType(ScriptMessageType.ASKSPEEDQUIZ);
+
+            if (t.intValue() != real || bad) {
+                if (bad) log.debug("Null string response for askSpeedQuiz.");
+                else log.warn("ScriptMessageType mismatch: {} vs {}", t.intValue(), real);
+            } else if (response.equals("__GIVEUP__")) { //thanks Nexon
+                script.escape();
+            } else {
+                script.setScriptResponse(null);
+                script.resume(t, a, o);
+            }
+        };
+    }
+
+    // =================================================================================================================
+
     private static ScriptResponse askNumberResponse(MoeScript script, int min, int max) {
         return (t, a, o) -> {
             var sel = ((Integer)o);
