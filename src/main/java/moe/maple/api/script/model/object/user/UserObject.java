@@ -50,6 +50,11 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
      */
     String getName();
 
+    /**
+     * @return true if the user can access gamemaster specific scripts.
+     */
+    boolean isGameMaster();
+
     // =================================================================================================================
 
     Optional<GuildObject> getGuild();

@@ -43,6 +43,11 @@ public class TestUserObject implements UserObject<Integer> {
     }
 
     @Override
+    public boolean isGameMaster() {
+        return false;
+    }
+
+    @Override
     public boolean exchange(Exchange exchange) {
         return false;
     }
