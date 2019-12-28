@@ -1,9 +1,7 @@
 package moe.maple.api.script.model.fieldset;
 
 import moe.maple.api.script.model.MoeScript;
-import moe.maple.api.script.model.fieldset.events.FSMobEvent;
-import moe.maple.api.script.model.fieldset.events.FSUserEvent;
-import moe.maple.api.script.model.object.PartyObject;
+import moe.maple.api.script.model.object.FieldObject;
 import moe.maple.api.script.model.object.field.DropObject;
 import moe.maple.api.script.model.object.field.MobObject;
 import moe.maple.api.script.model.object.user.UserObject;
@@ -17,8 +15,20 @@ import moe.maple.api.script.model.object.user.UserObject;
  */
 public interface FieldSetScript extends MoeScript {
 
+    int SUCCESS = 0, ERROR = -1;
+
+    String instancePrefix();
+
+    boolean containsField(int fieldId);
+
+    default boolean containsField(FieldObject<?> fieldObject) {
+        return containsField(fieldObject.getId());
+    }
+
     int enter(UserObject<?> userObject, int fieldIndex);
-    default int enter(UserObject<?> userObject) { return enter(userObject, 0); }
+    default int enter(UserObject<?> userObject) {
+        return enter(userObject, 0);
+    }
 
     void onItemEnterField(DropObject<?, ?> dropObject);
 
@@ -30,9 +40,9 @@ public interface FieldSetScript extends MoeScript {
 
     void onUserDeath(UserObject<?> userObject);
 
-    void onUserDisconnect();
+    void onUserDisconnect(UserObject<?> userObject);
 
-    void onUserDisbandParty();
+    void onUserDisbandParty(UserObject<?> userObject);
 
     void onUserLeaveParty(UserObject<?> userObject);
 
