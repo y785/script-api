@@ -40,6 +40,14 @@ import java.util.TimeZone;
 public interface ServerObject<T> extends ScriptObject<T>, ValidationHub, ProviderHub {
 
     /**
+     * FieldSets need a way to cleanup instances so that they don't continually grow.
+     * You should always check to make sure there aren't any lingering users in fields.
+     * @param instanceName - The name to be destroyed
+     * @return true of destruction was possible
+     */
+    boolean destroyFieldSetInstance(String instanceName);
+
+    /**
      * This should return the current state of the contimove.
      * ContiState.Wait is used for boarding, etc.
      * ContiState:
@@ -57,16 +65,25 @@ public interface ServerObject<T> extends ScriptObject<T>, ValidationHub, Provide
     int getContiState(int fieldIdStart);
 
     /**
-     * @param fieldSetName - The name of the FieldSet
+     * @param instanceName - The name of the FieldSet
      * @return the fieldset if it exists
      */
-    Optional<FieldSetObject> getFieldSet(String fieldSetName);
+    Optional<FieldSetObject> getFieldSet(String instanceName);
 
     /**
+     * Grab a field for the specified id. This field should be attached to the global server instance.
      * @param fieldId - The .wz id of the field
      * @return the fieldobject if it exists
      */
     Optional<FieldObject> getField(int fieldId);
+
+    /**
+     * Grab a specific field id for a specified instance. If the instance doesn't have
+     * @param fieldId      - The .wz id of the field
+     * @param instanceName - The instance name
+     * @return the fieldobject if it exists
+     */
+    Optional<FieldObject> getField(int fieldId, String instanceName);
 
     /**
      * @return A {@link ZonedDateTime} of the current moment.

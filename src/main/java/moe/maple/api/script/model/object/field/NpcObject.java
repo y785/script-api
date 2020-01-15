@@ -24,8 +24,7 @@ package moe.maple.api.script.model.object.field;
 
 /**
  * This is a script proxy for npc objects.
- * <T> should be your implementation of npc.
- * @param <T>
+ * @param <T> should be your implementation of npc.
  */
 public interface NpcObject<T> extends FieldedObject<T> {
 

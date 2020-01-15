@@ -39,6 +39,7 @@ public interface LifeObject<T> extends FieldedObject<T> {
      * This should NOT increase an object's maximum health pool.
      * This INCREASES the CURRENT health by an amount.
      * This is a HEAL.
+     * @param amountToHeal - The amount to increase the current value by
      * @return true if field allows healing/user can be healed.
      */
     boolean increaseHealth(int amountToHeal);
@@ -47,6 +48,7 @@ public interface LifeObject<T> extends FieldedObject<T> {
      * This should NOT increase an object's maximum mana pool.
      * This INCREASES the CURRENT mana by an amount.
      * This is a HEAL.
+     * @param amountToHeal - The amount to increase the current value by
      * @return true if field allows healing/user can be healed.
      */
     boolean increaseMana(int amountToHeal);
@@ -57,6 +59,7 @@ public interface LifeObject<T> extends FieldedObject<T> {
     /**
      * This INCREASES an object's maximum health pool.
      * This DOES NOT HEAL.
+     * @param amountToIncrease - The amount to increase the current value by
      * @return true if was able to increase
      */
     boolean increaseHealthMax(int amountToIncrease);
@@ -64,12 +67,14 @@ public interface LifeObject<T> extends FieldedObject<T> {
     /**
      * This INCREASES an object's maximum mana pool.
      * This DOES NOT HEAL.
+     * @param amountToIncrease - The amount to increase the current value by
      * @return true if was able to increase
      */
     boolean increaseManaMax(int amountToIncrease);
 
     /**
      * Heals an object to max health/mana.
+     * @return true if both were healed.
      */
     default boolean heal() { return increaseHealth(Integer.MAX_VALUE) && increaseMana(Integer.MAX_VALUE); }
 

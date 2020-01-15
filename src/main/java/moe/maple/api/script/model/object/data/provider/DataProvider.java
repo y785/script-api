@@ -11,34 +11,36 @@ import java.util.stream.Stream;
 /**
  * @author umbreon22
  * Created on 8/21/2019.
+ * @param <Key>   - The key type for this provider
+ * @param <Value> - The value for this provider
  */
 public interface DataProvider<Key, Value> extends DataValidator<Key> {
 
     /**
-     * @return A stream of {@link Key}
+     * @return A stream of {@code Key}
      */
     Stream<Key> keyStream();
 
     /**
-     * @return A stream of {@link Value}
+     * @return A stream of {@code Value}
      */
     Stream<Value> valueStream();
 
     /**
-     * @param key A {@link Key}
-     * @return An {@link Optional<Value>} from {@link Key}
+     * @param key A key
+     * @return An {@code Optional<Value>} from {@code Key}
      */
     Optional<Value> get(Key key);
 
     /**
-     * @param filter A {@link Predicate<Key>} filter
-     * @return A collection if {@link Value} that passes the predicate test.
+     * @param filter A {@code Predicate<Key>} filter
+     * @return A collection if {@code Value} that passes the predicate test.
      */
     default Collection<Value> getAll(Predicate<Value> filter) {
         return valueStream().filter(filter).collect(Collectors.toSet());
     }
     /**
-     * @return A collection of all {@link Value}
+     * @return A collection of all {@code Value}
      */
     default Collection<Value> getAll() {
         return valueStream().collect(Collectors.toSet());

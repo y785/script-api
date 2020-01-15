@@ -60,56 +60,63 @@ public abstract class StyleAndColorBuilder<Builder extends StyleAndColorBuilder<
     }
 
     /**
-     * @see {@link #setStyle(FontStyle)}
+     * @see #setStyle(FontStyle)
      * Sets the {@link FontStyle} to {@link FontStyle#BOLD}
+     * @return A builder
      */
     public Builder bold() {
         return setStyle(FontStyle.BOLD);
     }
 
     /**
-     * @see {@link #setColor(FontColor)}
+     * @see #setColor(FontColor)
      * Sets the {@link FontStyle} to {@link FontStyle#NORMAL}
+     * @return A builder
      */
     public Builder normal() {
         return setStyle(FontStyle.NORMAL);
     }
 
     /**
-     * @see {@link #setColor(FontColor)}
+     * @see #setColor(FontColor)
      * Sets the {@link FontColor} to {@link FontColor#BLACK}
+     * @return A builder
      */
     public Builder black() {
         return setColor(FontColor.BLACK);
     }
 
     /**
-     * @see {@link #setColor(FontColor)}
+     * @see #setColor(FontColor)
      * Sets the {@link FontColor} to {@link FontColor#BLUE}
+     * @return A builder
      */
     public Builder blue() {
         return setColor(FontColor.BLUE);
     }
 
     /**
-     * @see {@link #setColor(FontColor)}
+     * @see #setColor(FontColor)
      * Sets the {@link FontColor} to {@link FontColor#PURPLE}
+     * @return A builder
      */
     public Builder purple() {
         return setColor(FontColor.PURPLE);
     }
 
     /**
-     * @see {@link #setColor(FontColor)}
+     * @see #setColor(FontColor)
      * Sets the {@link FontColor} to {@link FontColor#GREEN}
+     * @return A builder
      */
     public Builder green() {
         return setColor(FontColor.GREEN);
     }
 
     /**
-     * @see {@link #setColor(FontColor)}
+     * @see #setColor(FontColor)
      * Sets the {@link FontColor} to {@link FontColor#RED}
+     * @return A builder
      */
     public Builder red() {
         return setColor(FontColor.RED);

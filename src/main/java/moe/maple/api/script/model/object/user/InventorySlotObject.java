@@ -28,6 +28,7 @@ public interface InventorySlotObject<T> extends ItemObject<T> {
 
     /**
      * This item's position in the inventory.
+     * @return the position
      */
     short getPosition();
 }

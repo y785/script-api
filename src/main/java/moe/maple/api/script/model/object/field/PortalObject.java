@@ -24,8 +24,7 @@ package moe.maple.api.script.model.object.field;
 
 /**
  * This is a script proxy for portal objects.
- * <T> should be your implementation of portal.
- * @param <T>
+ * @param <T> should be your implementation of portal.
  */
 public interface PortalObject<T> extends FieldedObject<T> {
 

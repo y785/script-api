@@ -35,6 +35,7 @@ public interface MobObject<T> extends LifeObject<T> {
     /**
      * Depending on your implementation on mobs, you might need
      * to override this.
+     * @return true if the mob is in "alive" state
      */
     default boolean isAlive() { return getHealthCurrent() <= 0; }
 }

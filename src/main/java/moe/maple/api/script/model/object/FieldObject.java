@@ -31,8 +31,7 @@ import java.util.stream.Stream;
 
 /**
  * This is a script proxy for field/map objects.
- * <T> should be your implementation of maps/fields.
- * @param <T>
+ * @param <T> should be your implementation of map/fields.
  */
 public interface FieldObject<T> extends ScriptObject<T> {
 

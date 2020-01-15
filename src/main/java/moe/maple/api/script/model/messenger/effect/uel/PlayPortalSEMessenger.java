@@ -30,6 +30,7 @@ public interface PlayPortalSEMessenger<User> extends ScriptMessenger {
     /**
      * Packet: UserEffectLocal | UserEffect.PlayPortalSE
      * See: UserEffect.PlayPortalSE
+     * @param userObject - the user object to send to
      */
     void send(UserObject<User> userObject);
 }

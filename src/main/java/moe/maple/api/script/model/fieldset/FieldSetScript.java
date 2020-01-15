@@ -17,7 +17,15 @@ public interface FieldSetScript extends MoeScript {
 
     int SUCCESS = 0, ERROR = -1;
 
-    String instancePrefix();
+    /**
+     * The instance prefix is used to create field instances on the server.
+     * Field instances lifespan is directly tied to the script instance and shouldn't exist outside that scope.
+     * For example, scripts can create fields that are tied directly to a character's name. The script will then use
+     * this prefix to determine if the server already has an instance registered. If it does, then it wont attempt to
+     * create another.
+     * @return - the name of the instance
+     */
+    String instanceName();
 
     boolean containsField(int fieldId);
 
@@ -56,7 +64,7 @@ public interface FieldSetScript extends MoeScript {
      * FieldSetScripts must be updated to pulse events and timers.
      * This should be called in a loop every x ms, with the current
      * delta time passed as a parameter.
-     * @param delta  - Current milliseconds for update
+     * @param current - Current milliseconds for update
      */
-    void update(long delta);
+    void update(long current);
 }

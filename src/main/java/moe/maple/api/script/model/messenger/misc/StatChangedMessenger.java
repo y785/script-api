@@ -29,7 +29,8 @@ import moe.maple.api.script.model.object.user.UserObject;
 public interface StatChangedMessenger<User> extends ScriptMessenger {
     /**
      * Sends a stat change, typically referred to as dispose
-     * @param exclRequest true will unlock the ui/context
+     * @param userObject  - the user object to send to
+     * @param exclRequest - true will unlock the ui/context
      */
     void send(UserObject<User> userObject, boolean exclRequest);
 }

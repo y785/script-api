@@ -32,16 +32,17 @@ public @interface Command {
     /**
      * The delimiter for the script.
      * The name and aliases are located in {@link Script}
+     * @return the delimiter for the command, defaults to '@'
      */
     String delimiter() default "@";
 
     /**
-     * The minimum permission level for this script.
+     * @return The minimum permission level for this script.
      */
     int min() default 0;
 
     /**
-     * The maximum permission level for this script.
+     * @return The maximum permission level for this script.
      */
     int max() default Integer.MAX_VALUE;
 }

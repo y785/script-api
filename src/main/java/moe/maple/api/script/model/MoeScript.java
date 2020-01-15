@@ -44,21 +44,27 @@ public interface MoeScript {
      *  Scripts can have multiple names and aliases,
      *  since it is unsure which script you're aiming at,
      *  you need to set the expected value here, for clarity.
+     * @param expected - The expected name for this script.
+     *                 - Used to override script names, especially useful
+     *                 - when the script doesn't exist.
      */
     void setExpected(String expected);
 
     /**
-     * See {@link #setExpected(String)}
+     * @return See {@link #setExpected(String)}
      */
     String getExpected();
 
     /**
-     * Has the script used {@link #start()} and reached {@link #end()}
+     * Scripts have multiple states, this will return true if the
+     * script has finished processing and is ready to be disposed or reset.
+     * @return - true if script used {@link #start()} and reached {@link #end()}
      */
     boolean isDone();
 
     /**
-     * Is the script waiting for a response for {@link #resume(Number, Number, Object)}
+     * Is the script waiting for a response for {@link #resume(Number, Number, Object)}?
+     * @return - true if the script waiting for a response
      */
     boolean isPaused();
 
@@ -117,31 +123,37 @@ public interface MoeScript {
 
     /**
      * Called in {@link #start()}
+     * @param event - the event to add
      */
     void addStartEvent(ScriptEvent event);
 
     /**
      * Called in {@link #end()}
+     * @param event - the event to add
      */
     void addEndEvent(ScriptEvent event);
 
     /**
      *  Called internally after the work method.
+     *  @param event - the event to add
      */
     void addAfterRunEvent(ScriptEvent event);
 
     /**
      *  Called internally before the work method.
+     *  @param event - the event to add
      */
     void addBeforeRunEvent(ScriptEvent event);
 
     /**
      * Called in {@link #start()} if script fails {@link #hasPermission()}
+     * @param event - the event to add
      */
     void addNoPermissionEvent(ScriptEvent event);
 
     /**
      * Called in {@link #resume(Number, Number, Object)} if a user issues an escape action
+     * @param event - the event to add
      */
     void setEscapeEvent(ScriptEvent event);
 

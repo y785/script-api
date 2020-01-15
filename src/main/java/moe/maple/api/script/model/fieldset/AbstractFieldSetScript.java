@@ -76,11 +76,6 @@ public abstract class AbstractFieldSetScript extends BaseScript implements Field
     }
 
     @Override
-    public void work() {
-        throw new IllegalStateException("This should never be called.");
-    }
-
-    @Override
     public void update(long delta) {
 
     }

@@ -29,8 +29,11 @@ import moe.maple.api.script.model.object.user.UserObject;
 public interface AvatarOrientedMessenger<User> extends ScriptMessenger {
     /**
      * Packet: UserEffectLocal | UserEffect.AvatarOriented
-     * @param path - The Effect.wz UOL, example: "Effect/OnUserEff.img/guideEffect/aranTutorial/tutorialArrow1"
-     * @param durationInSeconds - The duration of the effect in seconds -- This was removed in later versions.
+     * @param userObject        - the user object to send to
+     * @param path              - The Effect.wz UOL, example:
+     *                          - "Effect/OnUserEff.img/guideEffect/aranTutorial/tutorialArrow1"
+     * @param durationInSeconds - The duration of the effect in seconds.
+     *                          - This was removed in later versions.
      */
     void send(UserObject<User> userObject, String path, int durationInSeconds);
 }

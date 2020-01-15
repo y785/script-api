@@ -24,10 +24,8 @@ package moe.maple.api.script.model.object;
 
 /**
  * This is a script proxy for fieldset objects.
- * <T> should be your implementation of fieldset.
- * FieldSets are groups of fields, typically used for party quests
- * or events.
- * @param <T>
+ * FieldSets are groups of fields, typically used for party quests or events.
+ * @param <T> should be your implementation of fieldset.
  */
 public interface FieldSetObject<T> extends ScriptObject<T> {
 
@@ -41,9 +39,9 @@ public interface FieldSetObject<T> extends ScriptObject<T> {
 
     /**
      * Attempts to enter the FieldSet.
-     * @param characterId
-     * @param fieldIndex
-     * @return
+     * @param characterId - the character id
+     * @param fieldIndex  - the field index to enter into
+     * @return            - the result code from entering
      */
     int enter(int characterId, int fieldIndex);
 
@@ -61,14 +59,14 @@ public interface FieldSetObject<T> extends ScriptObject<T> {
 
     // =================================================================================================================
 
-    int increaseExpAll(int exp);//퀘스트 반복 횟수 Number of Quest Repeats? check BMS.
+    int increaseExpAll(int exp); //퀘스트 반복 횟수 Number of Quest Repeats? check BMS.
 
     // =================================================================================================================
 
     /**
      * Transfers all Users in the FieldSet to your specified Field ID.
-     * @param fieldId
-     * @param portal
+     * @param fieldId - The field to transfer all users in the fieldset to
+     * @param portal  - The portal name to transfer to
      */
     void transferFieldAll(int fieldId, String portal);
 
@@ -87,7 +85,7 @@ public interface FieldSetObject<T> extends ScriptObject<T> {
 
     /**
      * "Do not use if resetQuestTime is needed. We can not guarantee what will happen." - neckson
-     * @param timeMaybeCheckBMS
+     * @param timeMaybeCheckBMS - Unsure
      * @return successful reset
      */
     boolean resetTimeOut(int timeMaybeCheckBMS);

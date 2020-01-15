@@ -299,9 +299,9 @@ public enum ScriptAPI {
 
     /**
      * A message that is dropped into the chatbox. Or not. I don't know.
-     * @param script
-     * @param type
-     * @param message
+     * @param script  - The current script
+     * @param type    - The message type
+     * @param message - The message
      */
     public static void message(MoeScript script, int type, String message) {
         onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerMessage.send(user, type, message));
@@ -309,10 +309,10 @@ public enum ScriptAPI {
 
     /**
      * A balloon that appears above a user.
-     * @param script
-     * @param width
-     * @param timeoutInSeconds
-     * @param message
+     * @param script           - The current script
+     * @param width            - The width of the balloon
+     * @param timeoutInSeconds - How long the balloon should last, in seconds
+     * @param message          - The balloon message
      */
     public static void balloon(MoeScript script, int width, int timeoutInSeconds, String message) {
         onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerBalloon.send(user, message, width, timeoutInSeconds));
@@ -320,8 +320,8 @@ public enum ScriptAPI {
 
     /**
      * The yellow message that appears in the center of the screen.
-     * @param script
-     * @param message
+     * @param script  - The current script
+     * @param message - The message
      */
     public static void progress(MoeScript script, String message) {
         onScriptMessage(script, user->ScriptAPI.INSTANCE.messengerProgress.send(user, message));

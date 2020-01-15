@@ -38,22 +38,26 @@ public @interface Script {
      * The name(s) of the script. These should match
      * the .wz property of script names, like:
      * Map.wz/Map/Map0/000010000.img/info/onUserEnter
+     * @return the names as an array
      */
     String[] name() default "";
 
     /**
      *  Your name. B-baka.
+     * @return the script author's name or tag
      */
     String author() default "";
 
     /**
      *  A brief description of the script, what it does, where it's located, etc.
+     * @return the description
      */
     String description() default "";
 
     /**
      * The Map IDs of where this script is located.
      * Some scripts can be located in multiple maps/fields.
+     * @return the fields/maps this is located in, as an array
      */
     int[] field() default 0;
 }

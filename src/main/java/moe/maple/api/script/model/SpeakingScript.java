@@ -111,10 +111,6 @@ public interface SpeakingScript extends MessagingScript {
 
     // =================================================================================================================
 
-    /**
-     * Beware, sugar below.
-     */
-
     default BasicActionChain say(String... messages) {
         return ScriptAPI.say(this, 0, List.of(messages));
     }

@@ -29,8 +29,9 @@ import moe.maple.api.script.model.object.user.UserObject;
 public interface FieldTrembleMessenger<User> extends ScriptMessenger {
     /**
      * Sends a Tremble Effect to the User.
-     * @param type bHeavyNShortTremble | Heavy / Short (?) Undocumented atm.
-     * @param delay delay in milliseconds
+     * @param userObject - the user object to send to
+     * @param type       - bHeavyNShortTremble | Heavy / Short (?) Undocumented atm.
+     * @param delay      - delay in milliseconds
      */
     void send(UserObject<User> userObject, int type, int delay);
 }

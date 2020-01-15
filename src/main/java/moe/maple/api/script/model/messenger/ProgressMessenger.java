@@ -31,5 +31,7 @@ import moe.maple.api.script.model.object.user.UserObject;
  */
 @FunctionalInterface
 public interface ProgressMessenger<User> extends ScriptMessenger {
+
+
     void send(UserObject<User> userObject, String message);
 }

@@ -37,7 +37,7 @@ interface CharacterSequenceBuilder<Builder extends CharacterSequenceBuilder<Buil
     Builder get();
 
     /**
-     * @see {{@link #tab()}}
+     * @see CharacterSequenceBuilder#tab()
      * @param howMany Appends 'howMany' tabs to the builder.
      * @return A Builder.
      */
@@ -57,7 +57,7 @@ interface CharacterSequenceBuilder<Builder extends CharacterSequenceBuilder<Buil
     }
 
     /**
-     * @see {{@link #newLine()} ()}}
+     * @see CharacterSequenceBuilder#newLine()
      * @param howMany Appends 'howMany' newLines to the builder.
      * @return A Builder.
      */

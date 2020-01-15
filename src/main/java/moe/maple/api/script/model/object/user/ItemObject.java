@@ -24,6 +24,9 @@ package moe.maple.api.script.model.object.user;
 
 import moe.maple.api.script.model.object.ScriptObject;
 
+/**
+ * @param <T> Your implementation of items.
+ */
 public interface ItemObject <T> extends ScriptObject<T> {
 
     int getId();
@@ -33,8 +36,8 @@ public interface ItemObject <T> extends ScriptObject<T> {
     /**
      * You will need to override these depending on version or custom edits.
      * These are just meant to be helpful for basic scripts.
+     * @return true if the item is a wedding ring.
      */
-
     default boolean isWeddingRing() {
         var nItemID = getId();
         return nItemID == 1112803 || nItemID == 1112806 || nItemID == 1112807 || nItemID == 1112809;

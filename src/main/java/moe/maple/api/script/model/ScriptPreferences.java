@@ -24,7 +24,6 @@ public class ScriptPreferences {
 
     /**
      * If {@link #forceOkOnSay} is true, all script 'say' calls will end with 'OK'.
-     * Example: Given the pseudo script { say("0", "1", "2").andThen(()=>askMenu("pick", "one")) }
      * If true, "2" would end with Ok else "2" would be next.
      * @return Your preference.
      */
@@ -35,6 +34,7 @@ public class ScriptPreferences {
     /**
      * If true, scripts will catch all exceptions thrown and issue {@link MoeScript#end()}.
      * If false, scripts will throw exceptions and not call {@link MoeScript#end()}.
+     * @return true if all exceptions should be caught by the API
      */
     public boolean shouldCatchExceptions() {
         return catchExceptions;

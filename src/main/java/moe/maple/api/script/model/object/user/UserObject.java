@@ -65,13 +65,15 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
     default boolean isInParty() { return getParty().isPresent(); }
 
     /**
-     * @return status code, bms
+     * @param cost - the cost, in mesos
+     * @return     - status code, bms
      */
     int isCreateGuildPossible(int cost);
     default int isCreateGuildPossible() { return isCreateGuildPossible(0); }
 
     /**
-     * Sends the Create Guild Dialogue -> Contract for party members.
+     * Sends the Create Guild Dialogue and Contract for party members.
+     * @param cost The cost, in mesos, to be deducted once the guild is created.
      */
     void createNewGuild(int cost);
     default void createNewGuild() { createNewGuild(0); }
@@ -92,8 +94,8 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
      * Free Market portals and World Trip. The relationship is a String:String map.
      * If you don't wish to store like that, you should shove the data into an unused
      * quest like nexon does.
-     * @param key
-     * @return the value stored
+     * @param key - the variable key
+     * @return    - the value stored
      */
     String getScriptVariable(String key);
     default String getScriptVariable(int value) { return getScriptVariable(Integer.toString(value)); }
@@ -113,7 +115,7 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
 
     /**
      * Talks to an NPC in the Field by template ID.
-     * @see {@link #talkTo(String)}
+     * @see #talkTo(String)
      * @param npcId - The NPC used to grab the script name.
      */
     void talkTo(int npcId);
@@ -129,18 +131,24 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
     /**
      * This doesn't necessarily have to be an immediate transfer.
      * You can register an on-script-end event to transfer after script has finished.
-     * @param fieldId the map/field to transfer to
-     * @return true if transfer was successful
+     * @param fieldId - the map/field to transfer to
+     * @return        - true if transfer was successful
      */
     boolean transferField(int fieldId);
 
     /**
-     * @param spawnPoint Portal Id
+     * @see #transferField(int)
+     * @param fieldId    - the map/field to transfer to
+     * @param spawnPoint - Portal Id
+     * @return           - true if transfer was successful
      */
     boolean transferField(int fieldId, int spawnPoint);
 
     /**
-     * @param spawnPoint Portal name
+     * @see #transferField(int)
+     * @param fieldId    - the map/field to transfer to
+     * @param spawnPoint - Portal name
+     * @return           - true if transfer was successful
      */
     boolean transferField(int fieldId, String spawnPoint);
 
@@ -149,13 +157,13 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
      * @param skillId - Skill id
      * @param level   - Skill level
      * @param mastery - Skill mastery
-     * @return true if user learned the targeted skill, level, & mastery.
+     * @return        - true if user learned the targeted skill, level, and mastery.
      */
     boolean learnSkill(int skillId, int level, int mastery);
 
     /**
      * @param skillId - Skill id
-     * @return true if the skill was forgotten/removed.
+     * @return        - true if the skill was forgotten/removed.
      */
     boolean forgetSkill(int skillId);
 
@@ -164,15 +172,15 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
 
     /**
      * Gives the user a buff based on a consumable itemId.
-     * @param buffItemId a consumable itemId
-     * @return true if the operation is successful.
+     * @param buffItemId - a consumable itemId
+     * @return           - true if the operation is successful.
      */
     boolean giveBuffItem(int buffItemId);
 
     /**
      * Gives the user a buff based on a skill id.
-     * @param skillId a skill .wz id
-     * @return true if the operation is successful.
+     * @param skillId - a skill .wz id
+     * @return        - true if the operation is successful.
      */
     boolean giveBuffSkill(int skillId);
 
@@ -366,16 +374,19 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
      * If your version doesn't have skill point tiers, just return
      * the current skill point amount.
      * @param tier AKA 'JobLevel', the different skill tabs for Evans and other ExtendSP jobs.
+     * @return the skill points for the tier specified
      */
     int getSkillPoints(int tier);
+
     int getSkillPoints();
 
     /**
      * Increases a user's available skill points.
      * @param amount - The amount to increase by
      * @param tier   - The tier to increase. Used for jobs that have split
-     *                 skill points. Evan & Dual Blade. Later versions split all
+     *                 skill points. Evan and Dual Blade. Later versions split all
      *                 skills, while lower don't.
+     * @return       - true if successfully increased the user's skill points
      */
     boolean increaseSkillPoints(int amount, int tier);
 
@@ -384,6 +395,7 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
      * If your user has tiered skill points, you should default to
      * the current active tier.
      * @param amount - The amount to increase by
+     * @return       - see {@link #increaseSkillPoints(int, int)}
      */
     boolean increaseSkillPoints(int amount);
 
@@ -391,16 +403,17 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
 
     /**
      * This is intended to be used for job advancement, but doesn't have to be.
-     * @param jobCode A {@link Short} job identifier.
-     * @param isJobAdvancement if true, the user's stats should increase as they would per job advancement.
-     * @return true if the operation completes successfully.
+     * @param jobCode          - A {@link Short} job identifier.
+     * @param isJobAdvancement - if true, the user's stats should increase as
+     *                           they would per job advancement.
+     * @return                 - true if the operation completes successfully.
      */
     boolean setJob(short jobCode, boolean isJobAdvancement);
 
     /**
      * @see #setJob(short, boolean)
-     * @param jobCode A {@link Short} job identifier.
-     * @return true if the operation completes successfully.
+     * @param jobCode - A {@link Short} job identifier.
+     * @return        - true if the operation completes successfully.
      */
     default boolean setJob(short jobCode) {
         return setJob(jobCode, false);
@@ -419,6 +432,7 @@ public interface UserObject<T> extends LifeObject<T>, InventoryHolderObject<T> {
      * these change based on version,  it's important that you have to ability
      * to override these as nexon changes jobs. So, for now, some simple implementations.
      * Based on v92 ~ v95.
+     * @return true if the user is an admin
      */
     default boolean isAdmin() {
         var nJob = getJobId();

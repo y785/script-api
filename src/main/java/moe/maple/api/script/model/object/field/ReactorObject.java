@@ -32,7 +32,7 @@ import java.util.Optional;
 
 /**
  * This is a script proxy for reactor objects.
- * @param <T>
+ * @param <T> should be your implementation of reactors.
  */
 public interface ReactorObject<T> extends FieldedObject<T> {
 

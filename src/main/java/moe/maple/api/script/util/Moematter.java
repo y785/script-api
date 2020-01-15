@@ -53,7 +53,7 @@ public class Moematter {
 
     /**
      * Formats a number using the server's Locale
-     * Ex. (Locale.US) 1000 => 1,000
+     * Ex. (Locale.US) 1000 = 1,000
      * @param hopefullyANumber HOPEFULLY
      * @return A formatted number as a {@link String}
      */
@@ -79,6 +79,8 @@ public class Moematter {
     /**
      * Shows the item icon.
      * todo: #i{id}:#, #z{id}#, #t{id}#, #v{id}#
+     * @param itemWzId - the item id
+     * @return         - the formatted name
      */
     public static String item(Number itemWzId) { return String.format("#i%d#", itemWzId.intValue()); }
     public static String item(ItemObject object) { return item(object.getId()); }
@@ -88,6 +90,8 @@ public class Moematter {
 
     /**
      * Shows the map name.
+     * @param mapWzId - the map id
+     * @return        - the formatted name
      */
     public static String map(Number mapWzId) { return String.format("#m%d#", mapWzId.intValue()); }
     public static String map(FieldObject object) { return map(object.getId()); }
@@ -96,23 +100,31 @@ public class Moematter {
 
     /**
      * Shows the mob name.
+     * @param mobWzId - the mob id
+     * @return        - the formatted name
      */
     public static String mob(Number mobWzId) { return String.format("#o%d#", mobWzId.intValue()); }
     public static String mob(MobObject object) { return mob(object.getId()); }
 
     /**
      * Shows the npc name.
+     * @param npcWzId - the npc id
+     * @return        - the formatted name
      */
     public static String npc(Number npcWzId) { return String.format("#p%d#", npcWzId.intValue()); }
     public static String npc(NpcObject object) { return npc(object.getTemplateId()); }
 
     /**
      * Shows an icon of the skill.
+     * @param skillWzId - the skill id
+     * @return          - the formatted name
      */
     public static String skill(Number skillWzId) { return String.format("#s%d#", skillWzId.intValue()); }
 
     /**
      * Shows the name of the skill.
+     * @param skillWzId - the skill id
+     * @return          - the formatted name
      */
     public static String skillName(Number skillWzId) { return String.format("#q%d#", skillWzId.intValue()); }
 
@@ -120,6 +132,8 @@ public class Moematter {
     /**
      * Converts objects into their wz names, if possible.
      * Otherwise defaults to {@link #toString()}
+     * @param object - the object to convert
+     * @return       - the formatted name
      */
     public static String name(ScriptObject object) {
         if (object instanceof ItemObject)
