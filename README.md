@@ -7,6 +7,15 @@ The API itself is heavily modelled after nexon's own api, with some minor additi
     <img src="https://raw.githubusercontent.com/y785/script-api/master/example.png" tag="v83 example provided by bboki" width="200" height="200">
 </p>
 
+### Maven
+```
+<dependency>
+  <groupId>moe.maple</groupId>
+  <artifactId>script-api</artifactId>
+  <version>1.6.0</version>
+</dependency>
+```
+
 ### Examples
 For a more in depth explanation, see [**the wiki**](https://github.com/y785/script-api/wiki/Basic-Script-Examples). 
 All scripts extend their base script type, so a script for an Npc would extend the NpcScript, etc.
