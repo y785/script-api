@@ -8,8 +8,6 @@ The API itself is heavily modelled after nexon's own api, with some minor additi
 </p>
 
 ### Maven
-[![CircleCI](https://circleci.com/gh/y785/script-api.svg?style=svg)](https://circleci.com/gh/y785/script-api)
-[![Download](https://api.bintray.com/packages/moe/maple/script-api/images/download.svg) ](https://bintray.com/moe/maple/script-api/_latestVersion)
 ```
 <dependency>
   <groupId>moe.maple</groupId>
